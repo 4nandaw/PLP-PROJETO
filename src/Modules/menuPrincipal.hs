@@ -1,8 +1,6 @@
 module Modules.MenuPrincipal where 
 import Modules.Cadastro
     
-
-
 escolherOpcao :: IO()
 escolherOpcao = do
     escolha <- getLine

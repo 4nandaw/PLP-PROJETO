@@ -1,13 +1,11 @@
 module Modules.Cadastro where
-import System.Directory (createDirectoryIfMissing)
-import System.FilePath.Posix (takeDirectory)
-
+-- import System.Directory (createDirectoryIfMissing)
+-- import System.FilePath.Posix (takeDirectory)
 
 cadastroProfessor :: IO()
 escolherCadastro :: String -> IO()
 escolherOpcaoCadastro :: IO()
 cadastroGeral :: IO()
-
 
 cadastroGeral = do
     putStrLn "CADASTRO"
@@ -39,4 +37,9 @@ cadastroProfessor = do
     nomeDaDisciplina <- getLine
     putStrLn "Cadastro concluído!"
     putStrLn " "
+    writeFile ("../db/professor/" ++ matricula ++ ".txt") (
+        "nome: " ++ nome ++ "\n" ++
+        "matricula: " ++ matricula ++ "\n" ++
+        "senha: " ++ senha ++ "\n" ++
+        "disciplina: " ++ nomeDaDisciplina ++ "")
     
