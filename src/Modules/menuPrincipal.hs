@@ -10,11 +10,12 @@ escolherOpcao = do
     
 printarMenu :: IO()
 printarMenu = do
-    putStrLn "MENU INICIAL"
+    putStrLn "MENU INICIAL ======="
     putStrLn "Digite uma opção: "
     putStrLn "[0] Sair"
     putStrLn "[1] Login"
     putStrLn "[2] Cadastro"
+    putStrLn "===================="
     escolherOpcao
 
 escolher :: String -> IO()
