@@ -1,6 +1,4 @@
 module Modules.Cadastro where
--- import System.Directory (createDirectoryIfMissing)
--- import System.FilePath.Posix (takeDirectory)
 
 cadastroProfessor :: IO()
 escolherCadastro :: String -> IO()
