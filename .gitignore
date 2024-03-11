@@ -1,8 +1,0 @@
-*
-
-!.gitignore
-!*.hs
-!db
-!db/professor
-!db/aluno
-!db/disciplina
