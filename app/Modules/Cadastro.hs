@@ -5,6 +5,7 @@ module Modules.Cadastro where
 
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
+import System.Directory
 import Data.Aeson
 
 cadastroProfessor :: IO()
@@ -58,10 +59,15 @@ cadastroProfessor = do
     senha <- getLine
     putStrLn "Nome da disciplina: "
     nomeDaDisciplina <- getLine
-    putStrLn "Cadastro concluído!"
-    putStrLn " "
-    let dados = encode (Disciplina {nome = nomeDaDisciplina, nomeProfessor = nome, matriculaProfessor = matricula, senha = senha})
-    B.writeFile ("./db/disciplina/" ++ nomeDaDisciplina ++ ".json") dados
+
+    validarUnico <- doesFileExist ("./db/disciplina/" ++ nomeDaDisciplina ++ ".json")
+
+    if not validarUnico then do
+        let dados = encode (Disciplina {nome = nomeDaDisciplina, nomeProfessor = nome, matriculaProfessor = matricula, senha = senha})
+        B.writeFile ("./db/disciplina/" ++ nomeDaDisciplina ++ ".json") dados
+        putStrLn "Cadastro concluído!"
+        putStrLn " "
+    else print "Nome de discipina ja esta em uso"
 
 cadastroAluno = do
     putStrLn "CADASTRO DE ALUNO"
@@ -71,8 +77,13 @@ cadastroAluno = do
     matricula <- getLine
     putStrLn "Senha: "
     senha <- getLine
-    putStrLn "Cadastro concluído!"
-    putStrLn " "
-    let dados = encode (Aluno {nome = nome, matricula = matricula, senha = senha})
-    B.writeFile ("./db/aluno/" ++ matricula ++ ".json") dados
+
+    validarUnico <- doesFileExist ("./db/aluno/" ++ matricula ++ ".json")
+
+    if not validarUnico then do
+        let dados = encode (Aluno {nome = nome, matricula = matricula, senha = senha})
+        B.writeFile ("./db/aluno/" ++ matricula ++ ".json") dados
+        putStrLn "Cadastro concluído!"
+        putStrLn " "
+    else print "Matricula ja esta em uso"
     
