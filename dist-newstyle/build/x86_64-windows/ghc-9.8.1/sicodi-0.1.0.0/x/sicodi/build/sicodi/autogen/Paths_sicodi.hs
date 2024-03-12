@@ -46,12 +46,12 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
-bindir     = "/Users/marcus/.cabal/bin"
-libdir     = "/Users/marcus/.cabal/lib/aarch64-osx-ghc-9.8.2/sicodi-0.1.0.0-inplace-sicodi"
-dynlibdir  = "/Users/marcus/.cabal/lib/aarch64-osx-ghc-9.8.2"
-datadir    = "/Users/marcus/.cabal/share/aarch64-osx-ghc-9.8.2/sicodi-0.1.0.0"
-libexecdir = "/Users/marcus/.cabal/libexec/aarch64-osx-ghc-9.8.2/sicodi-0.1.0.0"
-sysconfdir = "/Users/marcus/.cabal/etc"
+bindir     = "C:\\Users\\josej\\AppData\\Roaming\\cabal\\bin"
+libdir     = "C:\\Users\\josej\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-9.8.1\\sicodi-0.1.0.0-inplace-sicodi"
+dynlibdir  = "C:\\Users\\josej\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-9.8.1"
+datadir    = "C:\\Users\\josej\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-9.8.1\\sicodi-0.1.0.0"
+libexecdir = "C:\\Users\\josej\\AppData\\Roaming\\cabal\\sicodi-0.1.0.0-inplace-sicodi\\x86_64-windows-ghc-9.8.1\\sicodi-0.1.0.0"
+sysconfdir = "C:\\Users\\josej\\AppData\\Roaming\\cabal\\etc"
 
 getBinDir     = catchIO (getEnv "sicodi_bindir")     (\_ -> return bindir)
 getLibDir     = catchIO (getEnv "sicodi_libdir")     (\_ -> return libdir)
@@ -71,7 +71,7 @@ joinFileName dir fname
   | otherwise                       = dir ++ pathSeparator : fname
 
 pathSeparator :: Char
-pathSeparator = '/'
+pathSeparator = '\\'
 
 isPathSeparator :: Char -> Bool
-isPathSeparator c = c == '/'
+isPathSeparator c = c == '/' || c == '\\'

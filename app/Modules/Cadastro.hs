@@ -1,5 +1,7 @@
 module Modules.Cadastro where
-
+import Data.Aeson 
+import qualified Data.ByteString.Lazy as ByteString
+    
 cadastroProfessor :: IO()
 cadastroAluno :: IO()
 escolherCadastro :: String -> IO()

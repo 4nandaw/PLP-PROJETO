@@ -1,69 +1,79 @@
-    module Modules.Login where
+{-# LANGUAGE DeriveGeneric #-}
+module Modules.Login where
 
+import Data.Aeson 
+import qualified Data.ByteString.Lazy as B
+import GHC.Generics
+import System.Directory(getCurrentDirectory)
+import Data.Text (Text)
 
-    --verificarMatricula :: String -> String -> IO ()
-    --verificarSenhaProfessor :: String-> String -> IO ()
-    --verificarSenhaAluno :: String -> String -> IO ()
-    --verificarNomeDisciplina :: String -> IO ()
-    loginProfessor :: IO()
-    loginAluno :: IO()
-    escolherLogin :: String -> IO()
-    escolherOpcaoLogin :: IO()
-    loginGeral :: IO()
+-- Definição do tipo Professor
+data Professor = Professor { nomeDisciplia :: String, nomeProfessor :: String, matricula :: String, senha :: String }
+    deriving (Generic, Show)
 
+-- Instância FromJSON para Professor
+instance FromJSON Professor
+instance ToJSON Professor
 
-    loginGeral = do
-        putStrLn "Login ====================="
-        putStrLn "Digite uma opção: "       
-        putStrLn "[0] Voltar pro menu inicial"
-        putStrLn "[1] Login de professor"
-        putStrLn "[2] Login de aluno"
-        putStrLn "=============================="
-        escolherOpcaoLogin
+-- Função para ler dados de um arquivo JSON
+lerDado :: FilePath -> IO (Maybe String)
+lerDado caminho = do
+    dados <- B.readFile caminho
+    case decode dados of
+        Just (Professor _ senha _ _) -> return $ Just senha
+        Nothing -> return Nothing
 
-    escolherOpcaoLogin = do
-        escolha <- getLine 
-        escolherLogin escolha
+-- Função para verificar o nome da disciplina
+verificarNomeDisciplina :: String -> IO ()
+verificarNomeDisciplina nomeDisciplina = do 
+    putStrLn "TESTE"
+    y <- getCurrentDirectory
+    putStrLn y
+    x <- lerDado("C:/Users/josej/OneDrive/Documentos/Jardel/UFCG/PLP/PLP-PROJETO/app/Modules/plp.json")
+    case x of
+        Just resultado -> putStrLn(show(resultado))
+        Nothing -> putStrLn "Erro"
 
-    escolherLogin escolha 
-        |(escolha == "0") = putStr ""
-        |(escolha == "1") = loginProfessor
-        |(escolha == "2") = loginAluno
-        | otherwise = putStrLn "Opção Inválida" 
+-- Função para o login geral
+loginGeral :: IO ()
+loginGeral = do
+    putStrLn "Login ====================="
+    putStrLn "Digite uma opção: "       
+    putStrLn "[0] Voltar pro menu inicial"
+    putStrLn "[1] Login de professor"
+    putStrLn "[2] Login de aluno"
+    putStrLn "=============================="
+    escolherOpcaoLogin
 
+-- Função para escolher a opção de login
+escolherOpcaoLogin :: IO ()
+escolherOpcaoLogin = do
+    escolha <- getLine 
+    escolherLogin escolha
 
+-- Função para realizar o login
+escolherLogin :: String -> IO ()
+escolherLogin escolha 
+    | escolha == "0" = putStr ""
+    | escolha == "1" = loginProfessor
+    | escolha == "2" = loginAluno
+    | otherwise = putStrLn "Opção Inválida" 
 
-    --É preciso duas funções para verificar senha diferentes, pois os arquivos relacionados aos professores estão num caminho
-    -- diferente dos relacionados aos alunos, mas pode-se otimizar isso mais a frente passando como argumento na função 
-    -- 0 para aluno e 1 para professor.  
+-- Função para o login do professor
+loginProfessor :: IO ()
+loginProfessor = do
+    putStrLn "Digite o nome da disciplina: "
+    nomeDisciplina <- getLine
+    verificarNomeDisciplina nomeDisciplina
+    putStrLn "Digite a senha: "
+    senha <- getLine
+    putStrLn " "
 
-
-    --FUNÇÕES COM ERROS DE DECLARAÇÃO/TIPO
-    --verificarNomeDisciplina nomeDisciplia = putStrLn ("*VERIFICANDO NOME DA DISCIPLINA * // NÃO ESTÁ FEITO AINDA " ++ nomeDisciplia)
-
-    --verificarSenhaProfessor nomeDisciplina senha = putStrLn ("*VERIFICANDO SENHA DO PROFESSOR* // NÃO ESTÁ FEITO AINDA " ++ nomeDisciplina ++ " " ++ senha)
-
-    --verificarSenhaAluno matricula senha = putStrLn ("*VERIFICANDO SENHA DO ALUNO* // NÃO ESTÁ FEITO " ++ matricula ++ " " ++ senha)
-
-    --verificarMatricula matricula = putStrLn ("*VERIFICANDO MATRÍCULA DO ALUNO* // NÃO ESTÁ FEITO AINDA " ++ matricula)
-
-    loginProfessor = do
-        putStrLn "Digite o nome da disciplina: "
-        nomeDisciplia <- getLine
-        --verificarNomeDisciplina nomeDisciplia
-        putStrLn "Digite a senha: "
-        senha <- getLine
-        --verificarSenhaProfessor nomeDisciplia senha
-        putStrLn " "
-
-    loginAluno = do
-        putStrLn "Digite a matrícula do aluno: "
-        matricula <- getLine
-        --verificarMatricula matricula
-        putStrLn "Digite a senha: "
-        senha <- getLine
-        --verificarSenhaAluno matricula senha
-        putStrLn " "
-        
-
-
+-- Função para o login do aluno
+loginAluno :: IO ()
+loginAluno = do
+    putStrLn "Digite a matrícula do aluno: "
+    matricula <- getLine
+    putStrLn "Digite a senha: "
+    senha <- getLine
+    putStrLn " "
