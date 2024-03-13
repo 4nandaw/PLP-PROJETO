@@ -4,45 +4,58 @@ module Modules.Login where
 import Data.Aeson 
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
-import System.Directory(getCurrentDirectory)
+import System.Directory(getCurrentDirectory, doesFileExist)
 import Data.Text (Text)
 
 -- Definição do tipo Professor
-data Professor = Professor { nomeDisciplia :: String, nomeProfessor :: String, matricula :: String, senha :: String }
+data Professor = Professor
+    {   nomeDisciplina :: String,
+        nomeProfessor :: String,
+        matricula :: String,
+        senha :: String }
     deriving (Generic, Show)
 
--- Instância FromJSON para Professor
-instance FromJSON Professor
 instance ToJSON Professor
 
+-- Instância FromJSON para Professor
+instance FromJSON Professor 
+
+-- Função para ler dados de um arquivo JSON
 -- Função para ler dados de um arquivo JSON
 lerDado :: FilePath -> IO (Maybe String)
 lerDado caminho = do
+    arquivoExiste <- doesFileExist caminho
+    if (arquivoExiste) then putStrLn "ARQUIVO EXISTE"
+    else putStrLn "Arquivo não existe"
     dados <- B.readFile caminho
     case decode dados of
-        Just (Professor _ senha _ _) -> return $ Just senha
+        Just (Professor _ _ _ senha) -> return $ Just senha
         Nothing -> return Nothing
 
 -- Função para verificar o nome da disciplina
-verificarNomeDisciplina :: String -> IO ()
+verificarNomeDisciplina :: String -> IO Bool
 verificarNomeDisciplina nomeDisciplina = do 
-    putStrLn "TESTE"
-    y <- getCurrentDirectory
-    putStrLn y
-    x <- lerDado("C:/Users/josej/OneDrive/Documentos/Jardel/UFCG/PLP/PLP-PROJETO/app/Modules/plp.json")
+    x <- lerDado("./app/Modules/" ++ nomeDisciplina ++ ".json")
     case x of
-        Just resultado -> putStrLn(show(resultado))
-        Nothing -> putStrLn "Erro"
+        Just resultado -> return True
+        Nothing -> return False
+
+verificarSenha :: String -> String-> IO Bool
+verificarSenha nomeDisciplina senhaPassada = do
+    senha <- lerDado("./app/Modules/" ++ nomeDisciplina ++ ".json")
+    case senha of
+        Just senha -> return (senha==senhaPassada)
+        Nothing -> return False
 
 -- Função para o login geral
 loginGeral :: IO ()
 loginGeral = do
-    putStrLn "Login ====================="
+    putStrLn "Login ======================"
     putStrLn "Digite uma opção: "       
     putStrLn "[0] Voltar pro menu inicial"
     putStrLn "[1] Login de professor"
     putStrLn "[2] Login de aluno"
-    putStrLn "=============================="
+    putStrLn "============================="
     escolherOpcaoLogin
 
 -- Função para escolher a opção de login
@@ -64,10 +77,24 @@ loginProfessor :: IO ()
 loginProfessor = do
     putStrLn "Digite o nome da disciplina: "
     nomeDisciplina <- getLine
-    verificarNomeDisciplina nomeDisciplina
-    putStrLn "Digite a senha: "
-    senha <- getLine
-    putStrLn " "
+    loginValido <- verificarNomeDisciplina nomeDisciplina
+    if (loginValido) then do
+        putStrLn "Digite a senha: "
+        senha <- getLine
+        senhaValida <- verificarSenha nomeDisciplina senha
+        if (senhaValida) then do
+            putStrLn "CHAMANDO MODULO QUE ENTRA NA DISCIPLINA DO PROFESSOR"
+            putStrLn " "
+        else do
+            putStrLn "SENHA INVÁLIDA"
+            putStrLn " "
+
+    else do 
+        putStrLn "Login inválido! Não existe disciplina com esse nome"
+        putStrLn " "
+
+
+        
 
 -- Função para o login do aluno
 loginAluno :: IO ()
