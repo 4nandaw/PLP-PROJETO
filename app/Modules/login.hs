@@ -7,42 +7,64 @@ import GHC.Generics
 import System.Directory(getCurrentDirectory, doesFileExist)
 import Data.Text (Text)
 
--- Definição do tipo Professor
-data Professor = Professor
+
+-- Definição do tipo Disciplina
+data Disciplina = Disciplina
     {   nomeDisciplina :: String,
         nomeProfessor :: String,
-        matricula :: String,
-        senha :: String }
+        matriculaProfessor :: String,
+        senhaDisciplina :: String }
     deriving (Generic, Show)
 
-instance ToJSON Professor
+--Definição do tipo Aluno
+data Aluno = Aluno
+    {   nomeAluno :: String,
+        matriculaAluno :: String,
+        senhaAluno :: String
+    } deriving(Generic, Show)
 
--- Instância FromJSON para Professor
-instance FromJSON Professor 
+--Instâncias de Disciplina/Aluno para Json
+instance ToJSON Disciplina
+instance ToJSON Aluno
 
--- Função para ler dados de um arquivo JSON
--- Função para ler dados de um arquivo JSON
-lerDado :: FilePath -> IO (Maybe String)
-lerDado caminho = do
-    arquivoExiste <- doesFileExist caminho
-    if (arquivoExiste) then putStrLn "ARQUIVO EXISTE"
-    else putStrLn "Arquivo não existe"
+-- Instâncias de Json para Disciplina/Aluno
+instance FromJSON Disciplina
+instance FromJSON Aluno
+
+-- Função para verificar se um arquivo existe
+arquivoDisciplinaExiste :: String -> IO Bool
+arquivoDisciplinaExiste nomeDisciplina = doesFileExist ("./db/disciplinas/" ++ nomeDisciplina ++ ".json")
+
+arquivoAlunoExiste :: String -> IO Bool
+arquivoAlunoExiste matricula = doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
+
+puxarSenhaDisciplina :: String -> IO (Maybe String)
+puxarSenhaDisciplina caminho = do
     dados <- B.readFile caminho
     case decode dados of
-        Just (Professor _ _ _ senha) -> return $ Just senha
+        Just (Disciplina _ _ _ senhaDisciplina) -> return $ Just senhaDisciplina
         Nothing -> return Nothing
 
--- Função para verificar o nome da disciplina
-verificarNomeDisciplina :: String -> IO Bool
-verificarNomeDisciplina nomeDisciplina = do 
-    x <- lerDado("./app/Modules/" ++ nomeDisciplina ++ ".json")
-    case x of
-        Just resultado -> return True
+puxarSenhaAluno :: String -> IO (Maybe String)
+puxarSenhaAluno caminho = do
+    dados <- B.readFile caminho
+    case decode dados of
+        Just (Aluno _ _ senhaAluno) -> return $ Just senhaAluno
+        Nothing -> return Nothing
+
+
+verificarSenhaDisciplina :: String -> String-> IO Bool
+verificarSenhaDisciplina nomeDisciplina senhaPassada = do
+    senha <- puxarSenhaDisciplina("./db/disciplinas/" ++ nomeDisciplina ++ ".json")
+    case senha of
+        Just senha -> do
+            putStrLn senha
+            return (senha==senhaPassada)
         Nothing -> return False
 
-verificarSenha :: String -> String-> IO Bool
-verificarSenha nomeDisciplina senhaPassada = do
-    senha <- lerDado("./app/Modules/" ++ nomeDisciplina ++ ".json")
+verificarSenhaAluno :: String -> String-> IO Bool
+verificarSenhaAluno matricula senhaPassada = do
+    senha <- puxarSenhaAluno("./db/alunos/" ++ matricula ++ ".json")
     case senha of
         Just senha -> return (senha==senhaPassada)
         Nothing -> return False
@@ -77,16 +99,16 @@ loginProfessor :: IO ()
 loginProfessor = do
     putStrLn "Digite o nome da disciplina: "
     nomeDisciplina <- getLine
-    loginValido <- verificarNomeDisciplina nomeDisciplina
+    loginValido <- arquivoDisciplinaExiste nomeDisciplina
     if (loginValido) then do
         putStrLn "Digite a senha: "
         senha <- getLine
-        senhaValida <- verificarSenha nomeDisciplina senha
+        senhaValida <- verificarSenhaDisciplina nomeDisciplina senha
         if (senhaValida) then do
             putStrLn "CHAMANDO MODULO QUE ENTRA NA DISCIPLINA DO PROFESSOR"
             putStrLn " "
         else do
-            putStrLn "SENHA INVÁLIDA"
+            putStrLn "SENHA INVÁLIDA!"
             putStrLn " "
 
     else do 
@@ -101,6 +123,17 @@ loginAluno :: IO ()
 loginAluno = do
     putStrLn "Digite a matrícula do aluno: "
     matricula <- getLine
-    putStrLn "Digite a senha: "
-    senha <- getLine
-    putStrLn " "
+    loginValido <- arquivoAlunoExiste matricula
+    if (loginValido) then do
+        putStrLn "Digite a senha: "
+        senha <- getLine
+        senhaValida <- verificarSenhaAluno matricula senha
+        if (senhaValida) then do 
+            putStrLn "CHAMANDO MODULO QUE ENTRA NA CONTA DO ALUNO"
+            putStrLn " "
+        else do
+            putStrLn "SENHA INVÁLIDA!"
+            putStrLn " "
+    else do 
+        putStrLn "Login Inválido! Não existe aluno com essa matrícula"
+        putStrLn " "
