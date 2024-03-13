@@ -85,5 +85,5 @@ cadastroAluno = do
         B.writeFile ("./db/aluno/" ++ matricula ++ ".json") dados
         putStrLn "Cadastro concluído!"
         putStrLn " "
-    else print "Matricula ja esta em uso"
+    else print "Erro: Matricula ja esta em uso"
     
