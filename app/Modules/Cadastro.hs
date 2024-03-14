@@ -7,6 +7,8 @@ import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
+import System.Directory (createDirectoryIfMissing)
+import System.FilePath.Posix (takeDirectory)
 
 cadastroProfessor :: IO()
 cadastroAluno :: IO()
@@ -60,11 +62,17 @@ cadastroProfessor = do
     putStrLn "Nome da disciplina: "
     nomeDaDisciplina <- getLine
 
-    validarUnico <- doesFileExist ("./db/disciplina/" ++ nomeDaDisciplina ++ ".json")
+    let diretorio = "./db/disciplinas/" ++ nomeDaDisciplina ++ "/" ++ nomeDaDisciplina ++ ".json"
+
+    validarUnico <- doesFileExist diretorio
 
     if not validarUnico then do
         let dados = encode (Disciplina {nome = nomeDaDisciplina, nomeProfessor = nome, matriculaProfessor = matricula, senha = senha})
-        B.writeFile ("./db/disciplina/" ++ nomeDaDisciplina ++ ".json") dados
+
+        createDirectoryIfMissing True $ takeDirectory diretorio
+
+        B.writeFile diretorio dados
+        
         putStrLn "Cadastro concluído!"
         putStrLn " "
     else print "Nome de discipina ja esta em uso"
@@ -78,11 +86,11 @@ cadastroAluno = do
     putStrLn "Senha: "
     senha <- getLine
 
-    validarUnico <- doesFileExist ("./db/aluno/" ++ matricula ++ ".json")
+    validarUnico <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
 
     if not validarUnico then do
         let dados = encode (Aluno {nome = nome, matricula = matricula, senha = senha})
-        B.writeFile ("./db/aluno/" ++ matricula ++ ".json") dados
+        B.writeFile ("./db/alunos/" ++ matricula ++ ".json") dados
         putStrLn "Cadastro concluído!"
         putStrLn " "
     else print "Erro: Matricula ja esta em uso"

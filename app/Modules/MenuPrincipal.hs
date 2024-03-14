@@ -22,7 +22,7 @@ printarMenu = do
 escolher :: String -> IO()
 escolher escolha 
         | (escolha == "0") = putStrLn "Programa finalizado"
-        | (escolha == "1") = Modules.MenuProfessor.exibirMenuProfessor "test"
+        | (escolha == "1") = Modules.MenuProfessor.exibirMenuProfessor "OAC"
         | (escolha == "2") = Modules.Cadastro.cadastroGeral
         | otherwise = putStrLn "Opção Inválida!!"
        

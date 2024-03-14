@@ -6,6 +6,8 @@ import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
+import System.Directory (createDirectoryIfMissing)
+import System.FilePath.Posix (takeDirectory)
 
 data Turma = Turma {
     nome :: String,
@@ -29,35 +31,34 @@ opcoesDeTurmas disciplina = do
     putStrLn "[0] Voltar"
     putStrLn "[1] Minhas turmas"
     putStrLn "[2] Criar turma"
-    putStrLn "[3] Alocar turma"
     putStrLn "===================="
     escolherOpcaoTurma disciplina
 
 escolherOpcaoMenuTurmas :: String -> String -> IO()
 escolherOpcaoMenuTurmas escolha disciplina
         | (escolha == "1") = putStrLn "Lista"
-        | (escolha == "2") = criarTurma
+        | (escolha == "2") = criarTurma disciplina
         | (escolha == "3") = putStrLn "Alocar"
         | otherwise = putStrLn "Opção Inválida!!"
 
-criarTurma :: IO()
-criarTurma = do
+criarTurma :: String -> IO()
+criarTurma disciplina = do
     putStrLn "CADASTRO DE TURMA"
     putStrLn "Nome da turma: "
     nome <- getLine
     putStrLn "Codigo da turma: "
     codigo <- getLine
 
-    validarUnico <- doesFileExist ("./db/turma/" ++ codigo ++ ".json")
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json"
+
+    validarUnico <- doesFileExist diretorio
 
     if not validarUnico then do
-        putStrLn "Informe a lista de matriculas de alunos (separado por espacos): "
-        matriculas <- getLine
-        let listaMatriculas = words matriculas
+        createDirectoryIfMissing True $ takeDirectory diretorio
 
-        let dados = encode (Turma {nome = nome, codigo = codigo, alunos = listaMatriculas})
-        B.writeFile ("./db/turma/" ++ codigo ++ ".json") dados
+        let dados = encode (Turma {nome = nome, codigo = codigo, alunos = []})
+        B.writeFile diretorio dados
         putStrLn "Cadastro concluído!"
         putStrLn " "
-    else print "Erro: Codigo ja esta em uso"
 
+    else print "Erro: Codigo de turma ja esta em uso"
