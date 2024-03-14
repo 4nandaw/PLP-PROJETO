@@ -3,11 +3,11 @@
 module Modules.Login where
 
 import Data.Aeson 
+import Modules.MenuProfessor
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
 import System.Directory(getCurrentDirectory, doesFileExist)
 import Data.Text (Text)
-
 
 -- Definição do tipo Disciplina
 data Disciplina = Disciplina
@@ -106,7 +106,7 @@ loginProfessor = do
         senha <- getLine
         senhaValida <- verificarSenhaDisciplina nomeDisciplina senha
         if (senhaValida) then do
-            putStrLn "CHAMANDO MODULO QUE ENTRA NA DISCIPLINA DO PROFESSOR"
+            Modules.MenuProfessor.exibirMenuProfessor nomeDisciplina
             putStrLn " "
         else do
             putStrLn "SENHA INVÁLIDA!"
