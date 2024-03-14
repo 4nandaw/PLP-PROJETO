@@ -1,5 +1,6 @@
 module Modules.MenuPrincipal where 
 import Modules.Cadastro
+import Modules.MenuProfessor
 import Modules.Login
 
 escolherOpcao :: IO()
