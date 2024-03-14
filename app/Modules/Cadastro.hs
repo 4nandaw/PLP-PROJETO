@@ -3,6 +3,7 @@
 
 module Modules.Cadastro where
 
+
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -60,11 +61,11 @@ cadastroProfessor = do
     putStrLn "Nome da disciplina: "
     nomeDaDisciplina <- getLine
 
-    validarUnico <- doesFileExist ("./db/disciplina/" ++ nomeDaDisciplina ++ ".json")
+    validarUnico <- doesFileExist ("./db/disciplinas/" ++ nomeDaDisciplina ++ ".json")
 
     if not validarUnico then do
         let dados = encode (Disciplina {nome = nomeDaDisciplina, nomeProfessor = nome, matriculaProfessor = matricula, senha = senha})
-        B.writeFile ("./db/disciplina/" ++ nomeDaDisciplina ++ ".json") dados
+        B.writeFile ("./db/disciplinas/" ++ nomeDaDisciplina ++ ".json") dados
         putStrLn "Cadastro concluído!"
         putStrLn " "
     else print "Nome de discipina ja esta em uso"
@@ -78,11 +79,11 @@ cadastroAluno = do
     putStrLn "Senha: "
     senha <- getLine
 
-    validarUnico <- doesFileExist ("./db/aluno/" ++ matricula ++ ".json")
+    validarUnico <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
 
     if not validarUnico then do
         let dados = encode (Aluno {nome = nome, matricula = matricula, senha = senha})
-        B.writeFile ("./db/aluno/" ++ matricula ++ ".json") dados
+        B.writeFile ("./db/alunos/" ++ matricula ++ ".json") dados
         putStrLn "Cadastro concluído!"
         putStrLn " "
     else print "Matricula ja esta em uso"
