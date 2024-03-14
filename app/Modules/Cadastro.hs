@@ -3,6 +3,7 @@
 
 module Modules.Cadastro where
 
+
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -61,7 +62,7 @@ cadastroProfessor = do
     senha <- getLine
     putStrLn "Nome da disciplina: "
     nomeDaDisciplina <- getLine
-
+    
     let diretorio = "./db/disciplinas/" ++ nomeDaDisciplina ++ "/" ++ nomeDaDisciplina ++ ".json"
 
     validarUnico <- doesFileExist diretorio
@@ -72,7 +73,6 @@ cadastroProfessor = do
         createDirectoryIfMissing True $ takeDirectory diretorio
 
         B.writeFile diretorio dados
-        
         putStrLn "Cadastro concluído!"
         putStrLn " "
     else print "Nome de discipina ja esta em uso"

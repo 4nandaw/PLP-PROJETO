@@ -64,7 +64,8 @@ executable sicodi
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.19.0.0, aeson, bytestring, directory, filepath
+
+    build-depends:    base ^>=4.19.0.0, aeson, bytestring, directory, filepath, text
 
     -- Directories containing source files.
     hs-source-dirs:   app

@@ -1,7 +1,8 @@
 module Modules.MenuPrincipal where 
 import Modules.Cadastro
 import Modules.MenuProfessor
-    
+import Modules.Login
+
 escolherOpcao :: IO()
 escolherOpcao = do
     escolha <- getLine
@@ -22,7 +23,7 @@ printarMenu = do
 escolher :: String -> IO()
 escolher escolha 
         | (escolha == "0") = putStrLn "Programa finalizado"
-        | (escolha == "1") = Modules.MenuProfessor.exibirMenuProfessor "OAC"
+        | (escolha == "1") = Modules.Login.loginGeral
         | (escolha == "2") = Modules.Cadastro.cadastroGeral
         | otherwise = putStrLn "Opção Inválida!!"
        
