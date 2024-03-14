@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 module Modules.Login where
 
 import Data.Aeson 
@@ -10,17 +11,17 @@ import Data.Text (Text)
 
 -- Definição do tipo Disciplina
 data Disciplina = Disciplina
-    {   nomeDisciplina :: String,
+    {   nome :: String,
         nomeProfessor :: String,
         matriculaProfessor :: String,
-        senhaDisciplina :: String }
+        senha :: String }
     deriving (Generic, Show)
 
 --Definição do tipo Aluno
 data Aluno = Aluno
-    {   nomeAluno :: String,
-        matriculaAluno :: String,
-        senhaAluno :: String
+    {   nome :: String,
+        matricula :: String,
+        senha :: String
     } deriving(Generic, Show)
 
 --Instâncias de Disciplina/Aluno para Json
@@ -42,14 +43,14 @@ puxarSenhaDisciplina :: String -> IO (Maybe String)
 puxarSenhaDisciplina caminho = do
     dados <- B.readFile caminho
     case decode dados of
-        Just (Disciplina _ _ _ senhaDisciplina) -> return $ Just senhaDisciplina
+        Just (Disciplina _ _ _ senha) -> return $ Just senha
         Nothing -> return Nothing
 
 puxarSenhaAluno :: String -> IO (Maybe String)
 puxarSenhaAluno caminho = do
     dados <- B.readFile caminho
     case decode dados of
-        Just (Aluno _ _ senhaAluno) -> return $ Just senhaAluno
+        Just (Aluno _ _ senha) -> return $ Just senha
         Nothing -> return Nothing
 
 
@@ -57,9 +58,7 @@ verificarSenhaDisciplina :: String -> String-> IO Bool
 verificarSenhaDisciplina nomeDisciplina senhaPassada = do
     senha <- puxarSenhaDisciplina("./db/disciplinas/" ++ nomeDisciplina ++ ".json")
     case senha of
-        Just senha -> do
-            putStrLn senha
-            return (senha==senhaPassada)
+        Just senha -> return (senha==senhaPassada)
         Nothing -> return False
 
 verificarSenhaAluno :: String -> String-> IO Bool
