@@ -64,6 +64,7 @@ executable sicodi
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
+
     build-depends:    base ^>=4.19.0.0, bytestring, aeson, text, directory 
 
     -- Directories containing source files.
