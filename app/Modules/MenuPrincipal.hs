@@ -26,5 +26,3 @@ escolher escolha
         | (escolha == "2") = Modules.Cadastro.cadastroGeral
         | otherwise = putStrLn "Opção Inválida!!"
        
-
-
