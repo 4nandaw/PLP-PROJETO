@@ -3,7 +3,6 @@
 
 module Modules.Cadastro where
 
-
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory

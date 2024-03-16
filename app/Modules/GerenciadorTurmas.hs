@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 
 module Modules.GerenciadorTurmas where
 
@@ -20,8 +21,17 @@ data AlunoTurma = AlunoTurma {
     faltas :: Int
 } deriving (Generic, Show)
 
+data Aluno = Aluno {
+    nome :: String,
+    matricula :: String,
+    senha :: String
+} deriving (Generic, Show)
+
 instance ToJSON Turma
 instance ToJSON AlunoTurma
+
+instance FromJSON AlunoTurma
+instance FromJSON Aluno
 
 escolherOpcaoTurma :: String -> IO()
 escolherOpcaoTurma disciplina = do
@@ -45,12 +55,65 @@ opcoesDeTurmas disciplina = do
 
 escolherOpcaoMenuTurmas :: String -> String -> IO()
 escolherOpcaoMenuTurmas escolha disciplina
-        | (escolha == "1") = putStrLn "Lista"
+        | (escolha == "1") = listarTurmas disciplina
         | (escolha == "2") = criarTurma disciplina
         | (escolha == "3") = solicitarEAlocarAluno disciplina
         | (escolha == "4") = excluirAluno disciplina
         | (escolha == "5") = excluirTurma disciplina
         | otherwise = putStrLn "Opção Inválida!!"
+
+listarTurmas :: String -> IO()
+listarTurmas disciplina = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/"
+    listaDeTurmas <- getDirectoryContents diretorio
+
+    putStrLn ("Turmas de " ++ disciplina)
+    mapM_ (\x -> (ajustarExibirTurmas x disciplina)) listaDeTurmas
+    putStrLn "==============================================="
+    putStrLn "Informe um codigo de turma, ou ENTER para sair:"
+    codigo <- getLine
+
+    if codigo /= "" then verAlunos (diretorio ++ codigo ++ "/alunos/")
+    else putStrLn "" 
+
+ajustarExibirTurmas :: String -> String -> IO()
+ajustarExibirTurmas turma disciplina = do
+    if turma /= "." && turma /= ".." then do
+        let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/alunos/"
+
+        listaDeAlunos <- getDirectoryContents diretorio
+        let numAlunos = (length listaDeAlunos) - 2
+
+        putStrLn (turma ++ " ------ " ++ (show numAlunos) ++ " aluno(s)")    
+
+    else putStr ""
+
+verAlunos :: String -> IO()
+verAlunos diretorio = do
+    listaDeAlunos <- getDirectoryContents diretorio
+
+    mapM_ (\x -> exibirAluno x diretorio) listaDeAlunos
+
+exibirAluno :: String -> String -> IO()
+exibirAluno matricula diretorio = do
+    if matricula /= "." && matricula /= ".." then do
+        let diretorioInfo = "./db/alunos/" ++ matricula
+        let diretorioA = diretorio ++ matricula
+
+        aluno <- B.readFile diretorioInfo
+        alunoFaltas <- B.readFile diretorioA
+
+        nome <- case decode aluno of 
+            Just (Aluno nome _ _ ) -> return $ nome
+
+        matriculaDecode <- case decode aluno of 
+            Just (Aluno _ matricula _ ) -> return $ matricula
+
+        faltas <- case decode alunoFaltas of 
+            Just (AlunoTurma _ faltas) -> return $ faltas
+
+        putStrLn (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
+    else putStr ""
 
 criarTurma :: String -> IO()
 criarTurma disciplina = do
