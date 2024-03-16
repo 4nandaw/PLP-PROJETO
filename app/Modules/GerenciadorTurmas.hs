@@ -6,7 +6,7 @@ import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
-import System.Directory (createDirectoryIfMissing)
+import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 
 data Turma = Turma {
@@ -45,6 +45,7 @@ opcoesDeTurmas disciplina = do
 
 escolherOpcaoMenuTurmas :: String -> String -> IO()
 escolherOpcaoMenuTurmas escolha disciplina
+        | (escolha == "0") = putStrLn " "
         | (escolha == "1") = putStrLn "Lista"
         | (escolha == "2") = criarTurma disciplina
         | (escolha == "3") = solicitarEAlocarAluno disciplina

@@ -1,5 +1,6 @@
 module Modules.MenuProfessor where 
 import Modules.GerenciadorTurmas
+import Modules.GerenciadorOpcoesDisciplina
     
 escolherOpcaoProfessor :: String -> IO()
 escolherOpcaoProfessor disciplina = do
@@ -20,7 +21,8 @@ exibirMenuProfessor disciplina = do
 
 escolherValorOpcao :: String -> String -> IO()
 escolherValorOpcao escolha disciplina
-        | (escolha == "1") = putStrLn "Disciplina"
+        | (escolha == "0") = putStrLn "Saindo da conta..."
+        | (escolha == "1") = Modules.GerenciadorOpcoesDisciplina.menuDeDisciplina disciplina
         | (escolha == "2") = Modules.GerenciadorTurmas.opcoesDeTurmas disciplina
         | otherwise = putStrLn "Opção Inválida!!"
        
