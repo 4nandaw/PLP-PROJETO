@@ -9,7 +9,9 @@ import System.Directory
 import Data.Aeson
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
-
+import Data.Maybe (isJust)
+import Text.Read (readMaybe)
+import Text.Printf
 
 data Turma = Turma {
     nome :: String,
@@ -18,11 +20,14 @@ data Turma = Turma {
 } deriving (Generic, Show)
 
 data AlunoTurma = AlunoTurma {
-    notas :: [Float],
+    nota1 :: Float,
+    nota2 :: Float,
+    nota3 :: Float,
     faltas :: Int
 } deriving (Generic, Show)
 
 instance FromJSON AlunoTurma
+instance ToJSON AlunoTurma
 
 escolherOpcaoMenuDisciplina :: String -> String -> IO()
 escolherOpcaoMenuDisciplina escolha disciplina
@@ -67,22 +72,51 @@ solicitarEAlocarNotas disciplina = do
         adicionarNotasTurma disciplina codTurma
     else putStrLn "Turma não existe!"
 
-validarNota :: Float -> IO Bool
-validarNota nota
-    | (nota<0) = return False
-    | (nota>10.0) = return False
-    | otherwise = return True
+validarNota :: String -> IO Bool
+validarNota notaStr =
+    case readMaybe notaStr :: Maybe Float of
+        Just nota -> return (nota>=0 && nota<=10)
+        Nothing -> return False
 
 salvarNota :: String -> String -> String -> String -> IO()
 salvarNota disciplina codTurma matriculaAluno escolha = do
     putStrLn "Digite o valor da nota: "
-    nota <- readLn :: IO Float
-    notaValida <- validarNota nota
+    notaAtualizadaString <- getLine
+    notaValida <- validarNota notaAtualizadaString
     if (notaValida) then do
-        putStrLn "SALVANDO A NOTA NO ARQUIVO"
+        dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
+        let notaAtualizada = read notaAtualizadaString
+        case decode dados of
+            Just (AlunoTurma nota1 nota2 nota3 faltas)-> do
+                let alunoNotaAtualizada = case escolha of
+                        "1" -> AlunoTurma notaAtualizada nota2 nota3 faltas
+                        "2" -> AlunoTurma nota1 notaAtualizada nota3 faltas
+                        "3" -> AlunoTurma nota1 nota2 notaAtualizada faltas
+                        _ -> AlunoTurma nota1 nota2 nota3 faltas
+                B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoNotaAtualizada)
+                putStrLn "SALVANDO A NOTA NO ARQUIVO"
+            Nothing -> putStrLn "Erro!!!"
     else 
         putStrLn "Nota inválida"
 
+situacaoAluno :: String -> String -> String -> IO()
+situacaoAluno disciplina codTurma matriculaAluno = do
+    dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
+    case decode dados of 
+        Just (AlunoTurma nota1 nota2 nota3 faltas)-> do
+            putStrLn $ "===== SITUAÇÃO DO ALUNO(A)" ++ matriculaAluno ++ "====="
+            putStrLn " "
+            putStrLn $ "Nota 1: " ++ show nota1
+            putStrLn $ "Nota 2: " ++ show nota2
+            putStrLn $ "Nota 3: " ++ show nota3
+            let media = (nota1 + nota2 + nota3) / 3
+            printf "Média: %.1f\n" media
+            if(media>=7) 
+                then putStrLn "Aprovado :)"
+                else 
+                    if(media>=4 && media<=6.9)
+                        then putStrLn "Final :|"
+                        else putStrLn "Reprovado :("
 
 
 menuNotas :: String -> String -> String -> IO()
@@ -94,7 +128,7 @@ menuNotas disciplina codTurma matriculaAluno = do
     putStrLn "[1] para adicionar a 1º nota"
     putStrLn "[2] para adicionar a 2º nota"
     putStrLn "[3] para adicionar a 3º nota"
-    putStrLn "[4] para adicionar a 4º nota" 
+    putStrLn "[4] para ver a situação do aluno" 
     escolha <- getLine
     if (escolha == "0") then putStrLn " "
     else do
@@ -103,7 +137,7 @@ menuNotas disciplina codTurma matriculaAluno = do
             menuNotas disciplina codTurma matriculaAluno
         else do
             if (escolha == "4") then do 
-                putStrLn "EXIBINDO SITUAÇÃO DO ALUNO"
+                situacaoAluno disciplina codTurma matriculaAluno
                 menuNotas disciplina codTurma matriculaAluno
 
             else do 

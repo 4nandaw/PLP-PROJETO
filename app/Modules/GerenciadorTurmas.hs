@@ -16,7 +16,9 @@ data Turma = Turma {
 } deriving (Generic, Show)
 
 data AlunoTurma = AlunoTurma {
-    notas :: [Float],
+    nota1 :: Float,
+    nota2 :: Float,
+    nota3 :: Float,
     faltas :: Int
 } deriving (Generic, Show)
 
@@ -136,7 +138,7 @@ alocarAluno matricula disciplina codigo = do
         else do
             createDirectoryIfMissing True $ takeDirectory diretorio
 
-            let dados = encode (AlunoTurma {faltas = 0, notas = []})
+            let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0})
 
             B.writeFile diretorio dados
 
