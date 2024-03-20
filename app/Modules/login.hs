@@ -58,9 +58,7 @@ verificarSenhaDisciplina :: String -> String-> IO Bool
 verificarSenhaDisciplina nomeDisciplina senhaPassada = do
     senha <- puxarSenhaDisciplina("./db/disciplinas/" ++ nomeDisciplina ++ "/" ++ nomeDisciplina ++ ".json")
     case senha of
-        Just senha -> do 
-            putStrLn senha
-            return (senha==senhaPassada)
+        Just senha -> return (senha==senhaPassada)
         Nothing -> return False
 
 verificarSenhaAluno :: String -> String-> IO Bool

@@ -7,7 +7,7 @@ import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
-import System.Directory (createDirectoryIfMissing)
+import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 
 data Turma = Turma {
@@ -17,7 +17,9 @@ data Turma = Turma {
 } deriving (Generic, Show)
 
 data AlunoTurma = AlunoTurma {
-    notas :: [Float],
+    nota1 :: Float,
+    nota2 :: Float,
+    nota3 :: Float,
     faltas :: Int
 } deriving (Generic, Show)
 
@@ -55,7 +57,8 @@ opcoesDeTurmas disciplina = do
 
 escolherOpcaoMenuTurmas :: String -> String -> IO()
 escolherOpcaoMenuTurmas escolha disciplina
-        | (escolha == "1") = listarTurmas disciplina
+        | (escolha == "0") = putStrLn " "
+        | (escolha == "1") = putStrLn "Lista"
         | (escolha == "2") = criarTurma disciplina
         | (escolha == "3") = solicitarEAlocarAluno disciplina
         | (escolha == "4") = excluirAluno disciplina
@@ -198,7 +201,7 @@ alocarAluno matricula disciplina codigo = do
         else do
             createDirectoryIfMissing True $ takeDirectory diretorio
 
-            let dados = encode (AlunoTurma {faltas = 0, notas = []})
+            let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0})
 
             B.writeFile diretorio dados
 

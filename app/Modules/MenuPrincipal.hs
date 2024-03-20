@@ -15,6 +15,7 @@ printarMenu = do
     putStrLn "MENU INICIAL ======="
     putStrLn "Digite uma opção: "
     putStrLn "[0] Sair"
+    putStrLn "TESTE"
     putStrLn "[1] Login"
     putStrLn "[2] Cadastro"
     putStrLn "===================="
