@@ -113,7 +113,7 @@ exibirAluno matricula diretorio = do
             Just (Aluno _ matricula _ ) -> return $ matricula
 
         faltas <- case decode alunoFaltas of 
-            Just (AlunoTurma _ faltas) -> return $ faltas
+            Just (AlunoTurma _ _ _ faltas) -> return $ faltas
 
         putStrLn (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
     else putStr ""
