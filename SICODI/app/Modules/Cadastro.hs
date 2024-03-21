@@ -10,11 +10,6 @@ import Data.Aeson
 import System.Directory (createDirectoryIfMissing)
 import System.FilePath.Posix (takeDirectory)
 
-cadastroProfessor :: IO()
-cadastroAluno :: IO()
-escolherCadastro :: String -> IO()
-escolherOpcaoCadastro :: IO()
-cadastroGeral :: IO()
 
 data Disciplina = Disciplina {
     nome :: String,
@@ -31,66 +26,30 @@ data Aluno = Aluno {
 
 instance ToJSON Disciplina
 instance ToJSON Aluno
-
-cadastroGeral = do
-    putStrLn "CADASTRO ====================="
-    putStrLn "Digite uma opção: "       
-    putStrLn "[0] Voltar pro menu inicial"
-    putStrLn "[1] Cadastro de professor"
-    putStrLn "[2] Cadastro de aluno"
-    putStrLn "=============================="
-    escolherOpcaoCadastro
-
-escolherOpcaoCadastro = do
-    escolha <- getLine
-    escolherCadastro escolha
-
-escolherCadastro escolha 
-    | (escolha == "0") = putStr ""
-    | (escolha == "1") = cadastroProfessor
-    | (escolha == "2") = cadastroAluno
-    | otherwise = putStrLn "Opção Inválida" 
     
-cadastroProfessor = do
-    putStrLn "CADASTRO DE PROFESSOR"
-    putStrLn "Nome: "
-    nome <- getLine
-    putStrLn "Matrícula: "
-    matricula <- getLine
-    putStrLn "Senha: "
-    senha <- getLine
-    putStrLn "Nome da disciplina: "
-    nomeDaDisciplina <- getLine
-    
-    let diretorio = "./db/disciplinas/" ++ nomeDaDisciplina ++ "/" ++ nomeDaDisciplina ++ ".json"
+cadastroDisciplina :: String -> String -> String -> String -> IO Bool
+cadastroDisciplina nomeProfessor matricula senha nomeDisciplina = do
+    let diretorio = "./db/disciplinas/" ++ nomeDisciplina ++ "/" ++ nomeDisciplina ++ ".json"
 
     validarUnico <- doesFileExist diretorio
 
     if not validarUnico then do
-        let dados = encode (Disciplina {nome = nomeDaDisciplina, nomeProfessor = nome, matriculaProfessor = matricula, senha = senha})
+        let dados = encode (Disciplina {nome = nomeDisciplina, nomeProfessor = nomeProfessor, matriculaProfessor = matricula, senha = senha})
 
         createDirectoryIfMissing True $ takeDirectory diretorio
 
         B.writeFile diretorio dados
-        putStrLn "Cadastro concluído!"
-        putStrLn " "
-    else print "Nome de discipina ja esta em uso"
+        return True
+    else return False
 
-cadastroAluno = do
-    putStrLn "CADASTRO DE ALUNO"
-    putStrLn "Nome: "
-    nome <- getLine
-    putStrLn "Matrícula: "
-    matricula <- getLine
-    putStrLn "Senha: "
-    senha <- getLine
-
+cadastroAluno :: String -> String -> String-> IO Bool
+cadastroAluno nome matricula senha = do
+    
     validarUnico <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
 
     if not validarUnico then do
         let dados = encode (Aluno {nome = nome, matricula = matricula, senha = senha})
         B.writeFile ("./db/alunos/" ++ matricula ++ ".json") dados
-        putStrLn "Cadastro concluído!"
-        putStrLn " "
-    else print "Erro: Matricula ja esta em uso"
-    
+        return True
+    else return False
+  

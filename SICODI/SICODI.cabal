@@ -46,9 +46,12 @@ executable SICODI-exe
   main-is: Main.hs
   other-modules:
       Modules.Cadastro
+      Modules.CadastroController
       Modules.GerenciadorOpcoesDisciplina
+      Modules.GerenciadorOpcoesDisciplinaController
       Modules.GerenciadorTurmas
       Modules.Login
+      Modules.LoginController
       Modules.MenuPrincipal
       Modules.MenuProfessor
       Paths_SICODI
