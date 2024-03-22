@@ -58,7 +58,7 @@ opcoesDeTurmas disciplina = do
 escolherOpcaoMenuTurmas :: String -> String -> IO()
 escolherOpcaoMenuTurmas escolha disciplina
         | (escolha == "0") = putStrLn " "
-        | (escolha == "1") = putStrLn "Lista"
+        | (escolha == "1") = listarTurmas disciplina
         | (escolha == "2") = criarTurma disciplina
         | (escolha == "3") = solicitarEAlocarAluno disciplina
         | (escolha == "4") = excluirAluno disciplina
@@ -67,7 +67,7 @@ escolherOpcaoMenuTurmas escolha disciplina
 
 listarTurmas :: String -> IO()
 listarTurmas disciplina = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/"
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas"
     listaDeTurmas <- getDirectoryContents diretorio
 
     putStrLn ("Turmas de " ++ disciplina)
@@ -76,8 +76,16 @@ listarTurmas disciplina = do
     putStrLn "Informe um codigo de turma, ou ENTER para sair:"
     codigo <- getLine
 
-    if codigo /= "" then verAlunos (diretorio ++ codigo ++ "/alunos/")
-    else putStrLn "" 
+    if codigo /= "" then do
+        putStrLn "Escolha uma opção: "
+        putStrLn "[1] Ver alunos da turma"
+        putStrLn "[2] Ver relatório da turma"
+        putStrLn "==============================================="
+        opcao <- getLine
+        if opcao == "1" then verAlunos (diretorio ++ "/" ++ codigo ++ "/alunos/")
+        else if opcao == "2" then exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
+        else putStrLn "Opção inválida!"
+    else putStrLn ""
 
 ajustarExibirTurmas :: String -> String -> IO()
 ajustarExibirTurmas turma disciplina = do
@@ -117,6 +125,45 @@ exibirAluno matricula diretorio = do
 
         putStrLn (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
     else putStr ""
+
+
+exibirRelatorio :: String -> IO()
+exibirRelatorio diretorio = do
+    putStrLn ""
+    putStrLn "RELATÓRIO DA TURMA ============================"
+    putStrLn ""
+    putStrLn $ "Média de notas: x.x" -- mediaNotas diretorio
+    putStrLn ""
+    mediaFaltas diretorio
+    putStrLn ""
+    putStrLn "==============================================="
+
+mediaFaltas :: String -> IO()
+mediaFaltas diretorio = do
+    listaDeAlunos <- getDirectoryContents diretorio
+
+    let faltasAlunos = mapM (\x -> exibirFaltas x diretorio) listaDeAlunos
+    faltas <- faltasAlunos
+
+    let faltasValidas = filter (> -1) faltas
+    let tamanho = length faltasValidas
+    let totalFaltas = sum faltasValidas
+    let media = fromIntegral totalFaltas / fromIntegral tamanho
+
+    putStrLn $ "Média de faltas: " ++ show media
+
+exibirFaltas :: String -> String -> IO Int
+exibirFaltas matricula diretorio = do
+    if matricula /= "." && matricula /= ".." then do
+        let diretorioAluno = diretorio ++ "/" ++ matricula
+        
+        alunoFaltas <- B.readFile diretorioAluno
+
+        case decode alunoFaltas of 
+            Just (AlunoTurma _ _ _ faltas) -> return faltas
+            _ -> return (-1)
+    else return (-1)
+
 
 criarTurma :: String -> IO()
 criarTurma disciplina = do
@@ -160,7 +207,6 @@ excluirAluno disciplina = do
         else do
             removeFile diretorioAluno
             putStrLn "Aluno removido!"
-
 
 excluirTurma :: String -> IO()
 excluirTurma disciplina = do
