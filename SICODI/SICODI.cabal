@@ -50,6 +50,7 @@ executable SICODI-exe
       Modules.GerenciadorOpcoesDisciplina
       Modules.GerenciadorOpcoesDisciplinaController
       Modules.GerenciadorTurmas
+      Modules.GerenciadorTurmasController
       Modules.Login
       Modules.LoginController
       Modules.MenuPrincipal
