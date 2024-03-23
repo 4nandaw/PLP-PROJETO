@@ -22,8 +22,8 @@ data Turma = Turma {
     alunos :: [String]
 } deriving (Generic, Show)
 
-verificadorArquivoTurma :: String -> String -> IO Bool
-verificadorArquivoTurma disciplina codTurma = do
+solicitarEAlocarNotas :: String -> String -> IO Bool
+solicitarEAlocarNotas disciplina codTurma = do
     turmaValida <- doesDirectoryExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma)
     if turmaValida then do 
         return True
@@ -94,14 +94,3 @@ verificarAlunoTurma disciplina codTurma matriculaAluno = do
         return True
     else do 
         return False
-
-adicionarFalta :: String -> String -> String-> IO String
-adicionarFalta disciplina codTurma matriculaAluno = do
-
-    dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
-    case decode dados of 
-        Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
-            let alunoFaltaAtualizada = AlunoTurma nota1 nota2 nota3 media (faltas + 1)
-            B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
-            return "Faltas do aluno atualizada."
-        Nothing -> return "Erro!!!"
