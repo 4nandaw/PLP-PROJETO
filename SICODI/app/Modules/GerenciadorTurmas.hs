@@ -91,10 +91,10 @@ exibirAluno matricula diretorio = do
 
         faltas <- case decode alunoFaltas of 
 
-            Just (AlunoTurma _ _ _ faltas) -> return $ faltas
+            Just (AlunoTurma _ _ _ faltas _) -> return $ faltas
             Nothing -> return 0
 
-            return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
+        return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
       else return ""
 
 
@@ -189,17 +189,20 @@ solicitarEAlocarAluno disciplina codigo = do
     else return ""
 
 alocarAluno :: String -> String -> String -> IO String
-alocarAluno matricula disciplina codigo = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matricula ++ ".json"
-    
-    validarMatricula <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
+alocarAluno matriculaAluno disciplina codigo = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matriculaAluno ++ ".json"
+    let diretorioAluno = ("./db/alunos/" ++ matriculaAluno ++ ".json")
+    validarMatricula <- doesFileExist ("./db/alunos/" ++ matriculaAluno ++ ".json")
 
     if not validarMatricula then return "Matricula invalida"
     else do
         createDirectoryIfMissing True $ takeDirectory diretorio
-
-        let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0})
-
+        dadosAluno <- B.readFile diretorioAluno
+        case decode dadosAluno of 
+            Just (Aluno matricula nome senha turmas) -> do
+                let dadosAlunoAtualizado = encode(Aluno {matricula = matricula, nome = nome, senha = senha, turmas = turmas ++ [[disciplina, codigo]]})
+                B.writeFile diretorioAluno dadosAlunoAtualizado
+        let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0, media = 0.0})
         B.writeFile diretorio dados
 
-        return $ "Adicionado " ++ matricula
+        return $ "Adicionado " ++ matriculaAluno
