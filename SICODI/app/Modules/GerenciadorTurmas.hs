@@ -43,9 +43,9 @@ listarTurmas disciplina = do
 
     listaDeTurmas <- getDirectoryContents diretorio
 
-    let response = mapM_ (\x -> (ajustarExibirTurmas x disciplina)) listaDeTurmas
+    response <- mapM (\x -> (ajustarExibirTurmas x disciplina)) listaDeTurmas
 
-    unlines $ response
+    return (unlines $ response)
 
 ajustarExibirTurmas :: String -> String -> IO String
 ajustarExibirTurmas turma disciplina = do
@@ -60,15 +60,17 @@ ajustarExibirTurmas turma disciplina = do
         return (turma ++ " ------ " ++ (show numAlunos) ++ " aluno(s)")
     else return ""
 
-verAlunos :: String -> IO()
+verAlunos :: String -> IO String
 verAlunos diretorio = do
     listaDeAlunos <- getDirectoryContents diretorio
 
     createDirectoryIfMissing True $ takeDirectory diretorio
 
-    mapM_ (\x -> exibirAluno x diretorio) listaDeAlunos
+    response <- mapM (\x -> (exibirAluno x diretorio)) listaDeAlunos
 
-exibirAluno :: String -> String -> IO()
+    return (unlines $ response)
+
+exibirAluno :: String -> String -> IO String
 exibirAluno matricula diretorio = do
     if matricula /= "." && matricula /= ".." then do
         let diretorioInfo = "./db/alunos/" ++ matricula
@@ -85,18 +87,13 @@ exibirAluno matricula diretorio = do
 
         faltas <- case decode alunoFaltas of 
             Just (AlunoTurma _ _ _ faltas) -> return $ faltas
+            Nothing -> return 0
 
-        putStrLn (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
-    else putStr ""
+        return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
+    else return ""
 
-criarTurma :: String -> IO()
-criarTurma disciplina = do
-    putStrLn "CADASTRO DE TURMA"
-    putStrLn "Nome da turma: "
-    nome <- getLine
-    putStrLn "Codigo da turma: "
-    codigo <- getLine
-
+criarTurma :: String -> String -> String -> IO String
+criarTurma disciplina nome codigo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json"
 
     validarUnico <- doesFileExist diretorio
@@ -106,76 +103,57 @@ criarTurma disciplina = do
 
         let dados = encode (Turma {nome = nome, codigo = codigo, alunos = []})
         B.writeFile diretorio dados
-        putStrLn "Cadastro concluído!"
-        putStrLn " "
+        return "Cadastro concluído!"
 
-    else print "Erro: Codigo de turma ja esta em uso"
+    else return "Erro: Codigo de turma ja esta em uso"
 
-excluirAluno :: String -> IO()
-excluirAluno disciplina = do
-    putStrLn "Informe o codigo da turma: "
-    codigo <- getLine
-
+excluirAluno :: String ->  String -> IO String
+excluirAluno disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
 
-    if not validarExistencia then putStrLn "Turma invalida"
-    else do
-        putStrLn "Informe a matricula do aluno: "
-        matricula <- getLine
+    if not validarExistencia then return "Turma invalida"
+    else return ""
 
+removerAluno :: String -> String -> String -> IO String
+removerAluno disciplina matricula codigo = do
         let diretorioAluno = ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matricula ++ ".json")
 
         validarExistenciaAluno <- doesFileExist diretorioAluno
 
-        if not validarExistenciaAluno then putStrLn "Aluno nao esta na turma ou nao existe"
+        if not validarExistenciaAluno then return "Aluno nao esta na turma ou nao existe"
         else do
             removeFile diretorioAluno
-            putStrLn "Aluno removido!"
+            return "Aluno removido!"
 
 
-excluirTurma :: String -> IO()
-excluirTurma disciplina = do
-    putStrLn "Informe o codigo da turma a ser excluida: "
-    codigo <- getLine
-
+excluirTurma :: String -> String -> IO String
+excluirTurma disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
 
-    if not validarExistencia then putStrLn "Turma invalida"
+    if not validarExistencia then return "Turma invalida"
     else do
         removeDirectoryRecursive ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo)
-        putStrLn "Turma removida!"
+        return "Turma removida!"
 
-solicitarEAlocarAluno :: String -> IO()
-solicitarEAlocarAluno disciplina = do
-    putStrLn "Informe o codigo da turma: "
-    codigo <- getLine
-
+solicitarEAlocarAluno :: String -> String -> IO String
+solicitarEAlocarAluno disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
 
-    if not validarExistencia then putStrLn "Codigo invalido!"
-    else do
-        putStrLn "Forneca um valor em branco para finalizar"
-        putStrLn "Informe o proximo aluno (matricula): "
-        m <- getLine
-        alocarAluno m disciplina codigo
+    if not validarExistencia then return "Codigo invalido!"
+    else return ""
 
-alocarAluno :: String -> String -> String -> IO()
+alocarAluno :: String -> String -> String -> IO String
 alocarAluno matricula disciplina codigo = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matricula ++ ".json"
 
-    if matricula == "" then putStrLn "Registro finalizado!"
+    validarMatricula <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
+
+    if not validarMatricula then return "Matricula invalida"
     else do
-        let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matricula ++ ".json"
+        createDirectoryIfMissing True $ takeDirectory diretorio
 
-        validarMatricula <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
+        let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0})
 
-        if not validarMatricula then putStrLn "Matricula invalida"
-        else do
-            createDirectoryIfMissing True $ takeDirectory diretorio
+        B.writeFile diretorio dados
 
-            let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0})
-
-            B.writeFile diretorio dados
-
-        putStrLn "Informe o proximo aluno (matricula): "
-        m <- getLine
-        alocarAluno m disciplina codigo
+        return $ "Adicionado " ++ matricula

@@ -37,7 +37,7 @@ listarTurmasController disciplina = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/"
 
     if codigo /= "" then do
-        validarTurma <- doesFileExist (diretorio ++ codigo ++ codigo ++ ".json") 
+        validarTurma <- doesFileExist (diretorio ++ codigo ++ "/" ++ codigo ++ ".json") 
 
         if not validarTurma then putStrLn "Codigo de turma invalido"
         else do 
@@ -67,8 +67,19 @@ solicitarEAlocarAlunoController disciplina = do
     if response /= "Codigo invalido!" then do
         putStrLn "Informe a matricula: "
         m <- getLine
-        alocarAluno m disciplina codigo
+        alocarAlunoController m disciplina codigo
     else putStrLn ""
+
+alocarAlunoController :: String -> String -> String -> IO()
+alocarAlunoController matricula disciplina codigo = do
+    if matricula == "" then putStrLn "Registro finalizado!"
+    else do
+        alocarAluno matricula disciplina codigo
+
+        putStrLn "Informe o proximo aluno (matricula): "
+        m <- getLine
+        
+        alocarAlunoController m disciplina codigo
 
 excluirAlunoController :: String -> IO()
 excluirAlunoController disciplina = do
@@ -83,7 +94,7 @@ excluirAlunoController disciplina = do
 
         responseAluno <- removerAluno disciplina matricula codigo
         putStrLn responseAluno
-    else putStrLn ""
+    else putStrLn "Truma invalida!"
 
 excluirTurmaController :: String -> IO()
 excluirTurmaController disciplina = do
