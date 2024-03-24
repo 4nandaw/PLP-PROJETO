@@ -21,7 +21,8 @@ data Disciplina = Disciplina {
 data Aluno = Aluno {
     nome :: String,
     matricula :: String,
-    senha :: String
+    senha :: String,
+    turmas :: [[String]]
 } deriving (Generic, Show)
 
 instance ToJSON Disciplina
@@ -48,7 +49,7 @@ cadastroAluno nome matricula senha = do
     validarUnico <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
 
     if not validarUnico then do
-        let dados = encode (Aluno {nome = nome, matricula = matricula, senha = senha})
+        let dados = encode (Aluno {nome = nome, matricula = matricula, senha = senha, turmas = []})
         B.writeFile ("./db/alunos/" ++ matricula ++ ".json") dados
         return True
     else return False

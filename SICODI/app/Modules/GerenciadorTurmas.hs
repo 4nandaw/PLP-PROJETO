@@ -20,17 +20,20 @@ data AlunoTurma = AlunoTurma {
     nota1 :: Float,
     nota2 :: Float,
     nota3 :: Float,
+    media :: Float,
     faltas :: Int
 } deriving (Generic, Show)
 
 data Aluno = Aluno {
     nome :: String,
     matricula :: String,
-    senha :: String
+    senha :: String,
+    turmas :: [[String]]
 } deriving (Generic, Show)
 
 instance ToJSON Turma
 instance ToJSON AlunoTurma
+instance ToJSON Aluno
 
 instance FromJSON AlunoTurma
 instance FromJSON Aluno
@@ -68,24 +71,9 @@ escolherOpcaoMenuTurmas escolha disciplina
 listarTurmas :: String -> IO()
 listarTurmas disciplina = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas"
+
     listaDeTurmas <- getDirectoryContents diretorio
-
-    putStrLn ("Turmas de " ++ disciplina)
     mapM_ (\x -> (ajustarExibirTurmas x disciplina)) listaDeTurmas
-    putStrLn "==============================================="
-    putStrLn "Informe um codigo de turma, ou ENTER para sair:"
-    codigo <- getLine
-
-    if codigo /= "" then do
-        putStrLn "Escolha uma opção: "
-        putStrLn "[1] Ver alunos da turma"
-        putStrLn "[2] Ver relatório da turma"
-        putStrLn "==============================================="
-        opcao <- getLine
-        if opcao == "1" then verAlunos (diretorio ++ "/" ++ codigo ++ "/alunos/")
-        else if opcao == "2" then exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
-        else putStrLn "Opção inválida!"
-    else putStrLn ""
 
 ajustarExibirTurmas :: String -> String -> IO()
 ajustarExibirTurmas turma disciplina = do
@@ -115,13 +103,13 @@ exibirAluno matricula diretorio = do
         alunoFaltas <- B.readFile diretorioA
 
         nome <- case decode aluno of 
-            Just (Aluno nome _ _ ) -> return $ nome
+            Just (Aluno nome _ _ _) -> return $ nome
 
         matriculaDecode <- case decode aluno of 
-            Just (Aluno _ matricula _ ) -> return $ matricula
+            Just (Aluno _ matricula _ _ ) -> return $ matricula
 
         faltas <- case decode alunoFaltas of 
-            Just (AlunoTurma _ _ _ faltas) -> return $ faltas
+            Just (AlunoTurma _ _ _ faltas _) -> return $ faltas
 
         putStrLn (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
     else putStr ""
@@ -160,7 +148,7 @@ exibirFaltas matricula diretorio = do
         alunoFaltas <- B.readFile diretorioAluno
 
         case decode alunoFaltas of 
-            Just (AlunoTurma _ _ _ faltas) -> return faltas
+            Just (AlunoTurma _ _ _ _ faltas) -> return faltas
             _ -> return (-1)
     else return (-1)
 
@@ -240,15 +228,20 @@ alocarAluno matricula disciplina codigo = do
     if matricula == "" then putStrLn "Registro finalizado!"
     else do
         let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matricula ++ ".json"
-
         validarMatricula <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
 
         if not validarMatricula then putStrLn "Matricula invalida"
         else do
+            let diretorioAluno = ("./db/alunos/" ++ matricula ++ ".json")
+            dadosAluno <- B.readFile diretorioAluno
+            case decode dadosAluno of
+                Just(Aluno nome matricula senha turmas) -> do
+                    let dadosAlunoAtualizado = encode(Aluno {nome = nome, matricula = matricula, senha = senha, turmas = turmas ++ [[disciplina, codigo]]})
+                    B.writeFile diretorioAluno dadosAlunoAtualizado
+
             createDirectoryIfMissing True $ takeDirectory diretorio
 
-            let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0})
-
+            let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0, media = 0.0})
             B.writeFile diretorio dados
 
         putStrLn "Informe o proximo aluno (matricula): "
