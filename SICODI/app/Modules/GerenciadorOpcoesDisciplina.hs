@@ -2,6 +2,7 @@
 
 module Modules.GerenciadorOpcoesDisciplina where
 
+
 import Utils.AlunoTurma
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
