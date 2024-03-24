@@ -20,17 +20,20 @@ data AlunoTurma = AlunoTurma {
     nota1 :: Float,
     nota2 :: Float,
     nota3 :: Float,
+    media :: Float,
     faltas :: Int
 } deriving (Generic, Show)
 
 data Aluno = Aluno {
     nome :: String,
     matricula :: String,
-    senha :: String
+    senha :: String,
+    turmas :: [[String]]
 } deriving (Generic, Show)
 
 instance ToJSON Turma
 instance ToJSON AlunoTurma
+instance ToJSON Aluno
 
 instance FromJSON AlunoTurma
 instance FromJSON Aluno
@@ -46,6 +49,7 @@ listarTurmas disciplina = do
     response <- mapM (\x -> (ajustarExibirTurmas x disciplina)) listaDeTurmas
 
     return (unlines $ response)
+
 
 ajustarExibirTurmas :: String -> String -> IO String
 ajustarExibirTurmas turma disciplina = do
@@ -80,17 +84,58 @@ exibirAluno matricula diretorio = do
         alunoFaltas <- B.readFile diretorioA
 
         nome <- case decode aluno of 
-            Just (Aluno nome _ _ ) -> return $ nome
+            Just (Aluno nome _ _ _) -> return $ nome
 
         matriculaDecode <- case decode aluno of 
-            Just (Aluno _ matricula _ ) -> return $ matricula
+            Just (Aluno _ matricula _ _ ) -> return $ matricula
 
         faltas <- case decode alunoFaltas of 
+
             Just (AlunoTurma _ _ _ faltas) -> return $ faltas
             Nothing -> return 0
 
-        return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
-    else return ""
+            return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
+      else return ""
+
+
+exibirRelatorio :: String -> IO()
+exibirRelatorio diretorio = do
+    putStrLn ""
+    putStrLn "RELATÓRIO DA TURMA ============================"
+    putStrLn ""
+    putStrLn $ "Média de notas: x.x" -- mediaNotas diretorio
+    putStrLn ""
+    mediaFaltas diretorio
+    putStrLn ""
+    putStrLn "==============================================="
+
+mediaFaltas :: String -> IO()
+mediaFaltas diretorio = do
+    listaDeAlunos <- getDirectoryContents diretorio
+
+    let faltasAlunos = mapM (\x -> exibirFaltas x diretorio) listaDeAlunos
+    faltas <- faltasAlunos
+
+    let faltasValidas = filter (> -1) faltas
+    let tamanho = length faltasValidas
+    let totalFaltas = sum faltasValidas
+    let media = fromIntegral totalFaltas / fromIntegral tamanho
+
+    putStrLn $ "Média de faltas: " ++ show media
+
+exibirFaltas :: String -> String -> IO Int
+exibirFaltas matricula diretorio = do
+    if matricula /= "." && matricula /= ".." then do
+        let diretorioAluno = diretorio ++ "/" ++ matricula
+        
+        alunoFaltas <- B.readFile diretorioAluno
+
+        case decode alunoFaltas of 
+            Just (AlunoTurma _ _ _ _ faltas) -> return faltas
+            _ -> return (-1)
+    else return (-1)
+
+
 
 criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do
@@ -126,6 +171,7 @@ removerAluno disciplina matricula codigo = do
             return "Aluno removido!"
 
 
+
 excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
@@ -145,7 +191,7 @@ solicitarEAlocarAluno disciplina codigo = do
 alocarAluno :: String -> String -> String -> IO String
 alocarAluno matricula disciplina codigo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matricula ++ ".json"
-
+    
     validarMatricula <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
 
     if not validarMatricula then return "Matricula invalida"

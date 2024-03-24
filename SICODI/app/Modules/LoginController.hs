@@ -1,6 +1,8 @@
 module Modules.LoginController where
 import Modules.Login
 import Modules.MenuProfessor
+import Modules.MenuAluno
+
 -- Função para o login geral
 loginGeral :: IO ()
 loginGeral = do
@@ -47,5 +49,5 @@ loginAlunoController = do
     loginValido <- Modules.Login.loginAluno matricula senha
     if (loginValido) then do
         putStrLn "Login realizado com sucesso!"     
-        putStrLn "EXIBINDO MENU ALUNO | NÃO FEITO AINDA"
+        Modules.MenuAluno.exibirMenuAluno matricula
     else putStrLn "Usuário ou senha inválidos"
