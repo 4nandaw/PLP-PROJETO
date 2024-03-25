@@ -83,7 +83,7 @@ exibirAluno matricula diretorio = do
 
         faltas <- case decode alunoFaltas of 
 
-            Just (AlunoTurma _ _ _ faltas _) -> return $ faltas
+            Just (AlunoTurma _ _ _ _ faltas) -> return $ faltas
             Nothing -> return 0
 
         return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
@@ -190,6 +190,7 @@ alocarAluno matriculaAluno disciplina codigo = do
             Just (Aluno matricula nome senha turmas) -> do
                 let dadosAlunoAtualizado = encode(Aluno {matricula = matricula, nome = nome, senha = senha, turmas = turmas ++ [[disciplina, codigo]]})
                 B.writeFile diretorioAluno dadosAlunoAtualizado
+            Nothing -> return ()
         let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0, media = 0.0})
         B.writeFile diretorio dados
 
