@@ -42,7 +42,6 @@ listarTurmas disciplina = do
 
     return (unlines $ response)
 
-
 ajustarExibirTurmas :: String -> String -> IO String
 ajustarExibirTurmas turma disciplina = do
     if turma /= "." && turma /= ".." then do
@@ -77,31 +76,28 @@ exibirAluno matricula diretorio = do
 
         nome <- case decode aluno of 
             Just (Aluno nome _ _ _) -> return $ nome
+            Nothing -> return ""
 
         matriculaDecode <- case decode aluno of 
             Just (Aluno _ matricula _ _ ) -> return $ matricula
+            Nothing -> return ""
 
         faltas <- case decode alunoFaltas of 
-
             Just (AlunoTurma _ _ _ _ faltas) -> return $ faltas
             Nothing -> return 0
 
         return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
       else return ""
 
-
-exibirRelatorio :: String -> IO()
+exibirRelatorio :: String -> IO String
 exibirRelatorio diretorio = do
-    putStrLn ""
-    putStrLn "RELATÓRIO DA TURMA ============================"
-    putStrLn ""
-    putStrLn $ "Média de notas: x.x" -- mediaNotas diretorio
-    putStrLn ""
-    mediaFaltas diretorio
-    putStrLn ""
-    putStrLn "==============================================="
+    mediaF <- mediaFaltas diretorio
+    mediaN <- mediaNotas diretorio
+    return $ "\nRELATÓRIO DA TURMA ============================\n\n" ++
+        mediaN ++ "\n\n" ++ mediaF ++
+        "\n\n==============================================="
 
-mediaFaltas :: String -> IO()
+mediaFaltas :: String -> IO String
 mediaFaltas diretorio = do
     listaDeAlunos <- getDirectoryContents diretorio
 
@@ -113,7 +109,7 @@ mediaFaltas diretorio = do
     let totalFaltas = sum faltasValidas
     let media = fromIntegral totalFaltas / fromIntegral tamanho
 
-    putStrLn $ "Média de faltas: " ++ show media
+    return $ "Média de faltas: " ++ show media
 
 exibirFaltas :: String -> String -> IO Int
 exibirFaltas matricula diretorio = do
@@ -124,6 +120,32 @@ exibirFaltas matricula diretorio = do
 
         case decode alunoFaltas of 
             Just (AlunoTurma _ _ _ _ faltas) -> return faltas
+            _ -> return (-1)
+    else return (-1)
+
+mediaNotas :: String -> IO String
+mediaNotas diretorio = do
+    listaDeAlunos <- getDirectoryContents diretorio
+
+    let notasAlunos = mapM (\x -> exibirNotas x diretorio) listaDeAlunos
+    notas <- notasAlunos
+
+    let notasValidas = filter (> -1) notas
+    let tamanho = length notasValidas
+    let totalNotas = sum notasValidas
+    let media = totalNotas / fromIntegral tamanho
+
+    return $ "Média de notas: " ++ show media
+
+exibirNotas :: String -> String -> IO Float
+exibirNotas matricula diretorio = do
+    if matricula /= "." && matricula /= ".." then do
+        let diretorioAluno = diretorio ++ "/" ++ matricula
+        
+        alunoNotas <- B.readFile diretorioAluno
+
+        case decode alunoNotas of 
+            Just (AlunoTurma _ _ _ notas _) -> return notas
             _ -> return (-1)
     else return (-1)
 

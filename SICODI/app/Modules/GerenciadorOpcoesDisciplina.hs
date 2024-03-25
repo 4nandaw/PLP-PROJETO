@@ -46,7 +46,6 @@ atualizarMedia disciplina codTurma matriculaAluno = do
             return "Média atualizada"
         Nothing -> return "Erro na atualização da média"
 
-
 salvarNota :: String -> String -> String -> String -> String -> IO String
 salvarNota disciplina codTurma matriculaAluno escolha nota = do
     notaValida <- validarNota nota
