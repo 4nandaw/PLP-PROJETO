@@ -8,8 +8,6 @@ import Data.Aeson
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 
-
-
 data Aluno = Aluno {
     nome :: String,
     matricula :: String,
