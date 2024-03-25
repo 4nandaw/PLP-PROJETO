@@ -2,7 +2,6 @@
 
 module Modules.GerenciadorOpcoesDisciplina where
 
-
 import Utils.AlunoTurma
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
@@ -14,7 +13,6 @@ import Data.Maybe (isJust)
 import Text.Read (readMaybe)
 import Text.Printf
 import Numeric 
-
 
 data Turma = Turma {
     nome :: String,
@@ -94,3 +92,14 @@ verificarAlunoTurma disciplina codTurma matriculaAluno = do
         return True
     else do 
         return False
+
+adicionarFalta :: String -> String -> String-> IO String
+adicionarFalta disciplina codTurma matriculaAluno = do
+
+    dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
+    case decode dados of 
+        Just (AlunoTurma nota1 nota2 nota3 faltas media) -> do
+            let alunoFaltaAtualizada = AlunoTurma nota1 nota2 nota3 (faltas + 1) media
+            B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
+            return "Faltas do aluno atualizada."
+        Nothing -> return "Erro!!!"
