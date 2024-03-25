@@ -71,15 +71,16 @@ situacaoAluno disciplina codTurma matriculaAluno = do
     dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     case decode dados of 
         Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
-            let situacao = if media >= 7
+            let situacao = if media >= 7 && faltas <= 7
                                then "Aprovado :)"
-                               else if media >= 4 && media <= 6.9
+                               else if media >= 4 && media <= 6.9 && faltas <= 7
                                         then "Final :|"
                                         else "Reprovado :("
             return $ "===== SITUAÇÃO DO ALUNO(A) " ++ matriculaAluno ++ " =====\n\n" ++
                      "Nota 1: " ++ show nota1 ++ "\n" ++
                      "Nota 2: " ++ show nota2 ++ "\n" ++
                      "Nota 3: " ++ show nota3 ++ "\n" ++
+                     "Faltas: " ++ show faltas ++ "\n" ++
                      printf "Média: %.1f\n" media ++
                      situacao
         Nothing -> return "Erro: Dados não encontrados para o aluno."
@@ -104,7 +105,7 @@ adicionarFalta disciplina codTurma matriculaAluno = do
 
     dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     case decode dados of 
-        Just (AlunoTurma nota1 nota2 nota3 faltas media) -> do
+        Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
             let alunoFaltaAtualizada = AlunoTurma nota1 nota2 nota3 media (faltas + 1)
             B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
             return "Faltas do aluno atualizada."
