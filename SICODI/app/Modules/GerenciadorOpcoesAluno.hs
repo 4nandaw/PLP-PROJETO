@@ -47,21 +47,8 @@ turmaValida matricula disciplina turma = do
             if (elem [disciplina, turma] turmas) then return True
             else return False
 
-
-
 visualizarNotas :: String -> String -> String -> IO String
 visualizarNotas matricula disciplina turma = do
-    --let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/alunos/" ++ matricula ++ ".json"
     situacao <- OpcoesDisciplina.situacaoAluno disciplina turma matricula
     return situacao
-
-    {-case decode alunoTurma of 
-        Just (AlunoTurma nota1 nota2 nota3 _) -> then do
-            return situacao
-        Nothing -> return "Erro na leitura das notas!"
-    where situacao = "Nota 1: " ++ nota1 ++ "\n" ++
-                    "Nota 2 " ++ nota2 ++ "\n" ++
-                    "Nota3: " ++ nota3 ++ "\n" ++
-                    "Média: " ++ 
-                    -}
                     

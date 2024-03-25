@@ -36,15 +36,27 @@ listarTurmasController disciplina = do
 
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/"
 
-    if codigo /= "" then do
-        validarTurma <- doesFileExist (diretorio ++ codigo ++ "/" ++ codigo ++ ".json") 
+    validarTurma <- doesFileExist (diretorio ++ codigo ++ "/" ++ codigo ++ ".json") 
+    
+    if not validarTurma then putStrLn "Codigo de turma invalido"
+    else do 
+        if codigo /= "" then do
+            putStrLn "Escolha uma opção: "
+            putStrLn "[1] Ver alunos da turma"
+            putStrLn "[2] Ver relatório da turma"
+            putStrLn "==============================================="
+            opcao <- getLine
 
-        if not validarTurma then putStrLn "Codigo de turma invalido"
-        else do 
-            responseAlunos <- verAlunos (diretorio ++ codigo ++ "/alunos/")
-            putStrLn responseAlunos
-
-    else putStrLn "" 
+            if codigo /= "" then do
+                if opcao == "1" then do
+                    responseAlunos <- verAlunos (diretorio ++ codigo ++ "/alunos/")
+                    putStrLn responseAlunos
+                else if opcao == "2" then do
+                    relatorio <- exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
+                    putStrLn relatorio
+                else putStrLn "Opção inválida!"
+            else putStrLn ""
+        else putStrLn "" 
 
 criarTurmaController :: String -> IO()
 criarTurmaController disciplina = do
