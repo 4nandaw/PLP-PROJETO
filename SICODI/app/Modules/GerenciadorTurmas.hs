@@ -135,8 +135,6 @@ exibirFaltas matricula diretorio = do
             _ -> return (-1)
     else return (-1)
 
-
-
 criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json"
@@ -169,8 +167,6 @@ removerAluno disciplina matricula codigo = do
         else do
             removeFile diretorioAluno
             return "Aluno removido!"
-
-
 
 excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do

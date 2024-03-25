@@ -100,8 +100,8 @@ adicionarFalta disciplina codTurma matriculaAluno = do
 
     dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     case decode dados of 
-        Just (AlunoTurma nota1 nota2 nota3 faltas) -> do
-            let alunoFaltaAtualizada = AlunoTurma nota1 nota2 nota3 (faltas + 1)
+        Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
+            let alunoFaltaAtualizada = AlunoTurma nota1 nota2 nota3 media (faltas + 1)
             B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
             return "Faltas do aluno atualizada."
         Nothing -> return "Erro!!!"

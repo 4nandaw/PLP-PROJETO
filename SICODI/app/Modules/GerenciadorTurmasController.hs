@@ -88,13 +88,13 @@ excluirAlunoController disciplina = do
     
     response <- excluirAluno disciplina codigo
 
-    if response /= "Truma invalida!" then do 
+    if response /= "Turma invalida!" then do 
         putStrLn "Informe a matricula do aluno: "
         matricula <- getLine
 
         responseAluno <- removerAluno disciplina matricula codigo
         putStrLn responseAluno
-    else putStrLn "Truma invalida!"
+    else putStrLn "Turma invalida!"
 
 excluirTurmaController :: String -> IO()
 excluirTurmaController disciplina = do

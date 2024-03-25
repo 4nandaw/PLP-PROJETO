@@ -77,7 +77,7 @@ solicitarEAlocarNotasController disciplina = do
     putStrLn " "
     putStrLn "Informe o código da turma: "
     codTurma <- getLine
-    turmaValida <- verificadorArquivoTurma disciplina codTurma
+    turmaValida <- Modules.GerenciadorOpcoesDisciplina.verificadorArquivoTurma disciplina codTurma
     if (turmaValida) then adicionarNotasTurmaController disciplina codTurma
     else putStrLn "Turma não existe"
 

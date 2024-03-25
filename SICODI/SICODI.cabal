@@ -47,14 +47,18 @@ executable SICODI-exe
   other-modules:
       Modules.Cadastro
       Modules.CadastroController
+      Modules.GerenciadorOpcoesAluno
+      Modules.GerenciadorOpcoesAlunoController
       Modules.GerenciadorOpcoesDisciplina
       Modules.GerenciadorOpcoesDisciplinaController
       Modules.GerenciadorTurmas
       Modules.GerenciadorTurmasController
       Modules.Login
       Modules.LoginController
+      Modules.MenuAluno
       Modules.MenuPrincipal
       Modules.MenuProfessor
+      Utils.AlunoTurma
       Paths_SICODI
   autogen-modules:
       Paths_SICODI
