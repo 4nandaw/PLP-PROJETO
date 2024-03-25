@@ -68,71 +68,23 @@ verificarSenhaAluno matricula senhaPassada = do
         Just senha -> return (senha==senhaPassada)
         Nothing -> return False
 
--- Função para o login geral
-loginGeral :: IO ()
-loginGeral = do
-    putStrLn "Login ======================"
-    putStrLn "Digite uma opção: "       
-    putStrLn "[0] Voltar pro menu inicial"
-    putStrLn "[1] Login de professor"
-    putStrLn "[2] Login de aluno"
-    putStrLn "============================="
-    escolherOpcaoLogin
-
--- Função para escolher a opção de login
-escolherOpcaoLogin :: IO ()
-escolherOpcaoLogin = do
-    escolha <- getLine 
-    escolherLogin escolha
-
--- Função para realizar o login
-escolherLogin :: String -> IO ()
-escolherLogin escolha 
-    | escolha == "0" = putStr ""
-    | escolha == "1" = loginProfessor
-    | escolha == "2" = loginAluno
-    | otherwise = putStrLn "Opção Inválida" 
-
 -- Função para o login do professor
-loginProfessor :: IO ()
-loginProfessor = do
-    putStrLn "Digite o nome da disciplina: "
-    nomeDisciplina <- getLine
-    loginValido <- arquivoDisciplinaExiste nomeDisciplina
+loginProfessor :: String -> String -> IO Bool
+loginProfessor disciplina senha= do
+    loginValido <- arquivoDisciplinaExiste disciplina
     if (loginValido) then do
-        putStrLn "Digite a senha: "
-        senha <- getLine
-        senhaValida <- verificarSenhaDisciplina nomeDisciplina senha
-        if (senhaValida) then do
-            Modules.MenuProfessor.exibirMenuProfessor nomeDisciplina
-            putStrLn " "
-        else do
-            putStrLn "SENHA INVÁLIDA!"
-            putStrLn " "
+        senhaValida <- verificarSenhaDisciplina disciplina senha
+        if (senhaValida) then return True
+        else return False
+    else return False
 
-    else do 
-        putStrLn "Login inválido! Não existe disciplina com esse nome"
-        putStrLn " "
-
-
-        
 
 -- Função para o login do aluno
-loginAluno :: IO ()
-loginAluno = do
-    putStrLn "Digite a matrícula do aluno: "
-    matricula <- getLine
+loginAluno :: String -> String-> IO Bool
+loginAluno matricula senha = do
     loginValido <- arquivoAlunoExiste matricula
     if (loginValido) then do
-        putStrLn "Digite a senha: "
-        senha <- getLine
         senhaValida <- verificarSenhaAluno matricula senha
-        if (senhaValida) then do 
-            putStrLn "CHAMANDO MODULO QUE ENTRA NA CONTA DO ALUNO"
-            putStrLn " "
-        else do
-            putStrLn "SENHA INVÁLIDA!"
-            putStrLn " "
-    else do 
-        putStrLn "Login Inválido! Não existe aluno com essa matrícula"
-        putStrLn " "
+        if (senhaValida) then return True
+        else return False
+    else return False

@@ -2,6 +2,8 @@ module Modules.MenuPrincipal where
 import Modules.Cadastro
 import Modules.MenuProfessor
 import Modules.Login
+import Modules.LoginController
+import Modules.CadastroController
 
 escolherOpcao :: IO()
 escolherOpcao = do
@@ -15,7 +17,6 @@ printarMenu = do
     putStrLn "MENU INICIAL ======="
     putStrLn "Digite uma opção: "
     putStrLn "[0] Sair"
-    putStrLn "TESTE"
     putStrLn "[1] Login"
     putStrLn "[2] Cadastro"
     putStrLn "===================="
@@ -24,7 +25,7 @@ printarMenu = do
 escolher :: String -> IO()
 escolher escolha 
         | (escolha == "0") = putStrLn "Programa finalizado"
-        | (escolha == "1") = Modules.Login.loginGeral
-        | (escolha == "2") = Modules.Cadastro.cadastroGeral
+        | (escolha == "1") = Modules.LoginController.loginGeral
+        | (escolha == "2") = Modules.CadastroController.cadastroGeral
         | otherwise = putStrLn "Opção Inválida!!"
        
