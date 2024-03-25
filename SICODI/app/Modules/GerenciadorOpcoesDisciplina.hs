@@ -93,6 +93,13 @@ verificarAlunoTurma disciplina codTurma matriculaAluno = do
     else do 
         return False
 
+verificadorArquivoTurma :: String -> String -> IO Bool
+verificadorArquivoTurma disciplina codTurma = do
+    turmaValida <- doesDirectoryExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma)
+    if turmaValida then do 
+        return True
+    else return False
+
 adicionarFalta :: String -> String -> String-> IO String
 adicionarFalta disciplina codTurma matriculaAluno = do
 
