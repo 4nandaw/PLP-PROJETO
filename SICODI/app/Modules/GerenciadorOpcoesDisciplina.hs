@@ -30,12 +30,10 @@ instance FromJSON AlunoTurma
 instance ToJSON AlunoTurma
 
 
-solicitarEAlocarNotas :: String -> String -> IO Bool
-solicitarEAlocarNotas disciplina codTurma = do
+verificadorArquivoTurma :: String -> String -> IO Bool
+verificadorArquivoTurma disciplina codTurma = do
     turmaValida <- doesDirectoryExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma)
     if turmaValida then do 
-        --let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma
-        --listarAlunosTurma diretorio  NÃO SE SABE SE VAI SER FEITO - DEPENDE DO TEMPO
         return True
     else return False
 
@@ -83,10 +81,21 @@ situacaoAluno disciplina codTurma matriculaAluno = do
                      situacao
         Nothing -> return "Erro: Dados não encontrados para o aluno."
 
-adicionarNotasTurma :: String -> String -> String-> IO Bool
-adicionarNotasTurma disciplina codTurma matriculaAluno = do
+verificarAlunoTurma :: String -> String -> String-> IO Bool
+verificarAlunoTurma disciplina codTurma matriculaAluno = do
     alunoValido <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     if (alunoValido) then do 
         return True
     else do 
         return False
+
+adicionarFalta :: String -> String -> String-> IO String
+adicionarFalta disciplina codTurma matriculaAluno = do
+
+    dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
+    case decode dados of 
+        Just (AlunoTurma nota1 nota2 nota3 faltas) -> do
+            let alunoFaltaAtualizada = AlunoTurma nota1 nota2 nota3 (faltas + 1)
+            B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
+            return "Faltas do aluno atualizada."
+        Nothing -> return "Erro!!!"
