@@ -26,15 +26,15 @@ escolherOpcaoTurma disciplina = do
 escolherOpcaoMenuTurmas :: String -> String -> IO()
 escolherOpcaoMenuTurmas escolha disciplina
         | (escolha == "0") = putStrLn " "
-        | (escolha == "1") = listarTurmasController disciplina
+        | (escolha == "1") = menuMinhasTurmas disciplina
         | (escolha == "2") = criarTurmaController disciplina
         | (escolha == "3") = solicitarEAlocarAlunoController disciplina
         | (escolha == "4") = excluirAlunoController disciplina
         | (escolha == "5") = excluirTurmaController disciplina
         | otherwise = putStrLn "Opção Inválida!!"
 
-listarTurmasController :: String -> IO()    
-listarTurmasController disciplina = do
+menuMinhasTurmas :: String -> IO()    
+menuMinhasTurmas disciplina = do
     putStrLn ("Turmas de " ++ disciplina)
 
     response <- listarTurmas disciplina
@@ -54,8 +54,8 @@ listarTurmasController disciplina = do
             putStrLn "Escolha uma opção: "
             putStrLn "[1] Ver alunos da turma"
             putStrLn "[2] Ver relatório da turma"
-            putStrLn "[3] Mural da Turma"
-            putStrLn "[4] Ver avaliações"
+            putStrLn "[3] Ver avaliações"
+            putStrLn "[4] Mural da Turma"
             putStrLn "==============================================="
             opcao <- getLine
 
@@ -65,6 +65,8 @@ listarTurmasController disciplina = do
                     putStrLn responseAlunos
                 else if opcao == "2" then do
                     exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
+                else if opcao == "3" then do
+                    exibirAvaliacoes (diretorio ++ codigo ++ "/avaliacoes/")
                 else putStrLn "Opção inválida!"
             else putStrLn ""
         else putStrLn "" 
@@ -78,6 +80,15 @@ exibirRelatorio diretorio = do
     putStrLn ""
     putStrLn mediaF
     putStrLn "\n==============================================="
+
+exibirAvaliacoes :: String -> IO()
+exibirAvaliacoes diretorio = do
+    media <- mediaAvaliacoes diretorio
+    feedbacks <- verAvaliacoes diretorio
+    putStrLn "\nAVALIAÇÕES ===================================="
+    putStrLn $ "\n" ++ media
+    putStrLn feedbacks
+    putStrLn "==============================================="
 
 criarTurmaController :: String -> IO()
 criarTurmaController disciplina = do
