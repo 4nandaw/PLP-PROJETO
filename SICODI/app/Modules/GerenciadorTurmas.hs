@@ -91,12 +91,7 @@ exibirAluno matricula diretorio = do
             Nothing -> return ""
 
         faltas <- case decode alunoFaltas of 
-<<<<<<< HEAD
             Just (AlunoTurma _ _ _ _ faltas) -> return $ faltas
-=======
-
-            Just (AlunoTurma _ _ _ faltas _) -> return $ faltas
->>>>>>> 3e22487 (envio de mensagem pelo chat)
             Nothing -> return 0
 
         return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
@@ -136,7 +131,6 @@ exibirFaltas matricula diretorio = do
             _ -> return (-1)
     else return (-1)
 
-<<<<<<< HEAD
 mediaNotas :: String -> IO String
 mediaNotas diretorio = do
     listaDeAlunos <- getDirectoryContents diretorio
@@ -162,9 +156,6 @@ exibirNotas matricula diretorio = do
             Just (AlunoTurma _ _ _ notas _) -> return notas
             _ -> return (-1)
     else return (-1)
-=======
-
->>>>>>> 3e22487 (envio de mensagem pelo chat)
 
 criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do

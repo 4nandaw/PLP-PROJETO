@@ -44,10 +44,6 @@ menuTurmaAluno :: String -> String -> String -> IO()
 menuTurmaAluno matricula disciplina turma = do
     putStrLn ("===== Menu do aluno " ++ matricula ++ ", na disciplina " ++ disciplina ++ " e turma " ++ turma ++ "! =====")
     putStrLn "Digite [0] para voltar"
-<<<<<<< HEAD
-    putStrLn "Digite [1] para ver sua situação atual (notas, faltas e média na turma)"
-=======
     putStrLn "Digite [1] para ver suas notas"
     putStrLn "Digite [2] para chat"
->>>>>>> 3e22487 (envio de mensagem pelo chat)
     escolherOpcaoAluno matricula disciplina turma

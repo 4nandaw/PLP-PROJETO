@@ -59,11 +59,7 @@ executable SICODI-exe
       Modules.MenuAluno
       Modules.MenuPrincipal
       Modules.MenuProfessor
-<<<<<<< HEAD
-      Utils.AlunoTurma
       Utils.Avaliacao
-=======
->>>>>>> 3e22487 (envio de mensagem pelo chat)
       Paths_SICODI
   autogen-modules:
       Paths_SICODI
