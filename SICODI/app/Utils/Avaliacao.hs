@@ -11,5 +11,3 @@ data Avaliacao = Avaliacao {
 
 instance FromJSON Avaliacao
 instance ToJSON Avaliacao
-
-

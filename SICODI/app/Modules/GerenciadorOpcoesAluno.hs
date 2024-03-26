@@ -1,8 +1,8 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
-
 module Modules.GerenciadorOpcoesAluno where
+import Utils.Avaliacao 
 import Modules.GerenciadorOpcoesDisciplina as OpcoesDisciplina
 import Data.Aeson
 import GHC.Generics
@@ -15,13 +15,8 @@ data Aluno = Aluno {
     turmas :: [[String]]
 } deriving (Generic, Show)
 
-
 instance ToJSON Aluno
---instance ToJSON AlunoTurma
-
 instance FromJSON Aluno
---instance FromJSON AlunoTurma
-
 
 listarDisciplinasTurmas :: String -> IO String
 listarDisciplinasTurmas matricula = do
@@ -50,3 +45,9 @@ visualizarNotas matricula disciplina turma = do
     situacao <- OpcoesDisciplina.situacaoAluno disciplina turma matricula
     return situacao
                     
+salvarAvaliacao :: String -> Int -> String -> String -> IO String
+salvarAvaliacao diretorio nota comentario matricula = do
+    let diretorioAvaliacao = diretorio ++ matricula ++ ".json"
+    let dados = encode (Avaliacao {nota = nota, comentario = comentario})
+    B.writeFile diretorioAvaliacao dados
+    return "Avaliação registrada!"

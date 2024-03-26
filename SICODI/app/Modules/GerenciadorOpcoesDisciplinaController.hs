@@ -4,11 +4,12 @@ import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 
 menuDeDisciplina :: String -> IO()
 menuDeDisciplina disciplina = do
-    putStrLn "MENU DE DISCIPLINA ====="
+    putStrLn "MENU DE DISCIPLINA =================="
     putStrLn "Digite uma opção: "
     putStrLn "[0] Voltar"
     putStrLn "[1] Adicionar notas"
     putStrLn "[2] Adicionar falta a aluno(a)"
+    putStrLn "====================================="
     escolherOpcaoDisciplina disciplina
 
 escolherOpcaoDisciplina :: String -> IO()

@@ -152,11 +152,13 @@ exibirNotas matricula diretorio = do
 criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json"
+    let avaliacoes = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/avaliacoes/"
 
     validarUnico <- doesFileExist diretorio
 
     if not validarUnico then do
         createDirectoryIfMissing True $ takeDirectory diretorio
+        createDirectoryIfMissing True $ takeDirectory avaliacoes
 
         let dados = encode (Turma {nome = nome, codigo = codigo, alunos = []})
         B.writeFile diretorio dados

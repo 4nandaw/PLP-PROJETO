@@ -88,7 +88,7 @@ alocarAlunoController matricula disciplina codigo = do
     else do
         alocarAluno matricula disciplina codigo
 
-        putStrLn "Informe o proximo aluno (matricula): "
+        putStrLn "Informe o proximo aluno (matricula) ou ENTER para finalizar: "
         m <- getLine
         
         alocarAlunoController m disciplina codigo
