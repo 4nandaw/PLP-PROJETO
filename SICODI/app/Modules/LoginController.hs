@@ -49,5 +49,6 @@ loginAlunoController = do
     loginValido <- Modules.Login.loginAluno matricula senha
     if (loginValido) then do
         putStrLn "Login realizado com sucesso!"     
+        putStrLn " "
         Modules.MenuAluno.exibirMenuAluno matricula
     else putStrLn "Usuário ou senha inválidos"

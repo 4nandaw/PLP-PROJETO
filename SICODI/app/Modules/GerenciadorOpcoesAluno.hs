@@ -45,6 +45,12 @@ turmaValida matricula disciplina turma = do
             if (elem [disciplina, turma] turmas) then return True
             else return False
 
+acessarChatAluno :: String -> String -> String -> IO String
+acessarChatAluno matricula disciplina turma = do
+    chat <- OpcoesDisciplina.acessarChat disciplina turma matricula
+    return chat
+
+
 visualizarNotas :: String -> String -> String -> IO String
 visualizarNotas matricula disciplina turma = do
     situacao <- OpcoesDisciplina.situacaoAluno disciplina turma matricula

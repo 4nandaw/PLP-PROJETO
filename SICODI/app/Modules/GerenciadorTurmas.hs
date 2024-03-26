@@ -3,7 +3,6 @@
 
 module Modules.GerenciadorTurmas where
 
-import Utils.AlunoTurma
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -17,6 +16,14 @@ data Turma = Turma {
     alunos :: [String]
 } deriving (Generic, Show)
 
+data AlunoTurma = AlunoTurma {
+    nota1 :: Float,
+    nota2 :: Float,
+    nota3 :: Float,
+    media :: Float,
+    faltas :: Int
+} deriving (Generic, Show)
+
 data Aluno = Aluno {
     nome :: String,
     matricula :: String,
@@ -25,9 +32,10 @@ data Aluno = Aluno {
 } deriving (Generic, Show)
 
 instance ToJSON Turma
-instance FromJSON Turma
-
+instance ToJSON AlunoTurma
 instance ToJSON Aluno
+
+instance FromJSON AlunoTurma
 instance FromJSON Aluno
 
 listarTurmas :: String -> IO String
@@ -83,7 +91,12 @@ exibirAluno matricula diretorio = do
             Nothing -> return ""
 
         faltas <- case decode alunoFaltas of 
+<<<<<<< HEAD
             Just (AlunoTurma _ _ _ _ faltas) -> return $ faltas
+=======
+
+            Just (AlunoTurma _ _ _ faltas _) -> return $ faltas
+>>>>>>> 3e22487 (envio de mensagem pelo chat)
             Nothing -> return 0
 
         return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
@@ -123,6 +136,7 @@ exibirFaltas matricula diretorio = do
             _ -> return (-1)
     else return (-1)
 
+<<<<<<< HEAD
 mediaNotas :: String -> IO String
 mediaNotas diretorio = do
     listaDeAlunos <- getDirectoryContents diretorio
@@ -148,6 +162,9 @@ exibirNotas matricula diretorio = do
             Just (AlunoTurma _ _ _ notas _) -> return notas
             _ -> return (-1)
     else return (-1)
+=======
+
+>>>>>>> 3e22487 (envio de mensagem pelo chat)
 
 criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do
@@ -182,6 +199,8 @@ removerAluno disciplina matricula codigo = do
             removeFile diretorioAluno
             return "Aluno removido!"
 
+
+
 excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
@@ -212,7 +231,7 @@ alocarAluno matriculaAluno disciplina codigo = do
             Just (Aluno matricula nome senha turmas) -> do
                 let dadosAlunoAtualizado = encode(Aluno {matricula = matricula, nome = nome, senha = senha, turmas = turmas ++ [[disciplina, codigo]]})
                 B.writeFile diretorioAluno dadosAlunoAtualizado
-            Nothing -> return ()
+                
         let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0, media = 0.0})
         B.writeFile diretorio dados
 
