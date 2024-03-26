@@ -4,6 +4,7 @@
 module Modules.GerenciadorTurmas where
 
 import Utils.AlunoTurma
+import Utils.Avaliacao
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -89,14 +90,6 @@ exibirAluno matricula diretorio = do
         return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
       else return ""
 
-exibirRelatorio :: String -> IO String
-exibirRelatorio diretorio = do
-    mediaF <- mediaFaltas diretorio
-    mediaN <- mediaNotas diretorio
-    return $ "\nRELATÓRIO DA TURMA ============================\n\n" ++
-        mediaN ++ "\n\n" ++ mediaF ++
-        "\n\n==============================================="
-
 mediaFaltas :: String -> IO String
 mediaFaltas diretorio = do
     listaDeAlunos <- getDirectoryContents diretorio
@@ -146,6 +139,71 @@ exibirNotas matricula diretorio = do
 
         case decode alunoNotas of 
             Just (AlunoTurma _ _ _ notas _) -> return notas
+            _ -> return (-1)
+    else return (-1)
+
+verAvaliacoes :: String -> IO String
+verAvaliacoes diretorio = do
+    listaDeAvaliacoes <- getDirectoryContents diretorio
+
+    createDirectoryIfMissing True $ takeDirectory diretorio
+
+    response <- mapM (\x -> (exibirAvaliacao x diretorio)) listaDeAvaliacoes
+
+    return (unlines $ response)
+
+exibirAvaliacao :: String -> String -> IO String
+exibirAvaliacao arquivo diretorio = do
+    if arquivo /= "." && arquivo /= ".." then do
+        let caminho = diretorio ++ arquivo
+
+        avaliacao <- B.readFile caminho
+
+        nota <- case decode avaliacao of 
+            Just (Avaliacao nota _) -> return $ show nota
+            Nothing -> return ""
+
+        comentario <- case decode avaliacao of 
+            Just (Avaliacao _ comentario) -> return comentario
+            Nothing -> return ""
+
+        notaFormatada <- formataNota nota
+
+        return (notaFormatada ++ "\n" ++ "Comentário: " ++ comentario ++ "\n")
+    else return ""
+
+formataNota :: String -> IO String
+formataNota nota
+    | (nota == "1") = return "⭑☆☆☆☆"
+    | (nota == "2") = return "⭑⭑☆☆☆"
+    | (nota == "3") = return "⭑⭑⭑☆☆"
+    | (nota == "4") = return "⭑⭑⭑⭑☆"
+    | (nota == "5") = return "⭑⭑⭑⭑⭑"
+    | otherwise = return ""
+
+mediaAvaliacoes :: String -> IO String
+mediaAvaliacoes diretorio = do
+    listaDeAvaliacoes <- getDirectoryContents diretorio
+
+    let notasAvaliacoes = mapM (\x -> exibirNota x diretorio) listaDeAvaliacoes
+    notas <- notasAvaliacoes
+
+    let notasValidas = filter (/= -1) notas
+    let quantidade = length notasValidas
+    let somaNotas = sum notasValidas
+    let media = fromIntegral somaNotas / fromIntegral quantidade
+
+    return $ "Nota média: " ++ show media
+
+exibirNota :: String -> String -> IO Int
+exibirNota arquivo diretorio = do
+    if arquivo /= "." && arquivo /= ".." then do
+        let caminho = diretorio ++ arquivo
+
+        avaliacao <- B.readFile caminho
+
+        case decode avaliacao of 
+            Just (Avaliacao nota _) -> return nota
             _ -> return (-1)
     else return (-1)
 
