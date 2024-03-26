@@ -4,6 +4,7 @@
 module Modules.GerenciadorTurmas where
 
 import Utils.AlunoTurma
+import Utils.Avaliacao
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -88,14 +89,6 @@ exibirAluno matricula diretorio = do
 
         return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
       else return ""
-
-exibirRelatorio :: String -> IO String
-exibirRelatorio diretorio = do
-    mediaF <- mediaFaltas diretorio
-    mediaN <- mediaNotas diretorio
-    return $ "\nRELATÓRIO DA TURMA ============================\n\n" ++
-        mediaN ++ "\n\n" ++ mediaF ++
-        "\n\n==============================================="
 
 mediaFaltas :: String -> IO String
 mediaFaltas diretorio = do

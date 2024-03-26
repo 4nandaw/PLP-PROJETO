@@ -23,6 +23,16 @@ escolherOpcaoTurma disciplina = do
     if (escolha /= "0") then opcoesDeTurmas disciplina
     else putStrLn " "
 
+escolherOpcaoMenuTurmas :: String -> String -> IO()
+escolherOpcaoMenuTurmas escolha disciplina
+        | (escolha == "0") = putStrLn " "
+        | (escolha == "1") = listarTurmasController disciplina
+        | (escolha == "2") = criarTurmaController disciplina
+        | (escolha == "3") = solicitarEAlocarAlunoController disciplina
+        | (escolha == "4") = excluirAlunoController disciplina
+        | (escolha == "5") = excluirTurmaController disciplina
+        | otherwise = putStrLn "Opção Inválida!!"
+
 listarTurmasController :: String -> IO()    
 listarTurmasController disciplina = do
     putStrLn ("Turmas de " ++ disciplina)
@@ -44,6 +54,8 @@ listarTurmasController disciplina = do
             putStrLn "Escolha uma opção: "
             putStrLn "[1] Ver alunos da turma"
             putStrLn "[2] Ver relatório da turma"
+            putStrLn "[3] Mural da Turma"
+            putStrLn "[4] Ver avaliações"
             putStrLn "==============================================="
             opcao <- getLine
 
@@ -52,11 +64,20 @@ listarTurmasController disciplina = do
                     responseAlunos <- verAlunos (diretorio ++ codigo ++ "/alunos/")
                     putStrLn responseAlunos
                 else if opcao == "2" then do
-                    relatorio <- exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
-                    putStrLn relatorio
+                    exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
                 else putStrLn "Opção inválida!"
             else putStrLn ""
         else putStrLn "" 
+
+exibirRelatorio :: String -> IO()
+exibirRelatorio diretorio = do
+    mediaF <- mediaFaltas diretorio
+    mediaN <- mediaNotas diretorio
+    putStrLn "\nRELATÓRIO DA TURMA ============================\n"
+    putStrLn mediaN
+    putStrLn ""
+    putStrLn mediaF
+    putStrLn "\n==============================================="
 
 criarTurmaController :: String -> IO()
 criarTurmaController disciplina = do
@@ -115,13 +136,3 @@ excluirTurmaController disciplina = do
 
     response <- excluirTurma disciplina codigo
     putStrLn response
-
-escolherOpcaoMenuTurmas :: String -> String -> IO()
-escolherOpcaoMenuTurmas escolha disciplina
-        | (escolha == "0") = putStrLn " "
-        | (escolha == "1") = listarTurmasController disciplina
-        | (escolha == "2") = criarTurmaController disciplina
-        | (escolha == "3") = solicitarEAlocarAlunoController disciplina
-        | (escolha == "4") = excluirAlunoController disciplina
-        | (escolha == "5") = excluirTurmaController disciplina
-        | otherwise = putStrLn "Opção Inválida!!"
