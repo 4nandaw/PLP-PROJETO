@@ -25,7 +25,7 @@ escolherOpcaoTurma disciplina = do
 
 escolherOpcaoMenuTurmas :: String -> String -> IO()
 escolherOpcaoMenuTurmas escolha disciplina
-        | (escolha == "0") = putStrLn " "
+        | (escolha == "0") = putStr ""
         | (escolha == "1") = menuMinhasTurmas disciplina
         | (escolha == "2") = criarTurmaController disciplina
         | (escolha == "3") = solicitarEAlocarAlunoController disciplina
@@ -60,16 +60,23 @@ menuMinhasTurmas disciplina = do
             opcao <- getLine
 
             if codigo /= "" then do
-                if opcao == "1" then do
-                    responseAlunos <- verAlunos (diretorio ++ codigo ++ "/alunos/")
-                    putStrLn responseAlunos
-                else if opcao == "2" then do
-                    exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
-                else if opcao == "3" then do
-                    exibirAvaliacoes (diretorio ++ codigo ++ "/avaliacoes/")
-                else putStrLn "Opção inválida!"
+                escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
             else putStrLn ""
         else putStrLn "" 
+
+escolherOpcaoMenuMinhasTurmas :: String -> String -> String -> IO()
+escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
+        | (opcao == "0") = putStr ""
+        | (opcao == "1") = responseAlunos (diretorio ++ codigo ++ "/alunos/")
+        | (opcao == "2") = exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
+        | (opcao == "3") = exibirAvaliacoes (diretorio ++ codigo ++ "/avaliacoes/")
+        -- | (opcao == "4") = mural disciplina
+        | otherwise = putStrLn "Opção Inválida!!" 
+
+responseAlunos :: String -> IO()
+responseAlunos diretorio = do
+    alunos <- verAlunos diretorio
+    putStrLn alunos    
 
 exibirRelatorio :: String -> IO()
 exibirRelatorio diretorio = do
