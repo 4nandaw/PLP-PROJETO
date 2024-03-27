@@ -2,6 +2,7 @@ module Modules.MenuProfessor where
 import Modules.GerenciadorTurmasController
 import Modules.GerenciadorOpcoesDisciplina
 import Modules.GerenciadorOpcoesDisciplinaController
+import System.Console.Pretty
 
 escolherOpcaoProfessor :: String -> IO()
 escolherOpcaoProfessor disciplina = do
@@ -12,18 +13,18 @@ escolherOpcaoProfessor disciplina = do
     
 exibirMenuProfessor :: String -> IO()
 exibirMenuProfessor disciplina = do
-    putStrLn ("MENU DE " ++ disciplina)
+    putStrLn (color Magenta . style Bold $ "MENU DE " ++ disciplina)
     putStrLn "Digite uma opção: "
     putStrLn "[0] Voltar"
     putStrLn "[1] Opcoes da disciplina"
     putStrLn "[2] Configuracoes de turmas"
-    putStrLn "============================="
+    putStrLn (color Magenta . style Bold $ "=============================")
     escolherOpcaoProfessor disciplina
 
 escolherValorOpcao :: String -> String -> IO()
 escolherValorOpcao escolha disciplina
-        | (escolha == "0") = putStrLn "Saindo da conta..."
+        | (escolha == "0") = putStrLn (color Green "Saindo da conta...")
         | (escolha == "1") = Modules.GerenciadorOpcoesDisciplinaController.menuDeDisciplina disciplina
         | (escolha == "2") = opcoesDeTurmas disciplina
-        | otherwise = putStrLn "Opção Inválida!!"
+        | otherwise = putStrLn (color Red "Opção Inválida!")
        
