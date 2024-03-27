@@ -31,7 +31,7 @@ escolherOpcaoMenuTurmas escolha disciplina
         | (escolha == "3") = solicitarEAlocarAlunoController disciplina
         | (escolha == "4") = excluirAlunoController disciplina
         | (escolha == "5") = excluirTurmaController disciplina
-        | otherwise = putStrLn "Opção Inválida!!"
+        | otherwise = putStrLn "Opção Inválida!"
 
 menuMinhasTurmas :: String -> IO()    
 menuMinhasTurmas disciplina = do
@@ -70,8 +70,27 @@ escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
         | (opcao == "1") = responseAlunos (diretorio ++ codigo ++ "/alunos/")
         | (opcao == "2") = exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
         | (opcao == "3") = exibirAvaliacoes (diretorio ++ codigo ++ "/avaliacoes/")
-        -- | (opcao == "4") = mural disciplina
-        | otherwise = putStrLn "Opção Inválida!!" 
+        | (opcao == "4") = menuMural (diretorio ++ codigo ++ "/mural.json")
+        | otherwise = putStrLn "Opção Inválida!" 
+
+menuMural :: String -> IO()
+menuMural arquivo = do
+    putStrLn "Escolha uma opção: "
+    putStrLn "[1] Ver Mural"
+    putStrLn "[2] Deixar aviso no Mural"
+    putStrLn "==============================================="
+    opcao <- getLine
+
+    if opcao /= "" then do
+        escolherOpcaoMenuMural opcao arquivo
+    else putStrLn "Opção inválida!"
+
+escolherOpcaoMenuMural :: String -> String -> IO()
+escolherOpcaoMenuMural opcao arquivo
+    | (opcao == "0") = putStr ""
+    | (opcao == "1") = putStrLn "ver mural"
+    | (opcao == "2") = putStrLn "deixar aviso no mural"
+    | otherwise = putStrLn "Opção inválida!"
 
 responseAlunos :: String -> IO()
 responseAlunos diretorio = do
