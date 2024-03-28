@@ -20,14 +20,6 @@ data Turma = Turma {
     alunos :: [String]
 } deriving (Generic, Show)
 
-data AlunoTurma = AlunoTurma {
-    nota1 :: Float,
-    nota2 :: Float,
-    nota3 :: Float,
-    media :: Float,
-    faltas :: Int
-} deriving (Generic, Show)
-
 data Aluno = Aluno {
     nome :: String,
     matricula :: String,
@@ -36,10 +28,8 @@ data Aluno = Aluno {
 } deriving (Generic, Show)
 
 instance ToJSON Turma
-instance ToJSON AlunoTurma
 instance ToJSON Aluno
 
-instance FromJSON AlunoTurma
 instance FromJSON Aluno
 
 listarTurmas :: String -> IO String

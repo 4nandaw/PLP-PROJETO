@@ -11,6 +11,7 @@ menuDeDisciplina disciplina = do
     putStrLn "[0] Voltar"
     putStrLn "[1] Adicionar notas"
     putStrLn "[2] Adicionar falta a aluno(a)"
+    putStrLn "[3] Chat"
     putStrLn (color Magenta . style Bold $ "=====================================")
     escolherOpcaoDisciplina disciplina
 
@@ -26,6 +27,7 @@ escolherOpcaoMenuDisciplina escolha disciplina
         | (escolha == "0") = putStrLn " "
         | (escolha == "1") = solicitarEAlocarNotasController disciplina
         | (escolha == "2") = menuFaltas disciplina
+        | (escolha == "3") = chatController disciplina
         | otherwise = putStrLn (color Red "Opção Inválida.")
 
 -- Função principal que inicia o menu para adicionar faltas
@@ -130,38 +132,6 @@ menuNotas disciplina codTurma matriculaAluno = do
                 salvarNotaController disciplina codTurma matriculaAluno escolha
                 menuNotas disciplina codTurma matriculaAluno
 
-
-salvarNotaController :: String -> String -> String -> String -> IO()
-salvarNotaController disciplina codTurma matriculaAluno escolha = do
-    putStrLn "Digite o valor da nota: "
-    nota <- getLine
-    notaSalva <- Modules.GerenciadorOpcoesDisciplina.salvarNota  disciplina codTurma matriculaAluno escolha nota
-    putStrLn (notaSalva)
-
-adicionarNotasTurmaController :: String -> String -> IO()
-adicionarNotasTurmaController disciplina codTurma = do
-    putStrLn "Digite a matrícula do aluno que deseja alocar as notas ou ENTER para sair "
-    matriculaAluno <- getLine
-    if (matriculaAluno == "") then putStrLn "Registro de notas finalizado!"
-    else do
-        alunoValido <- Modules.GerenciadorOpcoesDisciplina.adicionarNotasTurma disciplina codTurma matriculaAluno
-        if (alunoValido) then do 
-            menuNotas disciplina codTurma matriculaAluno
-            adicionarNotasTurmaController disciplina codTurma
-        else do 
-            putStrLn "Aluno não existe" 
-            adicionarNotasTurmaController disciplina codTurma
-
-solicitarEAlocarNotasController :: String -> IO()
-solicitarEAlocarNotasController disciplina = do 
-    putStrLn "===== ADICIONANDO NOTAS ===== "
-    putStrLn " "
-    putStrLn "Informe o código da turma: "
-    codTurma <- getLine
-    turmaValida <- solicitarEAlocarNotas disciplina codTurma
-    if (turmaValida) then adicionarNotasTurmaController disciplina codTurma
-    else putStrLn "Turma não existe"
-
 chatController :: String -> IO()
 chatController disciplina = do
     putStrLn "DIGITE ENTER NA TURMA E ALUNO CASO DESEJE SAIR"
@@ -198,30 +168,3 @@ enviarMensagemController disciplina codTurma matriculaAluno = do
         enviarMensagem disciplina codTurma remetente matriculaAluno msg
         enviarMensagemController disciplina codTurma matriculaAluno
     else putStrLn "========================"
-
- 
-escolherOpcaoMenuDisciplina :: String -> String -> IO()
-escolherOpcaoMenuDisciplina escolha disciplina
-        | (escolha == "0") = putStrLn " "
-        | (escolha == "1") = solicitarEAlocarNotasController disciplina
-        | (escolha == "2") = chatController disciplina
-        | otherwise = putStrLn "Opção Inválida!!"
-
-escolherOpcaoDisciplina :: String -> IO()
-escolherOpcaoDisciplina disciplina = do
-    escolha <- getLine
-    escolherOpcaoMenuDisciplina escolha disciplina
-    if (escolha /= "0") then menuDeDisciplina disciplina
-    else putStrLn " "
-
-menuDeDisciplina :: String -> IO()
-menuDeDisciplina disciplina = do
-    putStrLn "MENU DE DISCIPLINA ====="
-    putStrLn "Digite uma opção: "
-    putStrLn "[0] Voltar"
-    putStrLn "[1] Adicionar notas"
-    putStrLn "[2] Chat"
-    escolherOpcaoDisciplina disciplina
-
-
-

@@ -4,10 +4,6 @@ import System.Console.Pretty
 
 import Modules.Chat
 
-visualizarNotasController :: String -> String -> String -> IO()
-visualizarNotasController matricula disciplina turma = do 
-    situacao <- Modules.GerenciadorOpcoesAluno.visualizarNotas matricula disciplina turma
-    putStrLn situacao
 
 chatController :: String -> String -> String -> IO()
 chatController matricula disciplina turma = do
@@ -31,7 +27,8 @@ enviarMensagemController disciplina codTurma matriculaAluno = do
 
 menuTurmaAluno :: String -> String -> String -> IO()
 menuTurmaAluno matricula disciplina turma = do
-    putStrLn (color Blue . style Bold $ "===== Menu do aluno " ++ color Blue . style Bold $ matricula ++ color Blue . style Bold $ ", na disciplina " ++ color Blue . style Bold $ disciplina ++ color Blue . style Bold $ " e turma " ++ color Blue . style Bold $ turma ++ color Blue . style Bold $ "! =====\n")
+    let msg = "===== Menu do aluno " ++ matricula ++ ", na disciplina " ++ disciplina ++ " e turma " ++ turma ++ "! =====\n"
+    putStrLn (color Blue . style Bold $ msg)
     putStrLn "Digite uma opção:"
     putStrLn "[0] Voltar"
     putStrLn "[1] Ver notas"
