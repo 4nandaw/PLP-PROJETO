@@ -3,11 +3,8 @@
 
 module Modules.GerenciadorOpcoesDisciplina where
 
+
 import Utils.AlunoTurma
-import Utils.Chat
-import Utils.Disciplina
-import Utils.Mural
-import Utils.Turma
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -19,6 +16,29 @@ import Text.Read (readMaybe)
 import Text.Printf
 import Numeric 
 -- import Data.Binary (encode)
+
+data Chat = Chat {
+    chat :: [[String]]
+} deriving (Generic, Show)
+
+data Turma = Turma {
+    nome :: String,
+    codigo :: String,
+    alunos :: [String]
+} deriving (Generic, Show)
+
+data Disciplina = Disciplina {
+    matriculaProfessor :: String,
+    nome :: String,
+    nomeProfessor :: String,
+    senha :: String
+} deriving (Generic, Show)
+
+instance ToJSON Chat
+instance ToJSON Disciplina
+
+instance FromJSON Chat
+instance FromJSON Disciplina    
 
 
 solicitarEAlocarNotas :: String -> String -> IO Bool
@@ -36,8 +56,9 @@ validarNota notaStr =
         Just nota -> return (nota>=0 && nota<=10)
         Nothing -> return False
 
-atualizarMedia :: String -> IO String
-atualizarMedia diretorio = do
+atualizarMedia :: String -> String -> String -> IO String
+atualizarMedia disciplina codTurma matriculaAluno = do
+    let diretorio = ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     dados <- B.readFile diretorio
     case decode dados of
         Just (AlunoTurma nota1 nota2 nota3 _ faltas)-> do
@@ -48,11 +69,11 @@ atualizarMedia diretorio = do
             return "Média atualizada"
         Nothing -> return "Erro na atualização da média"
 
-salvarNota :: String -> String -> String->IO String
-salvarNota diretorio escolha nota = do
+salvarNota :: String -> String -> String -> String -> String -> IO String
+salvarNota disciplina codTurma matriculaAluno escolha nota = do
     notaValida <- validarNota nota
     if (notaValida) then do
-        dados <- B.readFile diretorio
+        dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
         let notaAtualizada = read nota
         case decode dados of
             Just (AlunoTurma nota1 nota2 nota3 media faltas)-> do
@@ -61,16 +82,16 @@ salvarNota diretorio escolha nota = do
                         "2" -> AlunoTurma nota1 notaAtualizada nota3 media faltas
                         "3" -> AlunoTurma nota1 nota2 notaAtualizada media faltas
                         _ -> AlunoTurma nota1 nota2 nota3 media faltas
-                B.writeFile diretorio (encode alunoNotaAtualizada)
-                atualizarMedia diretorio
+                B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoNotaAtualizada)
+                atualizarMedia disciplina codTurma matriculaAluno
                 return "NOTA SALVA NO ARQUIVO"
             Nothing -> return "Erro!!!"
     else 
         return "Nota inválida"
 
-situacaoAluno :: String -> String -> IO String
-situacaoAluno diretorio matriculaAluno = do
-    dados <- B.readFile diretorio
+situacaoAluno :: String -> String -> String -> IO String
+situacaoAluno disciplina codTurma matriculaAluno = do
+    dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     case decode dados of 
         Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
             let situacao = if media >= 7 && faltas <= 7
@@ -106,6 +127,7 @@ verificarPossivelChat disciplina codTurma matriculaAluno = do
         if matriculaAlunoValida then return True
         else return False
 
+
 acessarChat :: String -> String -> String -> IO String
 acessarChat disciplina codTurma matriculaAluno = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/chats/" ++ codTurma ++ "-" ++ matriculaAluno ++ ".json"
@@ -139,9 +161,9 @@ puxarNomeProfessor disciplina = do
         Just (Disciplina _ _ nomeProfessor _) -> return nomeProfessor
         Nothing -> return "Erro ao pegar nome do professor"
 
-verificarAlunoTurma :: String -> IO Bool
-verificarAlunoTurma diretorio = do
-    alunoValido <- doesFileExist diretorio
+verificarAlunoTurma :: String -> String -> String-> IO Bool
+verificarAlunoTurma disciplina codTurma matriculaAluno = do
+    alunoValido <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     if (alunoValido) then do 
         return True
     else do 
@@ -164,26 +186,3 @@ adicionarFalta disciplina codTurma matriculaAluno = do
             B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
             return "Faltas do aluno atualizada."
         Nothing -> return "Erro!!!"
-
-criarAvisoTurma :: String -> String -> IO String
-criarAvisoTurma diretorio novoAviso = do
-
-    let diretorioArquivo = diretorio ++ "mural.json"
-    createDirectoryIfMissing True $ takeDirectory diretorioArquivo
-    
-    muralValido <- doesFileExist diretorioArquivo
-    if muralValido then do
-        dadosMural <- B.readFile diretorioArquivo
-        case decode dadosMural of
-            Just (Mural avisosAntigos) -> do
-                let muralAtualizado = encode $ Mural { aviso = avisosAntigos ++ [novoAviso] }
-                B.writeFile diretorioArquivo muralAtualizado
-                return "Aviso registrado no Mural da Turma!"
-            Nothing -> do
-                let mural = encode $ Mural { aviso = [novoAviso] }
-                B.writeFile diretorioArquivo mural
-                return "Aviso registrado no Mural da Turma!"
-    else do
-        let mural = encode $ Mural { aviso = [novoAviso] }
-        B.writeFile diretorioArquivo mural
-        return "Aviso registrado no Mural da Turma!"
