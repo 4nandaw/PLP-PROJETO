@@ -39,6 +39,7 @@ library
     , bytestring
     , directory
     , filepath
+    , pretty-terminal
     , text
   default-language: Haskell2010
 
@@ -60,6 +61,7 @@ executable SICODI-exe
       Modules.MenuProfessor
       Utils.AlunoTurma
       Utils.Avaliacao
+      Utils.Mural
       Paths_SICODI
   autogen-modules:
       Paths_SICODI
@@ -73,6 +75,7 @@ executable SICODI-exe
     , bytestring
     , directory
     , filepath
+    , pretty-terminal
     , text
   default-language: Haskell2010
 
@@ -93,5 +96,6 @@ test-suite SICODI-test
     , bytestring
     , directory
     , filepath
+    , pretty-terminal
     , text
   default-language: Haskell2010

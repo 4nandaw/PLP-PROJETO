@@ -5,12 +5,14 @@ module Modules.GerenciadorTurmas where
 
 import Utils.AlunoTurma
 import Utils.Avaliacao
+import Utils.Mural
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
+import Control.Monad (when)
 
 data Turma = Turma {
     nome :: String,
@@ -211,18 +213,20 @@ criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json"
     let avaliacoes = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/avaliacoes/"
+    let mural = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/mural/"
 
     validarUnico <- doesFileExist diretorio
 
     if not validarUnico then do
         createDirectoryIfMissing True $ takeDirectory diretorio
         createDirectoryIfMissing True $ takeDirectory avaliacoes
+        createDirectoryIfMissing True $ takeDirectory mural
 
         let dados = encode (Turma {nome = nome, codigo = codigo, alunos = []})
         B.writeFile diretorio dados
         return "Cadastro concluído!"
 
-    else return "Erro: Codigo de turma ja esta em uso"
+    else return "Erro: Código de turma já está em uso."
 
 excluirAluno :: String ->  String -> IO String
 excluirAluno disciplina codigo = do
@@ -277,3 +281,29 @@ alocarAluno matriculaAluno disciplina codigo = do
         B.writeFile diretorio dados
 
         return $ "Adicionado " ++ matriculaAluno
+
+criarAvisoTurma :: String -> String -> IO String
+criarAvisoTurma diretorio novoAviso = do
+
+    let diretorioArquivo = diretorio ++ "mural.json"
+    createDirectoryIfMissing True $ takeDirectory diretorioArquivo
+    
+    muralValido <- doesFileExist diretorioArquivo
+    if muralValido then do
+        dadosMural <- B.readFile diretorioArquivo
+        case decode dadosMural of
+            Just (Mural avisosAntigos) -> do
+                let muralAtualizado = encode $ Mural { aviso = avisosAntigos ++ [novoAviso] }
+                B.writeFile diretorioArquivo muralAtualizado
+                return "Aviso registrado no Mural da Turma!"
+            Nothing -> do
+                let mural = encode $ Mural { aviso = [novoAviso] }
+                B.writeFile diretorioArquivo mural
+                return "Aviso registrado no Mural da Turma!"
+    else do
+        let mural = encode $ Mural { aviso = [novoAviso] }
+        B.writeFile diretorioArquivo mural
+        return "Aviso registrado no Mural da Turma!"
+
+
+
