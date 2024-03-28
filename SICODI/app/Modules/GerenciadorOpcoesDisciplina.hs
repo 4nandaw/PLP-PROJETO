@@ -106,7 +106,6 @@ verificarPossivelChat disciplina codTurma matriculaAluno = do
         if matriculaAlunoValida then return True
         else return False
 
-
 acessarChat :: String -> String -> String -> IO String
 acessarChat disciplina codTurma matriculaAluno = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/chats/" ++ codTurma ++ "-" ++ matriculaAluno ++ ".json"

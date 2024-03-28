@@ -37,7 +37,7 @@ loginProfessorController = do
     senha <- getLine
     loginValido <- Modules.Login.loginProfessor nomeDisciplina senha
     if (loginValido) then do 
-        putStrLn (color Green "Login realizado com sucesso!")
+        putStrLn (color Green "\nLogin realizado com sucesso!\n")
         Modules.MenuProfessor.exibirMenuProfessor nomeDisciplina
     else putStrLn (color Red "Usuário ou senha inválidos")
 
@@ -49,6 +49,6 @@ loginAlunoController = do
     senha <- getLine
     loginValido <- Modules.Login.loginAluno matricula senha
     if (loginValido) then do
-        putStrLn (color Green "Login realizado com sucesso!"     )
+        putStrLn (color Green "\nLogin realizado com sucesso!\n")
         Modules.MenuAluno.exibirMenuAluno matricula
     else putStrLn (color Red "Usuário ou senha inválidos")
