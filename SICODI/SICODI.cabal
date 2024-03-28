@@ -63,8 +63,10 @@ executable SICODI-exe
       Utils.Aluno
       Utils.AlunoTurma
       Utils.Avaliacao
+      Utils.Chat
       Utils.Disciplina
       Utils.Mural
+      Utils.Turma
       Paths_SICODI
   autogen-modules:
       Paths_SICODI

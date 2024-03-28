@@ -3,8 +3,10 @@
 
 module Modules.GerenciadorOpcoesDisciplina where
 
-
 import Utils.AlunoTurma
+import Utils.Chat
+import Utils.Disciplina
+import Utils.Turma
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -16,29 +18,6 @@ import Text.Read (readMaybe)
 import Text.Printf
 import Numeric 
 -- import Data.Binary (encode)
-
-data Chat = Chat {
-    chat :: [[String]]
-} deriving (Generic, Show)
-
-data Turma = Turma {
-    nome :: String,
-    codigo :: String,
-    alunos :: [String]
-} deriving (Generic, Show)
-
-data Disciplina = Disciplina {
-    matriculaProfessor :: String,
-    nome :: String,
-    nomeProfessor :: String,
-    senha :: String
-} deriving (Generic, Show)
-
-instance ToJSON Chat
-instance ToJSON Disciplina
-
-instance FromJSON Chat
-instance FromJSON Disciplina    
 
 
 solicitarEAlocarNotas :: String -> String -> IO Bool
