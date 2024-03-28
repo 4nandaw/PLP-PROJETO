@@ -1,18 +1,19 @@
 module Modules.MenuAluno where
 import Modules.GerenciadorOpcoesAluno
 import Modules.GerenciadorOpcoesAlunoController
+import System.Console.Pretty
 
 
 exibirMenuAluno :: String -> IO()
 exibirMenuAluno matricula = do
-    putStrLn ("===== Menu do aluno: " ++ matricula ++ " =====")
+    putStrLn (color Blue . style Bold $ "===== Menu do aluno: " ++ matricula ++ " =====")
     putStrLn "Digite ENTER para voltar"
     putStrLn " "
     listaDisciplinasTurmas <- Modules.GerenciadorOpcoesAluno.listarDisciplinasTurmas matricula
     putStrLn listaDisciplinasTurmas
-    putStrLn "Digite a disciplina que você quer entrar: "
+    putStrLn (color Blue "Digite a disciplina que você quer entrar: ")
     disciplina <- getLine
-    putStrLn "Digite a turma: "
+    putStrLn (color Blue "Digite a turma: ")
     turma <- getLine
     if (disciplina == "" && turma == "") then putStrLn " "
     else do
@@ -21,6 +22,6 @@ exibirMenuAluno matricula = do
             Modules.GerenciadorOpcoesAlunoController.menuTurmaAluno matricula disciplina turma
             exibirMenuAluno matricula
         else do 
-            putStrLn "Disciplina e/ou turma inválida"
+            putStrLn (color Red "Disciplina e/ou turma inválida")
             putStrLn " "
             exibirMenuAluno matricula
