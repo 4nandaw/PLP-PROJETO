@@ -212,12 +212,12 @@ criarTurma disciplina nome codigo = do
 
     else return "Erro: Código de turma já está em uso."
 
-excluirAluno :: String ->  String -> IO String
+excluirAluno :: String ->  String -> IO Bool
 excluirAluno disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
 
-    if not validarExistencia then return "Turma invalida"
-    else return ""
+    if not validarExistencia then return False
+    else return True
 
 removerAluno :: String -> String -> String -> IO String
 removerAluno disciplina matricula codigo = do
@@ -268,28 +268,6 @@ alocarAluno matriculaAluno disciplina codigo = do
 
         return $ "Adicionado " ++ matriculaAluno
 
-criarAvisoTurma :: String -> String -> IO String
-criarAvisoTurma diretorio novoAviso = do
-
-    let diretorioArquivo = diretorio ++ "mural.json"
-    createDirectoryIfMissing True $ takeDirectory diretorioArquivo
-    
-    muralValido <- doesFileExist diretorioArquivo
-    if muralValido then do
-        dadosMural <- B.readFile diretorioArquivo
-        case decode dadosMural of
-            Just (Mural avisosAntigos) -> do
-                let muralAtualizado = encode $ Mural { aviso = avisosAntigos ++ [novoAviso] }
-                B.writeFile diretorioArquivo muralAtualizado
-                return "Aviso registrado no Mural da Turma!"
-            Nothing -> do
-                let mural = encode $ Mural { aviso = [novoAviso] }
-                B.writeFile diretorioArquivo mural
-                return "Aviso registrado no Mural da Turma!"
-    else do
-        let mural = encode $ Mural { aviso = [novoAviso] }
-        B.writeFile diretorioArquivo mural
-        return "Aviso registrado no Mural da Turma!"
 
 
 

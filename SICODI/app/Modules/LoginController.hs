@@ -1,6 +1,5 @@
 module Modules.LoginController where
 import Modules.Login
-import Modules.MenuProfessor
 import Modules.MenuAluno
 import Modules.GerenciadorTurmasController
 import System.Console.Pretty

@@ -48,7 +48,8 @@ acessarChatAluno matricula disciplina turma = do
 
 visualizarNotas :: String -> String -> String -> IO String
 visualizarNotas matricula disciplina turma = do
-    situacao <- OpcoesDisciplina.situacaoAluno disciplina turma matricula
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/alunos/" ++ matricula ++ ".json"
+    situacao <- OpcoesDisciplina.situacaoAluno diretorio matricula
     return situacao
                     
 salvarAvaliacao :: String -> Int -> String -> String -> IO String
