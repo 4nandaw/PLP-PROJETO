@@ -3,6 +3,8 @@
 
 module Modules.Cadastro where
 
+import Utils.Disciplina
+import Utils.Aluno
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -11,31 +13,14 @@ import System.Directory (createDirectoryIfMissing)
 import System.FilePath.Posix (takeDirectory)
 
 
-data Disciplina = Disciplina {
-    nome :: String,
-    nomeProfessor :: String,
-    matriculaProfessor :: String,
-    senha :: String
-} deriving (Generic, Show)
-
-data Aluno = Aluno {
-    nome :: String,
-    matricula :: String,
-    senha :: String,
-    turmas :: [[String]]
-} deriving (Generic, Show)
-
-instance ToJSON Disciplina
-instance ToJSON Aluno
-    
 cadastroDisciplina :: String -> String -> String -> String -> IO Bool
-cadastroDisciplina nomeProfessor matricula senha nomeDisciplina = do
+cadastroDisciplina nomeProfessor matriculaProfessor senha nomeDisciplina = do
     let diretorio = "./db/disciplinas/" ++ nomeDisciplina ++ "/" ++ nomeDisciplina ++ ".json"
 
     validarUnico <- doesFileExist diretorio
 
     if not validarUnico then do
-        let dados = encode (Disciplina {nome = nomeDisciplina, nomeProfessor = nomeProfessor, matriculaProfessor = matricula, senha = senha})
+        let dados = encode (Disciplina {matriculaProfessor = matriculaProfessor, nome = nomeDisciplina, nomeProfessor = nomeProfessor, senha = senha})
 
         createDirectoryIfMissing True $ takeDirectory diretorio
 
