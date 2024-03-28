@@ -12,6 +12,7 @@ import System.Directory
 import Data.Aeson
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
+import Control.Monad (when)
 
 data Turma = Turma {
     nome :: String,
@@ -282,11 +283,27 @@ alocarAluno matriculaAluno disciplina codigo = do
         return $ "Adicionado " ++ matriculaAluno
 
 criarAvisoTurma :: String -> String -> IO String
-criarAvisoTurma diretorio aviso = do
+criarAvisoTurma diretorio novoAviso = do
+
     let diretorioArquivo = diretorio ++ "mural.json"
-    let dados = encode (Mural { aviso = [[aviso]] })
     createDirectoryIfMissing True $ takeDirectory diretorioArquivo
-    B.writeFile diretorioArquivo dados
-    return "Aviso registrado no Mural da Turma!"
+    
+    muralValido <- doesFileExist diretorioArquivo
+    if muralValido then do
+        dadosMural <- B.readFile diretorioArquivo
+        case decode dadosMural of
+            Just (Mural avisosAntigos) -> do
+                let muralAtualizado = encode $ Mural { aviso = avisosAntigos ++ [novoAviso] }
+                B.writeFile diretorioArquivo muralAtualizado
+                return "Aviso registrado no Mural da Turma!"
+            Nothing -> do
+                let mural = encode $ Mural { aviso = [novoAviso] }
+                B.writeFile diretorioArquivo mural
+                return "Aviso registrado no Mural da Turma!"
+    else do
+        let mural = encode $ Mural { aviso = [novoAviso] }
+        B.writeFile diretorioArquivo mural
+        return "Aviso registrado no Mural da Turma!"
+
 
 

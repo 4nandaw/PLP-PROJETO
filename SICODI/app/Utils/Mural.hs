@@ -5,7 +5,7 @@ import GHC.Generics
 import Data.Aeson
 
 data Mural = Mural {
-    aviso :: [[String]]
+    aviso :: [String]
 } deriving (Generic, Show)
 
 instance FromJSON Mural
