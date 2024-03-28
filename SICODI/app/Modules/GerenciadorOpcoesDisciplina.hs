@@ -1,6 +1,8 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 
 module Modules.GerenciadorOpcoesDisciplina where
+
 
 import Utils.AlunoTurma
 import GHC.Generics
@@ -13,6 +15,11 @@ import Data.Maybe (isJust)
 import Text.Read (readMaybe)
 import Text.Printf
 import Numeric 
+-- import Data.Binary (encode)
+
+data Chat = Chat {
+    chat :: [[String]]
+} deriving (Generic, Show)
 
 data Turma = Turma {
     nome :: String,
@@ -20,10 +27,26 @@ data Turma = Turma {
     alunos :: [String]
 } deriving (Generic, Show)
 
+data Disciplina = Disciplina {
+    matriculaProfessor :: String,
+    nome :: String,
+    nomeProfessor :: String,
+    senha :: String
+} deriving (Generic, Show)
+
+instance ToJSON Chat
+instance ToJSON Disciplina
+
+instance FromJSON Chat
+instance FromJSON Disciplina    
+
+
 solicitarEAlocarNotas :: String -> String -> IO Bool
 solicitarEAlocarNotas disciplina codTurma = do
     turmaValida <- doesDirectoryExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma)
     if turmaValida then do 
+        --let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma
+        --listarAlunosTurma diretorio  NÃO SE SABE SE VAI SER FEITO - DEPENDE DO TEMPO
         return True
     else return False
 
@@ -85,28 +108,57 @@ situacaoAluno disciplina codTurma matriculaAluno = do
                      situacao
         Nothing -> return "Erro: Dados não encontrados para o aluno."
 
-verificarAlunoTurma :: String -> String -> String-> IO Bool
-verificarAlunoTurma disciplina codTurma matriculaAluno = do
+adicionarNotasTurma :: String -> String -> String-> IO Bool
+adicionarNotasTurma disciplina codTurma matriculaAluno = do
     alunoValido <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     if (alunoValido) then do 
         return True
     else do 
         return False
 
-verificadorArquivoTurma :: String -> String -> IO Bool
-verificadorArquivoTurma disciplina codTurma = do
-    turmaValida <- doesDirectoryExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma)
-    if turmaValida then do 
-        return True
-    else return False
+verificarPossivelChat :: String -> String -> String -> IO Bool
+verificarPossivelChat disciplina codTurma matriculaAluno = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma
+    turmaValida <-doesDirectoryExist diretorio
+    if not turmaValida then return False
+    else do 
+        let diretorioAluno = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json"
+        matriculaAlunoValida <- doesFileExist diretorioAluno
+        if matriculaAlunoValida then return True
+        else return False
 
-adicionarFalta :: String -> String -> String-> IO String
-adicionarFalta disciplina codTurma matriculaAluno = do
 
-    dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
-    case decode dados of 
-        Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
-            let alunoFaltaAtualizada = AlunoTurma nota1 nota2 nota3 media (faltas + 1)
-            B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
-            return "Faltas do aluno atualizada."
-        Nothing -> return "Erro!!!"
+acessarChat :: String -> String -> String -> IO String
+acessarChat disciplina codTurma matriculaAluno = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/chats/" ++ codTurma ++ "-" ++ matriculaAluno ++ ".json"
+    createDirectoryIfMissing True $ takeDirectory diretorio
+    chatExiste <- doesFileExist diretorio
+
+    if not chatExiste then do
+        let chat = encode(Chat{chat = []})
+        B.writeFile diretorio chat
+        return "\ESC[31mSem mensagens no chat!\ESC[0m"
+    else do
+        dadosChat <- B.readFile diretorio
+        nomeProfessor <- puxarNomeProfessor disciplina
+        case decode dadosChat of 
+            Just (Chat chat) -> do
+                let listaMensagensChat = map (\x -> ajustarExibirMensagensChat x nomeProfessor) chat
+                if listaMensagensChat == [] then return "\ESC[33mSem mensagens no chat!\ESC[0m"
+                else return $ unlines $ listaMensagensChat
+            Nothing -> return "Erro ao pegar as mensagens do chat"
+
+ajustarExibirMensagensChat :: [String] -> String -> String
+ajustarExibirMensagensChat [remetente, mensagem] nomeProfessor
+    | (remetente==nomeProfessor) = nomeProfessor ++ ": " ++ mensagem
+    | otherwise = remetente ++ ": " ++ mensagem 
+
+puxarNomeProfessor :: String -> IO String
+puxarNomeProfessor disciplina = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/"++ disciplina ++ ".json"
+    dados <- B.readFile diretorio
+    case decode dados of
+        Just (Disciplina _ _ nomeProfessor _) -> return nomeProfessor
+        Nothing -> return "Erro ao pegar nome do professor"
+
+

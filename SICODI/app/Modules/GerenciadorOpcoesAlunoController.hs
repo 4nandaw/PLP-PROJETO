@@ -2,13 +2,41 @@ module Modules.GerenciadorOpcoesAlunoController where
 import Modules.GerenciadorOpcoesAluno
 import System.Console.Pretty
 
+import Modules.Chat
+
+visualizarNotasController :: String -> String -> String -> IO()
+visualizarNotasController matricula disciplina turma = do 
+    situacao <- Modules.GerenciadorOpcoesAluno.visualizarNotas matricula disciplina turma
+    putStrLn situacao
+
+chatController :: String -> String -> String -> IO()
+chatController matricula disciplina turma = do
+    putStrLn "Mensagens anteriores: "
+    chat <- Modules.GerenciadorOpcoesAluno.acessarChatAluno matricula disciplina turma
+    putStrLn chat
+
+    enviarMensagemController disciplina turma matricula
+
+enviarMensagemController :: String -> String -> String -> IO()
+enviarMensagemController disciplina codTurma matriculaAluno = do
+    putStrLn ":"
+    msg <- getLine
+
+    remetente <- lerNomeAluno matriculaAluno
+
+    if msg /= "" then do 
+        enviarMensagem disciplina codTurma remetente matriculaAluno msg
+        enviarMensagemController disciplina codTurma matriculaAluno
+    else putStrLn "===================="
+
 menuTurmaAluno :: String -> String -> String -> IO()
 menuTurmaAluno matricula disciplina turma = do
     putStrLn (color Blue . style Bold $ "===== Menu do aluno " ++ color Blue . style Bold $ matricula ++ color Blue . style Bold $ ", na disciplina " ++ color Blue . style Bold $ disciplina ++ color Blue . style Bold $ " e turma " ++ color Blue . style Bold $ turma ++ color Blue . style Bold $ "! =====\n")
     putStrLn "Digite uma opção:"
     putStrLn "[0] Voltar"
     putStrLn "[1] Ver notas"
-    putStrLn "[2] Avaliar professor(a)"
+    putStrLn "[2] Chat"
+    putStrLn "[3] Avaliar professor(a)"
     putStrLn (color Blue . style Bold $ "==============================================================")
     escolherOpcaoAluno matricula disciplina turma
 
@@ -23,7 +51,8 @@ escolherOpcaoMenuTurmaAluno :: String -> String -> String -> String -> IO()
 escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
         | (escolha == "0") = putStrLn " "
         | (escolha == "1") = visualizarNotasController matricula disciplina turma
-        | (escolha == "2") = menuAvaliacoes matricula disciplina turma
+        | (escolha == "2") = chatController matricula disciplina turma
+        | (escolha == "3") = menuAvaliacoes matricula disciplina turma
         | otherwise = putStrLn (color Red "Opção Inválida!")
 
 visualizarNotasController :: String -> String -> String -> IO()
@@ -42,6 +71,7 @@ menuAvaliacoes matricula disciplina turma = do
     putStrLn ("[5] Excelente")
     putStrLn (color Blue . style Bold $  "==========================================")
     escolha <- getLine
+    
     let nota = (read escolha :: Int)
 
     if (escolha == "0") then putStrLn " "

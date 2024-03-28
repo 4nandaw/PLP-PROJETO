@@ -20,6 +20,14 @@ data Turma = Turma {
     alunos :: [String]
 } deriving (Generic, Show)
 
+data AlunoTurma = AlunoTurma {
+    nota1 :: Float,
+    nota2 :: Float,
+    nota3 :: Float,
+    media :: Float,
+    faltas :: Int
+} deriving (Generic, Show)
+
 data Aluno = Aluno {
     nome :: String,
     matricula :: String,
@@ -28,9 +36,10 @@ data Aluno = Aluno {
 } deriving (Generic, Show)
 
 instance ToJSON Turma
-instance FromJSON Turma
-
+instance ToJSON AlunoTurma
 instance ToJSON Aluno
+
+instance FromJSON AlunoTurma
 instance FromJSON Aluno
 
 listarTurmas :: String -> IO String
@@ -246,6 +255,8 @@ removerAluno disciplina matricula codigo = do
             removeFile diretorioAluno
             return "Aluno removido!"
 
+
+
 excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
@@ -276,7 +287,7 @@ alocarAluno matriculaAluno disciplina codigo = do
             Just (Aluno matricula nome senha turmas) -> do
                 let dadosAlunoAtualizado = encode(Aluno {matricula = matricula, nome = nome, senha = senha, turmas = turmas ++ [[disciplina, codigo]]})
                 B.writeFile diretorioAluno dadosAlunoAtualizado
-            Nothing -> return ()
+                
         let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0, media = 0.0})
         B.writeFile diretorio dados
 

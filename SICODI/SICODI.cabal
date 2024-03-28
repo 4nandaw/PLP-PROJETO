@@ -48,6 +48,7 @@ executable SICODI-exe
   other-modules:
       Modules.Cadastro
       Modules.CadastroController
+      Modules.Chat
       Modules.GerenciadorOpcoesAluno
       Modules.GerenciadorOpcoesAlunoController
       Modules.GerenciadorOpcoesDisciplina
@@ -59,8 +60,9 @@ executable SICODI-exe
       Modules.MenuAluno
       Modules.MenuPrincipal
       Modules.MenuProfessor
-      Utils.AlunoTurma
+      Utils.Aluno
       Utils.Avaliacao
+      Utils.Disciplina
       Utils.Mural
       Paths_SICODI
   autogen-modules:
