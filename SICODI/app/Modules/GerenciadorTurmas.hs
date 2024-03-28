@@ -281,11 +281,12 @@ alocarAluno matriculaAluno disciplina codigo = do
 
         return $ "Adicionado " ++ matriculaAluno
 
-criarAvisoTurma :: String -> String -> String -> IO String
-criarAvisoTurma disciplina turma aviso = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/mural/"
+criarAvisoTurma :: String -> String -> IO String
+criarAvisoTurma diretorio aviso = do
+    let diretorioArquivo = diretorio ++ "mural.json"
     let dados = encode (Mural { aviso = [[aviso]] })
-    B.writeFile (diretorio ++ "mural.json") dados
+    createDirectoryIfMissing True $ takeDirectory diretorioArquivo
+    B.writeFile diretorioArquivo dados
     return "Aviso registrado no Mural da Turma!"
 
 

@@ -70,11 +70,11 @@ escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
         | (opcao == "1") = responseAlunos (diretorio ++ codigo ++ "/alunos/")
         | (opcao == "2") = exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
         | (opcao == "3") = exibirAvaliacoes (diretorio ++ codigo ++ "/avaliacoes/")
-        | (opcao == "4") = menuMural (diretorio ++ codigo ++ "/mural/") opcao
+        | (opcao == "4") = menuMural (diretorio ++ codigo ++ "/mural/") 
         | otherwise = putStrLn "Opção Inválida!" 
 
-menuMural :: String -> String -> IO()
-menuMural disciplina turma = do
+menuMural :: String -> IO()
+menuMural diretorio = do
     putStrLn "Escolha uma opção: "
     putStrLn "[1] Ver Mural"
     putStrLn "[2] Deixar aviso no Mural"
@@ -82,21 +82,21 @@ menuMural disciplina turma = do
     opcao <- getLine
 
     if opcao /= "" then do
-        escolherOpcaoMenuMural opcao disciplina turma
+        escolherOpcaoMenuMural opcao diretorio
     else putStrLn "Opção inválida!"
 
-escolherOpcaoMenuMural :: String -> String -> String -> IO()
-escolherOpcaoMenuMural opcao disciplina turma
+escolherOpcaoMenuMural :: String -> String -> IO()
+escolherOpcaoMenuMural opcao diretorio
     | (opcao == "0") = putStr ""
     | (opcao == "1") = putStrLn "ver mural"
-    | (opcao == "2") = criarAvisoTurmaController disciplina turma
+    | (opcao == "2") = criarAvisoTurmaController diretorio
     | otherwise = putStrLn "Opção inválida!"
 
-criarAvisoTurmaController :: String -> String -> IO ()
-criarAvisoTurmaController disciplina turma = do
+criarAvisoTurmaController :: String -> IO ()
+criarAvisoTurmaController diretorio = do
     putStrLn "Digite o aviso para toda turma: "
     aviso <- getLine
-    salvarAviso <- Modules.GerenciadorTurmas.criarAvisoTurma disciplina turma aviso
+    salvarAviso <- Modules.GerenciadorTurmas.criarAvisoTurma diretorio aviso
     putStrLn salvarAviso
 
 responseAlunos :: String -> IO()
