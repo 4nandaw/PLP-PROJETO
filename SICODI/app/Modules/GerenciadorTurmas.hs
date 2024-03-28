@@ -5,6 +5,7 @@ module Modules.GerenciadorTurmas where
 
 import Utils.AlunoTurma
 import Utils.Avaliacao
+import Utils.Mural
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -211,18 +212,20 @@ criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json"
     let avaliacoes = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/avaliacoes/"
+    let mural = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/mural/"
 
     validarUnico <- doesFileExist diretorio
 
     if not validarUnico then do
         createDirectoryIfMissing True $ takeDirectory diretorio
         createDirectoryIfMissing True $ takeDirectory avaliacoes
+        createDirectoryIfMissing True $ takeDirectory mural
 
         let dados = encode (Turma {nome = nome, codigo = codigo, alunos = []})
         B.writeFile diretorio dados
         return "Cadastro concluído!"
 
-    else return "Erro: Codigo de turma ja esta em uso"
+    else return "Erro: Código de turma já está em uso."
 
 excluirAluno :: String ->  String -> IO String
 excluirAluno disciplina codigo = do
@@ -277,3 +280,12 @@ alocarAluno matriculaAluno disciplina codigo = do
         B.writeFile diretorio dados
 
         return $ "Adicionado " ++ matriculaAluno
+
+criarAvisoTurma :: String -> String -> String -> IO String
+criarAvisoTurma disciplina turma aviso = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/mural/"
+    let dados = encode (Mural { aviso = [[aviso]] })
+    B.writeFile (diretorio ++ "mural.json") dados
+    return "Aviso registrado no Mural da Turma!"
+
+

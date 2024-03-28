@@ -48,7 +48,7 @@ menuMinhasTurmas disciplina = do
 
     validarTurma <- doesFileExist (diretorio ++ codigo ++ "/" ++ codigo ++ ".json") 
     
-    if not validarTurma then putStrLn "Codigo de turma invalido"
+    if not validarTurma then putStrLn "Codigo de turma inválido!"
     else do 
         if codigo /= "" then do
             putStrLn "Escolha uma opção: "
@@ -70,11 +70,11 @@ escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
         | (opcao == "1") = responseAlunos (diretorio ++ codigo ++ "/alunos/")
         | (opcao == "2") = exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
         | (opcao == "3") = exibirAvaliacoes (diretorio ++ codigo ++ "/avaliacoes/")
-        | (opcao == "4") = menuMural (diretorio ++ codigo ++ "/mural.json")
+        | (opcao == "4") = menuMural (diretorio ++ codigo ++ "/mural/") opcao
         | otherwise = putStrLn "Opção Inválida!" 
 
-menuMural :: String -> IO()
-menuMural arquivo = do
+menuMural :: String -> String -> IO()
+menuMural disciplina turma = do
     putStrLn "Escolha uma opção: "
     putStrLn "[1] Ver Mural"
     putStrLn "[2] Deixar aviso no Mural"
@@ -82,15 +82,22 @@ menuMural arquivo = do
     opcao <- getLine
 
     if opcao /= "" then do
-        escolherOpcaoMenuMural opcao arquivo
+        escolherOpcaoMenuMural opcao disciplina turma
     else putStrLn "Opção inválida!"
 
-escolherOpcaoMenuMural :: String -> String -> IO()
-escolherOpcaoMenuMural opcao arquivo
+escolherOpcaoMenuMural :: String -> String -> String -> IO()
+escolherOpcaoMenuMural opcao disciplina turma
     | (opcao == "0") = putStr ""
     | (opcao == "1") = putStrLn "ver mural"
-    | (opcao == "2") = putStrLn "deixar aviso no mural"
+    | (opcao == "2") = criarAvisoTurmaController disciplina turma
     | otherwise = putStrLn "Opção inválida!"
+
+criarAvisoTurmaController :: String -> String -> IO ()
+criarAvisoTurmaController disciplina turma = do
+    putStrLn "Digite o aviso para toda turma: "
+    aviso <- getLine
+    salvarAviso <- Modules.GerenciadorTurmas.criarAvisoTurma disciplina turma aviso
+    putStrLn salvarAviso
 
 responseAlunos :: String -> IO()
 responseAlunos diretorio = do
@@ -134,8 +141,8 @@ solicitarEAlocarAlunoController disciplina = do
 
     response <- solicitarEAlocarAluno disciplina codigo
 
-    if response /= "Codigo invalido!" then do
-        putStrLn "Informe a matricula: "
+    if response /= "Codigo inválido!" then do
+        putStrLn "Informe a matrícula: "
         m <- getLine
         alocarAlunoController m disciplina codigo
     else putStrLn ""

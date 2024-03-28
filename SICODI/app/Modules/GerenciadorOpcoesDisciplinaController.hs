@@ -71,7 +71,6 @@ verificarAluno disciplina codTurma matriculaAluno = do
     alunoValido <- Modules.GerenciadorOpcoesDisciplina.verificarAlunoTurma disciplina codTurma matriculaAluno
     return alunoValido
 
-
 solicitarEAlocarNotasController :: String -> IO()
 solicitarEAlocarNotasController disciplina = do 
     putStrLn "===== ADICIONANDO NOTAS ===== "
