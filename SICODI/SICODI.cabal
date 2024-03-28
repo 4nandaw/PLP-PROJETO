@@ -61,6 +61,7 @@ executable SICODI-exe
       Modules.MenuPrincipal
       Modules.MenuProfessor
       Utils.Aluno
+      Utils.AlunoTurma
       Utils.Avaliacao
       Utils.Disciplina
       Utils.Mural

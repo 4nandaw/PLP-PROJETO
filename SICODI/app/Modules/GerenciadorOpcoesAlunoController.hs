@@ -4,10 +4,6 @@ import System.Console.Pretty
 
 import Modules.Chat
 
-visualizarNotasController :: String -> String -> String -> IO()
-visualizarNotasController matricula disciplina turma = do 
-    situacao <- Modules.GerenciadorOpcoesAluno.visualizarNotas matricula disciplina turma
-    putStrLn situacao
 
 chatController :: String -> String -> String -> IO()
 chatController matricula disciplina turma = do
