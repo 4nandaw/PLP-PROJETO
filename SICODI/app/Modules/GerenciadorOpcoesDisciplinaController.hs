@@ -90,8 +90,10 @@ enviarMensagemController disciplina codTurma matriculaAluno = do
     putStrLn ":"
     msg <- getLine
 
+    remetente <- lerNomeProfessor disciplina
+
     if msg /= "" then do 
-        enviarMensagem disciplina codTurma disciplina matriculaAluno msg
+        enviarMensagem disciplina codTurma remetente matriculaAluno msg
         enviarMensagemController disciplina codTurma matriculaAluno
     else putStrLn "========================"
 

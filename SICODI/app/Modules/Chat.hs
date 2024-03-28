@@ -8,6 +8,9 @@ import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
 
+import Utils.Disciplina
+import Utils.Aluno
+
 data Chat = Chat {
     chat :: [[String]]
 } deriving (Generic, Show)
@@ -34,3 +37,32 @@ enviarMensagem disciplina codTurma remetente matricula mensagem = do
 
     B.writeFile diretorio chat
     
+lerNomeProfessor :: String -> IO String
+lerNomeProfessor disciplina = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/" ++ disciplina ++ ".json"
+    
+    validarDiretorio <- doesFileExist diretorio
+
+    if not validarDiretorio then return "Falha catastrofica"
+    else do 
+        dados <- B.readFile diretorio
+        nomeProfessor  <- case decode dados of
+            Just (Disciplina _ _ nomeProfessor _) -> return nomeProfessor
+            Nothing -> return ""
+
+        return nomeProfessor
+
+lerNomeAluno :: String -> IO String
+lerNomeAluno matricula = do
+    let diretorio = "./db/alunos/" ++ matricula ++ ".json"
+    
+    validarDiretorio <- doesFileExist diretorio
+
+    if not validarDiretorio then return "Falha catastrofica"
+    else do 
+        dados <- B.readFile diretorio
+        nomeAluno  <- case decode dados of
+            Just (Aluno _ nome _ _) -> return nome
+            Nothing -> return ""
+
+        return nomeAluno

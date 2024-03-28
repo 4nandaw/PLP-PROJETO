@@ -59,7 +59,9 @@ executable SICODI-exe
       Modules.MenuAluno
       Modules.MenuPrincipal
       Modules.MenuProfessor
+      Utils.Aluno
       Utils.Avaliacao
+      Utils.Disciplina
       Paths_SICODI
   autogen-modules:
       Paths_SICODI
