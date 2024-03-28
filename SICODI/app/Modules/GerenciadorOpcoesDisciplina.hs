@@ -20,6 +20,11 @@ import Numeric
 -- import Data.Binary (encode)
 
 
+
+
+
+
+
 solicitarEAlocarNotas :: String -> String -> IO Bool
 solicitarEAlocarNotas disciplina codTurma = do
     turmaValida <- doesDirectoryExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma)

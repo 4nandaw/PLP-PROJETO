@@ -2,6 +2,7 @@ module Modules.LoginController where
 import Modules.Login
 import Modules.MenuProfessor
 import Modules.MenuAluno
+import Modules.GerenciadorTurmasController
 import System.Console.Pretty
 
 -- Função para o login geral
@@ -38,7 +39,7 @@ loginProfessorController = do
     loginValido <- Modules.Login.loginProfessor nomeDisciplina senha
     if (loginValido) then do 
         putStrLn (color Green "\nLogin realizado com sucesso!\n")
-        Modules.MenuProfessor.exibirMenuProfessor nomeDisciplina
+        Modules.GerenciadorTurmasController.opcoesDeTurmas nomeDisciplina
     else putStrLn (color Red "Usuário ou senha inválidos")
 
 loginAlunoController :: IO()

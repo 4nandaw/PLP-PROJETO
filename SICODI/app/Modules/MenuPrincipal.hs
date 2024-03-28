@@ -15,7 +15,7 @@ escolherOpcao = do
     
 printarMenu :: IO()
 printarMenu = do
-    putStrLn (color Yellow . style Bold $ "MENU INICIAL =======")
+    putStrLn (color Yellow . style Bold $ "\nMENU INICIAL =======")
     putStrLn "Digite uma opção: "
     putStrLn "[0] Sair"
     putStrLn "[1] Login"
@@ -25,7 +25,7 @@ printarMenu = do
 
 escolher :: String -> IO()
 escolher escolha 
-        | (escolha == "0") = putStrLn (color Green "Programa finalizado!")
+        | (escolha == "0") = putStr (color Green "Programa finalizado!")
         | (escolha == "1") = Modules.LoginController.loginGeral
         | (escolha == "2") = Modules.CadastroController.cadastroGeral
         | otherwise = putStrLn (color Red "Opção Inválida!")

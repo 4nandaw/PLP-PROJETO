@@ -28,3 +28,11 @@ escolherValorOpcao escolha disciplina
         | (escolha == "2") = opcoesDeTurmas disciplina
         | otherwise = putStrLn (color Red "Opção Inválida!")
        
+
+-- [1] Adicionar notas
+-- [2] Adicionar falta a aluno(a)
+-- [3] Chat
+-- [1] Ver alunos da turma
+-- [2] Ver relatório da turma
+-- [3] Ver avaliações
+-- [4] Mural da Turma

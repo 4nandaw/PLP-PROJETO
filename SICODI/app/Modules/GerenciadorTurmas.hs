@@ -3,9 +3,11 @@
 
 module Modules.GerenciadorTurmas where
 
+import Utils.Aluno
 import Utils.AlunoTurma
 import Utils.Avaliacao
 import Utils.Mural
+import Utils.Turma
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -14,23 +16,6 @@ import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 import Control.Monad (when)
 
-data Turma = Turma {
-    nome :: String,
-    codigo :: String,
-    alunos :: [String]
-} deriving (Generic, Show)
-
-data Aluno = Aluno {
-    nome :: String,
-    matricula :: String,
-    senha :: String,
-    turmas :: [[String]]
-} deriving (Generic, Show)
-
-instance ToJSON Turma
-instance ToJSON Aluno
-
-instance FromJSON Aluno
 
 listarTurmas :: String -> IO String
 listarTurmas disciplina = do
