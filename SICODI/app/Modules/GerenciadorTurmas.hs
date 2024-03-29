@@ -16,6 +16,7 @@ import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 import Control.Monad (when)
 import Data.List (intercalate)
+import Data.Bool (Bool)
 
 
 listarTurmas :: String -> IO String
@@ -42,158 +43,7 @@ ajustarExibirTurmas turma disciplina = do
 
         return (turma ++ " ------ " ++ (show numAlunos) ++ " aluno(s)")
     else return ""
-
-verAlunos :: String -> IO String
-verAlunos diretorio = do
-    listaDeAlunos <- getDirectoryContents diretorio
-
-    createDirectoryIfMissing True $ takeDirectory diretorio
-
-    response <- mapM (\x -> (exibirAluno x diretorio)) listaDeAlunos
-
-    return (unlines $ response)
-
-exibirAluno :: String -> String -> IO String
-exibirAluno matricula diretorio = do
-    if matricula /= "." && matricula /= ".." then do
-        let diretorioInfo = "./db/alunos/" ++ matricula
-        let diretorioA = diretorio ++ matricula
-
-        aluno <- B.readFile diretorioInfo
-        alunoFaltas <- B.readFile diretorioA
-
-        nome <- case decode aluno of 
-            Just (Aluno nome _ _ _) -> return $ nome
-            Nothing -> return ""
-
-        matriculaDecode <- case decode aluno of 
-            Just (Aluno _ matricula _ _ ) -> return $ matricula
-            Nothing -> return ""
-
-        faltas <- case decode alunoFaltas of 
-            Just (AlunoTurma _ _ _ _ faltas) -> return $ faltas
-            Nothing -> return 0
-
-        return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
-      else return ""
-
-mediaFaltas :: String -> IO String
-mediaFaltas diretorio = do
-    listaDeAlunos <- getDirectoryContents diretorio
-
-    let faltasAlunos = mapM (\x -> exibirFaltas x diretorio) listaDeAlunos
-    faltas <- faltasAlunos
-
-    let faltasValidas = filter (> -1) faltas
-    let tamanho = length faltasValidas
-    let totalFaltas = sum faltasValidas
-    let media = fromIntegral totalFaltas / fromIntegral tamanho
-
-    return $ "Média de faltas: " ++ show media
-
-exibirFaltas :: String -> String -> IO Int
-exibirFaltas matricula diretorio = do
-    if matricula /= "." && matricula /= ".." then do
-        let diretorioAluno = diretorio ++ "/" ++ matricula
-        
-        alunoFaltas <- B.readFile diretorioAluno
-
-        case decode alunoFaltas of 
-            Just (AlunoTurma _ _ _ _ faltas) -> return faltas
-            _ -> return (-1)
-    else return (-1)
-
-mediaNotas :: String -> IO String
-mediaNotas diretorio = do
-    listaDeAlunos <- getDirectoryContents diretorio
-
-    let notasAlunos = mapM (\x -> exibirNotas x diretorio) listaDeAlunos
-    notas <- notasAlunos
-
-    let notasValidas = filter (> -1) notas
-    let tamanho = length notasValidas
-    let totalNotas = sum notasValidas
-    let media = totalNotas / fromIntegral tamanho
-
-    return $ "Média de notas: " ++ show media
-
-exibirNotas :: String -> String -> IO Float
-exibirNotas matricula diretorio = do
-    if matricula /= "." && matricula /= ".." then do
-        let diretorioAluno = diretorio ++ "/" ++ matricula
-        
-        alunoNotas <- B.readFile diretorioAluno
-
-        case decode alunoNotas of 
-            Just (AlunoTurma _ _ _ notas _) -> return notas
-            _ -> return (-1)
-    else return (-1)
-
-verAvaliacoes :: String -> IO String
-verAvaliacoes diretorio = do
-    listaDeAvaliacoes <- getDirectoryContents diretorio
-
-    createDirectoryIfMissing True $ takeDirectory diretorio
-
-    response <- mapM (\x -> (exibirAvaliacao x diretorio)) listaDeAvaliacoes
-
-    return (unlines $ response)
-
-exibirAvaliacao :: String -> String -> IO String
-exibirAvaliacao arquivo diretorio = do
-    if arquivo /= "." && arquivo /= ".." then do
-        let caminho = diretorio ++ arquivo
-
-        avaliacao <- B.readFile caminho
-
-        nota <- case decode avaliacao of 
-            Just (Avaliacao nota _) -> return $ show nota
-            Nothing -> return ""
-
-        comentario <- case decode avaliacao of 
-            Just (Avaliacao _ comentario) -> return comentario
-            Nothing -> return ""
-
-        notaFormatada <- formataNota nota
-
-        return (notaFormatada ++ "\n" ++ "Comentário: " ++ comentario ++ "\n")
-    else return ""
-
-formataNota :: String -> IO String
-formataNota nota
-    | (nota == "1") = return "⭑☆☆☆☆"
-    | (nota == "2") = return "⭑⭑☆☆☆"
-    | (nota == "3") = return "⭑⭑⭑☆☆"
-    | (nota == "4") = return "⭑⭑⭑⭑☆"
-    | (nota == "5") = return "⭑⭑⭑⭑⭑"
-    | otherwise = return ""
-
-mediaAvaliacoes :: String -> IO String
-mediaAvaliacoes diretorio = do
-    listaDeAvaliacoes <- getDirectoryContents diretorio
-
-    let notasAvaliacoes = mapM (\x -> exibirNota x diretorio) listaDeAvaliacoes
-    notas <- notasAvaliacoes
-
-    let notasValidas = filter (/= -1) notas
-    let quantidade = length notasValidas
-    let somaNotas = sum notasValidas
-    let media = fromIntegral somaNotas / fromIntegral quantidade
-
-    return $ "Nota média: " ++ show media
-
-exibirNota :: String -> String -> IO Int
-exibirNota arquivo diretorio = do
-    if arquivo /= "." && arquivo /= ".." then do
-        let caminho = diretorio ++ arquivo
-
-        avaliacao <- B.readFile caminho
-
-        case decode avaliacao of 
-            Just (Avaliacao nota _) -> return nota
-            _ -> return (-1)
-    else return (-1)
-
+    
 criarTurma :: String -> String -> String -> IO String
 criarTurma disciplina nome codigo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json"
@@ -212,6 +62,14 @@ criarTurma disciplina nome codigo = do
         return "Cadastro concluído!"
 
     else return "Erro: Código de turma já está em uso."
+
+validarTurma :: String -> String -> IO Bool
+validarTurma disciplina codTurma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/"
+
+    validacao <- doesFileExist (diretorio ++ codTurma ++ "/" ++ codTurma ++ ".json") 
+
+    return validacao
 
 excluirAluno :: String ->  String -> IO Bool
 excluirAluno disciplina codigo = do

@@ -15,6 +15,8 @@ import System.FilePath.Posix (takeDirectory)
 
 cadastroDisciplina :: String -> String -> String -> String -> IO Bool
 cadastroDisciplina nomeProfessor matriculaProfessor senha nomeDisciplina = do
+    createDirectoryIfMissing True $ takeDirectory "./db/disciplinas/"
+
     let diretorio = "./db/disciplinas/" ++ nomeDisciplina ++ "/" ++ nomeDisciplina ++ ".json"
 
     validarUnico <- doesFileExist diretorio
@@ -30,7 +32,8 @@ cadastroDisciplina nomeProfessor matriculaProfessor senha nomeDisciplina = do
 
 cadastroAluno :: String -> String -> String-> IO Bool
 cadastroAluno nome matricula senha = do
-    
+    createDirectoryIfMissing True $ takeDirectory "./db/alunos/"
+
     validarUnico <- doesFileExist ("./db/alunos/" ++ matricula ++ ".json")
 
     if not validarUnico then do
