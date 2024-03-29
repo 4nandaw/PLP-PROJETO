@@ -125,6 +125,7 @@ menuTurmaEscolhida disciplina codTurma = do
     putStrLn "[5] Ver avaliações"
     putStrLn "[6] Mural da Turma"
     putStrLn "[7] Chat"
+    putStrLn "[8] Materiais Didáticos"
     putStrLn "==============================================="
     opcao <- getLine
 
@@ -153,6 +154,9 @@ escolherOpcaoMenuMinhasTurmas opcao disciplina codTurma
             menuTurmaEscolhida disciplina codTurma
         | (opcao == "7") = do
             chatController disciplina codTurma
+            menuTurmaEscolhida disciplina codTurma
+        | (opcao == "8") = do
+            menuMaterialDidatico disciplina codTurma
             menuTurmaEscolhida disciplina codTurma
         | otherwise = do
             putStrLn "Opção Inválida!" 
@@ -217,3 +221,40 @@ exibirMuralController :: String -> String -> IO()
 exibirMuralController disciplina codTurma = do
     avisos <- Modules.GerenciadorOpcoesDisciplina.exibirAvisosMural disciplina codTurma
     putStrLn avisos
+
+menuMaterialDidatico :: String -> String -> IO()
+menuMaterialDidatico disciplina codTurma = do
+    putStrLn "\nEscolha uma opção: "
+    putStrLn "[0] Voltar"
+    putStrLn "[1] Ver Materiais Didáticos"
+    putStrLn "[2] Adicionar novo Material Didático para turma"
+    putStrLn "==============================================="
+    opcao <- getLine
+
+    if opcao /= "" then do
+        escolherOpcaoMaterialDidatico opcao disciplina codTurma
+    else putStrLn "Opção inválida!"
+
+escolherOpcaoMaterialDidatico :: String -> String -> String -> IO()
+escolherOpcaoMaterialDidatico opcao disciplina codTurma
+    | (opcao == "0") = putStr ""
+    | (opcao == "1") = putStrLn "\nNão implementado.\n"
+    | (opcao == "2") = criarMaterialDidaticoController disciplina codTurma
+    | otherwise = putStrLn "\nOpção inválida!\n"
+
+criarMaterialDidaticoController :: String -> String -> IO()
+criarMaterialDidaticoController disciplina codTurma = do
+    putStrLn (color Magenta "\nInsira o TÍTULO do Material Didático para toda turma ou ENTER para sair: ")
+    titulo <- getLine
+
+    if null titulo then
+        putStrLn (color Green "Saindo de Materiais Didáticos...\n")
+    else do
+        putStrLn (color Magenta"\nInsira o CONTEÚDO do Material Didático para toda turma ou ENTER para sair: ")
+        conteudo <- getLine
+
+        if null conteudo then
+            putStrLn (color Green "Saindo de Materiais Didáticos...\n")
+        else do
+            salvarMaterial <- Modules.GerenciadorOpcoesDisciplina.criarMaterialDidatico disciplina codTurma titulo conteudo
+            putStrLn salvarMaterial
