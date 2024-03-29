@@ -161,27 +161,30 @@ escolherOpcaoMenuMinhasTurmas opcao disciplina codTurma
 menuMural :: String -> String -> IO()
 menuMural disciplina codTurma = do
     putStrLn "Escolha uma opção: "
+    putStrLn "[0] Voltar"
     putStrLn "[1] Ver Mural"
     putStrLn "[2] Deixar aviso no Mural"
     putStrLn "==============================================="
     opcao <- getLine
 
     if opcao /= "" then do
-        escolherOpcaoMenuMural opcao  disciplina codTurma
+        escolherOpcaoMenuMural opcao disciplina codTurma
     else putStrLn "Opção inválida!"
 
 escolherOpcaoMenuMural :: String -> String -> String -> IO()
-escolherOpcaoMenuMural opcao  disciplina codTurma
+escolherOpcaoMenuMural opcao disciplina codTurma
     | (opcao == "0") = putStr ""
-    | (opcao == "1") = putStrLn "ver mural"
-    | (opcao == "2") = criarAvisoTurmaController disciplina codTurma
+    | (opcao == "1") = exibirMural disciplina codTurma
+    | (opcao == "2") = do
+        criarAvisoMuralController disciplina codTurma
+        menuMural disciplina codTurma
     | otherwise = putStrLn "Opção inválida!"
 
-criarAvisoTurmaController :: String -> String -> IO ()
-criarAvisoTurmaController disciplina codTurma = do
+criarAvisoMuralController :: String -> String -> IO ()
+criarAvisoMuralController disciplina codTurma = do
     putStrLn "Digite o aviso para toda turma: "
     aviso <- getLine
-    salvarAviso <- Modules.GerenciadorOpcoesDisciplina.criarAvisoTurma disciplina codTurma aviso
+    salvarAviso <- Modules.GerenciadorOpcoesDisciplina.criarAvisoMural disciplina codTurma aviso
     putStrLn salvarAviso
 
 responseAlunos :: String -> String -> IO()

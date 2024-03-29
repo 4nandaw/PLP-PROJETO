@@ -15,6 +15,7 @@ import Data.Aeson
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 import Control.Monad (when)
+import Data.List (intercalate)
 import Data.Bool (Bool)
 
 
@@ -87,8 +88,6 @@ removerAluno disciplina matricula codigo = do
         else do
             removeFile diretorioAluno
             return "Aluno removido!"
-
-
 
 excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do

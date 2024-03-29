@@ -1,5 +1,6 @@
 module Modules.GerenciadorOpcoesAlunoController where
 import Modules.GerenciadorOpcoesAluno
+import Modules.GerenciadorOpcoesDisciplina
 import System.Console.Pretty
 
 import Modules.Chat
@@ -32,8 +33,9 @@ menuTurmaAluno matricula disciplina turma = do
     putStrLn "Digite uma opção:"
     putStrLn "[0] Voltar"
     putStrLn "[1] Ver notas"
-    putStrLn "[2] Chat"
-    putStrLn "[3] Avaliar professor(a)"
+    putStrLn "[2] Ver Mural"
+    putStrLn "[3] Chat"
+    putStrLn "[4] Avaliar professor(a)"
     putStrLn (color Blue . style Bold $ "==============================================================")
     escolherOpcaoAluno matricula disciplina turma
 
@@ -46,16 +48,23 @@ escolherOpcaoAluno matricula disciplina turma = do
 
 escolherOpcaoMenuTurmaAluno :: String -> String -> String -> String -> IO()
 escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
-        | (escolha == "0") = putStrLn " "
+        | (escolha == "0") = putStrLn ""
         | (escolha == "1") = visualizarNotasController matricula disciplina turma
-        | (escolha == "2") = chatController matricula disciplina turma
-        | (escolha == "3") = menuAvaliacoes matricula disciplina turma
+        | (escolha == "2") = exibirMural disciplina turma
+        | (escolha == "3") = chatController matricula disciplina turma
+        | (escolha == "4") = menuAvaliacoes matricula disciplina turma
         | otherwise = putStrLn (color Red "Opção Inválida!")
 
 visualizarNotasController :: String -> String -> String -> IO()
 visualizarNotasController matricula disciplina turma = do 
     situacao <- Modules.GerenciadorOpcoesAluno.visualizarNotas matricula disciplina turma
     putStrLn situacao
+
+exibirMural :: String -> String -> IO()
+exibirMural disciplina turma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/mural/"
+    avisos <- Modules.GerenciadorOpcoesDisciplina.exibirAvisosMural diretorio
+    putStrLn avisos
 
 menuAvaliacoes :: String -> String -> String -> IO()
 menuAvaliacoes matricula disciplina turma = do
