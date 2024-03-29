@@ -59,7 +59,6 @@ executable SICODI-exe
       Modules.LoginController
       Modules.MenuAluno
       Modules.MenuPrincipal
-      Modules.MenuProfessor
       Utils.Aluno
       Utils.AlunoTurma
       Utils.Avaliacao

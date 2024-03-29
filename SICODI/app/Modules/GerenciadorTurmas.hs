@@ -15,6 +15,7 @@ import Data.Aeson
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 import Control.Monad (when)
+import Data.List (intercalate)
 
 
 listarTurmas :: String -> IO String
