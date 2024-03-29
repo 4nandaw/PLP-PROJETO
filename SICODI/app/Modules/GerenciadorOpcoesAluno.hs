@@ -47,8 +47,8 @@ acessarChatAluno matricula disciplina turma = do
 
 
 visualizarNotas :: String -> String -> String -> IO String
-visualizarNotas matricula disciplina turma = do
-    situacao <- OpcoesDisciplina.situacaoAluno disciplina turma matricula
+visualizarNotas matricula disciplina codTurma = do
+    situacao <- OpcoesDisciplina.situacaoAluno disciplina codTurma matricula
     return situacao
                     
 salvarAvaliacao :: String -> Int -> String -> String -> IO String

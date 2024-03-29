@@ -2,35 +2,13 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 module Modules.Login where
 
+import Utils.Disciplina
+import Utils.Aluno
 import Data.Aeson 
-import Modules.MenuProfessor
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
 import System.Directory(getCurrentDirectory, doesFileExist)
 import Data.Text (Text)
-
--- Definição do tipo Disciplina
-data Disciplina = Disciplina
-    {   nome :: String,
-        nomeProfessor :: String,
-        matriculaProfessor :: String,
-        senha :: String }
-    deriving (Generic, Show)
-
---Definição do tipo Aluno
-data Aluno = Aluno
-    {   nome :: String,
-        matricula :: String,
-        senha :: String
-    } deriving(Generic, Show)
-
---Instâncias de Disciplina/Aluno para Json
-instance ToJSON Disciplina
-instance ToJSON Aluno
-
--- Instâncias de Json para Disciplina/Aluno
-instance FromJSON Disciplina
-instance FromJSON Aluno
 
 -- Função para verificar se um arquivo existe
 arquivoDisciplinaExiste :: String -> IO Bool
@@ -50,7 +28,7 @@ puxarSenhaAluno :: String -> IO (Maybe String)
 puxarSenhaAluno caminho = do
     dados <- B.readFile caminho
     case decode dados of
-        Just (Aluno _ _ senha) -> return $ Just senha
+        Just (Aluno _ _ senha _) -> return $ Just senha
         Nothing -> return Nothing
 
 

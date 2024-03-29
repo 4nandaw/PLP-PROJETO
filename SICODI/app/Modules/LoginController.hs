@@ -1,7 +1,7 @@
 module Modules.LoginController where
 import Modules.Login
-import Modules.MenuProfessor
 import Modules.MenuAluno
+import Modules.GerenciadorTurmasController
 import System.Console.Pretty
 
 -- Função para o login geral
@@ -37,8 +37,8 @@ loginProfessorController = do
     senha <- getLine
     loginValido <- Modules.Login.loginProfessor nomeDisciplina senha
     if (loginValido) then do 
-        putStrLn (color Green "Login realizado com sucesso!")
-        Modules.MenuProfessor.exibirMenuProfessor nomeDisciplina
+        putStrLn (color Green "\nLogin realizado com sucesso!\n")
+        Modules.GerenciadorTurmasController.opcoesDeTurmas nomeDisciplina
     else putStrLn (color Red "Usuário ou senha inválidos")
 
 loginAlunoController :: IO()
@@ -49,6 +49,6 @@ loginAlunoController = do
     senha <- getLine
     loginValido <- Modules.Login.loginAluno matricula senha
     if (loginValido) then do
-        putStrLn (color Green "Login realizado com sucesso!"     )
+        putStrLn (color Green "\nLogin realizado com sucesso!\n")
         Modules.MenuAluno.exibirMenuAluno matricula
     else putStrLn (color Red "Usuário ou senha inválidos")

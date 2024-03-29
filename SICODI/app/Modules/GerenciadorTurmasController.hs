@@ -1,11 +1,14 @@
 module Modules.GerenciadorTurmasController where
+import Modules.GerenciadorOpcoesDisciplinaController
 import Modules.GerenciadorTurmas
 import System.Directory
 import System.Console.Pretty
+import qualified Data.Char
+import Data.Char (toUpper)
 
 opcoesDeTurmas :: String -> IO()
 opcoesDeTurmas disciplina = do
-    putStrLn (color Magenta . style Bold $ "MENU DE TURMAS =====")
+    putStrLn (color Magenta . style Bold $ "MENU DE " ++ (map toUpper disciplina) ++ " =====")
     putStrLn "Digite uma opção: "
     putStrLn "[0] Voltar"
     putStrLn "[1] Minhas turmas"
@@ -42,142 +45,69 @@ menuMinhasTurmas disciplina = do
 
     putStrLn (color Magenta "===============================================")
     putStrLn (color Magenta "Informe um codigo de turma, ou ENTER para sair:")
-    codigo <- getLine
+    codTurma <- getLine
 
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/"
+    if codTurma /= "" then do
+        validacao <- validarTurma disciplina codTurma
 
-    validarTurma <- doesFileExist (diretorio ++ codigo ++ "/" ++ codigo ++ ".json") 
-    
-    if not validarTurma then putStrLn (color Red "Codigo de turma invalido")
-    else do 
-        if codigo /= "" then do
-            putStrLn "Escolha uma opção: "
-            putStrLn "[1] Ver alunos da turma"
-            putStrLn "[2] Ver relatório da turma"
-            putStrLn "[3] Ver avaliações"
-            putStrLn "[4] Mural da Turma"
-            putStrLn "==============================================="
-            opcao <- getLine
-
-            if codigo /= "" then do
-                escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
-            else putStrLn ""
-        else putStrLn "" 
-
-escolherOpcaoMenuMinhasTurmas :: String -> String -> String -> IO()
-escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
-        | (opcao == "0") = putStr ""
-        | (opcao == "1") = responseAlunos (diretorio ++ codigo ++ "/alunos/")
-        | (opcao == "2") = exibirRelatorio (diretorio ++ codigo ++ "/alunos/")
-        | (opcao == "3") = exibirAvaliacoes (diretorio ++ codigo ++ "/avaliacoes/")
-        | (opcao == "4") = menuMural (diretorio ++ codigo ++ "/mural/") 
-        | otherwise = putStrLn "Opção Inválida!" 
-
-menuMural :: String -> IO()
-menuMural diretorio = do
-    putStrLn "Escolha uma opção: "
-    putStrLn "[1] Ver Mural"
-    putStrLn "[2] Deixar aviso no Mural"
-    putStrLn "==============================================="
-    opcao <- getLine
-
-    if opcao /= "" then do
-        escolherOpcaoMenuMural opcao diretorio
-    else putStrLn "Opção inválida!"
-
-escolherOpcaoMenuMural :: String -> String -> IO()
-escolherOpcaoMenuMural opcao diretorio
-    | (opcao == "0") = putStr ""
-    | (opcao == "1") = putStrLn "ver mural"
-    | (opcao == "2") = criarAvisoTurmaController diretorio
-    | otherwise = putStrLn "Opção inválida!"
-
-criarAvisoTurmaController :: String -> IO ()
-criarAvisoTurmaController diretorio = do
-    putStrLn "Digite o aviso para toda turma: "
-    aviso <- getLine
-    salvarAviso <- Modules.GerenciadorTurmas.criarAvisoTurma diretorio aviso
-    putStrLn salvarAviso
-
-responseAlunos :: String -> IO()
-responseAlunos diretorio = do
-    alunos <- verAlunos diretorio
-    putStrLn alunos    
-
-exibirRelatorio :: String -> IO()
-exibirRelatorio diretorio = do
-    mediaF <- mediaFaltas diretorio
-    mediaN <- mediaNotas diretorio
-    putStrLn "\nRELATÓRIO DA TURMA ============================\n"
-    putStrLn mediaN
-    putStrLn ""
-    putStrLn mediaF
-    putStrLn "\n==============================================="
-
-exibirAvaliacoes :: String -> IO()
-exibirAvaliacoes diretorio = do
-    media <- mediaAvaliacoes diretorio
-    feedbacks <- verAvaliacoes diretorio
-    putStrLn "\nAVALIAÇÕES ===================================="
-    putStrLn $ "\n" ++ media
-    putStrLn feedbacks
-    putStrLn "==============================================="
-
+        if not validacao then putStrLn (color Red "Codigo de turma invalido")
+        else do 
+                Modules.GerenciadorOpcoesDisciplinaController.menuTurmaEscolhida disciplina codTurma
+    else putStr ""
+ 
 criarTurmaController :: String -> IO()
 criarTurmaController disciplina = do
     putStrLn (color Magenta "CADASTRO DE TURMA")
     putStrLn (color Magenta "Nome da turma: ")
     nome <- getLine
     putStrLn (color Magenta "Codigo da turma: ")
-    codigo <- getLine
+    codTurma <- getLine
 
-    response <- criarTurma disciplina nome codigo
+    response <- criarTurma disciplina nome codTurma
     putStrLn response
 
 solicitarEAlocarAlunoController :: String -> IO()
 solicitarEAlocarAlunoController disciplina = do
     putStrLn (color Magenta "Informe o codigo da turma: ")
-    codigo <- getLine
+    codTurma <- getLine
 
-    response <- solicitarEAlocarAluno disciplina codigo
+    response <- solicitarEAlocarAluno disciplina codTurma
 
     if response /= "Código inválido!" then do
         putStrLn (color Magenta "Informe a matricula: ")
         
         m <- getLine
-        alocarAlunoController m disciplina codigo
+        alocarAlunoController m disciplina codTurma
     else putStrLn ""
 
 alocarAlunoController :: String -> String -> String -> IO()
-alocarAlunoController matricula disciplina codigo = do
+alocarAlunoController matricula disciplina codTurma = do
     if matricula == "" then putStrLn (color Green "Registro finalizado!")
     else do
-        alocarAluno matricula disciplina codigo
+        alocarAluno matricula disciplina codTurma
 
         putStrLn (color Magenta "Informe o proximo aluno (matricula) ou ENTER para finalizar: ")
         m <- getLine
         
-        alocarAlunoController m disciplina codigo
+        alocarAlunoController m disciplina codTurma
 
 excluirAlunoController :: String -> IO()
 excluirAlunoController disciplina = do
     putStrLn (color Magenta "Informe o codigo da turma: ")
-    codigo <- getLine
+    codTurma <- getLine
     
-    response <- excluirAluno disciplina codigo
-    if response /= "Turma invalida!" then do 
+    response <- excluirAluno disciplina codTurma
+    if response then do 
         putStrLn (color Magenta "Informe a matricula do aluno: ")
         matricula <- getLine
 
-        responseAluno <- removerAluno disciplina matricula codigo
+        responseAluno <- removerAluno disciplina matricula codTurma
         putStrLn responseAluno
     else putStrLn (color Red "Turma invalida!")
-
 
 excluirTurmaController :: String -> IO()
 excluirTurmaController disciplina = do
     putStrLn (color Magenta "Informe o codigo da turma a ser excluida: ")
-    codigo <- getLine
-
-    response <- excluirTurma disciplina codigo
+    codTurma <- getLine
+    response <- excluirTurma disciplina codTurma
     putStrLn response
