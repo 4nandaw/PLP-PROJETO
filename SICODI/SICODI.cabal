@@ -64,6 +64,7 @@ executable SICODI-exe
       Utils.Avaliacao
       Utils.Chat
       Utils.Disciplina
+      Utils.MaterialDidatico
       Utils.Mural
       Utils.Turma
       Paths_SICODI

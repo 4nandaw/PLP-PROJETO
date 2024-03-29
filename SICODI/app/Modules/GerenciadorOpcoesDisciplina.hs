@@ -10,6 +10,7 @@ import Utils.Mural
 import Utils.Avaliacao
 import Utils.Aluno
 import Utils.Disciplina
+import Utils.MaterialDidatico
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -21,6 +22,7 @@ import Text.Read (readMaybe)
 import Text.Printf
 import Numeric 
 import Data.List (intercalate)
+import System.Console.Pretty
 -- import Data.Binary (encode)
 
 
@@ -396,3 +398,25 @@ exibirAvisosMural disciplina codTurma = do
             Nothing -> return "Erro ao decodificar o Mural"
     else
         return "Nenhuma mensagem no Mural."
+
+criarMaterialDidatico :: String -> String -> String -> String -> IO String
+criarMaterialDidatico disciplina codTurma titulo conteudo = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/materiais/"
+    let diretorioArquivo = diretorio ++ "materiaisDidaticos.json"
+    createDirectoryIfMissing True $ takeDirectory diretorioArquivo
+    
+    existeArquivo <- doesFileExist diretorioArquivo
+    
+    if existeArquivo then do
+        dadosMaterial <- B.readFile diretorioArquivo
+        case decode dadosMaterial of
+            Just (MaterialDidatico materiais) -> do
+                let novoMaterial = (titulo, conteudo)
+                let materiaisAtualizados = MaterialDidatico (materiais ++ [novoMaterial])
+                B.writeFile diretorioArquivo (encode materiaisAtualizados)
+                return (color Green "\nMaterial didático registrado com sucesso!\n")
+            Nothing -> return (color Red "\nErro!\n")
+    else do
+        let novoMaterial = MaterialDidatico [(titulo, conteudo)]
+        B.writeFile diretorioArquivo (encode novoMaterial)
+        return (color Green "\nMaterial didático registrado com sucesso!\n")
