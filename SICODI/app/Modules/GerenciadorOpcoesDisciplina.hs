@@ -431,8 +431,8 @@ exibirMaterialDidatico disciplina codTurma = do
         dadosMaterial <- B.readFile diretorioArquivo
         case decode dadosMaterial of
             Just (MaterialDidatico materiais) -> do
-                let formattedMaterials = formatarMateriais materiais
-                return $ (color White . style Bold $ "\n===== MATERIAIS DIDÁTICOS =====\n\n") ++ formattedMaterials
+                let listaMateriais = formatarMateriais $ reverse materiais
+                return $ (color White . style Bold $ "\n===== MATERIAIS DIDÁTICOS =====\n\n") ++ listaMateriais
             Nothing -> return (color Red "\nErro ao decodificar os materiais didáticos!\n")
     else
         return (color Red "\nArquivo de materiais didáticos não encontrado!\n")
