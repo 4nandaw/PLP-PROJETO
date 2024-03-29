@@ -230,8 +230,6 @@ removerAluno disciplina matricula codigo = do
             removeFile diretorioAluno
             return "Aluno removido!"
 
-
-
 excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")

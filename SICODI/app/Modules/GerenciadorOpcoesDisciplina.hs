@@ -18,6 +18,7 @@ import Data.Maybe (isJust)
 import Text.Read (readMaybe)
 import Text.Printf
 import Numeric 
+import Data.List (intercalate)
 -- import Data.Binary (encode)
 
 
@@ -165,8 +166,8 @@ adicionarFalta disciplina codTurma matriculaAluno = do
             return "Faltas do aluno atualizada."
         Nothing -> return "Erro!!!"
 
-criarAvisoTurma :: String -> String -> IO String
-criarAvisoTurma diretorio novoAviso = do
+criarAvisoMural :: String -> String -> IO String
+criarAvisoMural diretorio novoAviso = do
 
     let diretorioArquivo = diretorio ++ "mural.json"
     createDirectoryIfMissing True $ takeDirectory diretorioArquivo
@@ -187,3 +188,17 @@ criarAvisoTurma diretorio novoAviso = do
         let mural = encode $ Mural { aviso = [novoAviso] }
         B.writeFile diretorioArquivo mural
         return "Aviso registrado no Mural da Turma!"
+
+exibirAvisosMural :: String -> IO String
+exibirAvisosMural diretorio = do
+    let diretorioArquivo = diretorio ++ "mural.json"
+    muralValido <- doesFileExist diretorioArquivo
+    if muralValido then do
+        dadosMural <- B.readFile diretorioArquivo
+        case decode dadosMural of
+            Just (Mural avisos) -> do
+                let mensagens = intercalate "\n\n" (reverse avisos)
+                return $ "\n==== MENSAGENS DO MURAL\n\n" ++ mensagens ++ "\n"
+            Nothing -> return "Erro ao decodificar o Mural"
+    else
+        return "Nenhuma mensagem no Mural."

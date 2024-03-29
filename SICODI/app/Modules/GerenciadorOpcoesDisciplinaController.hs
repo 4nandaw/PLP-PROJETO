@@ -193,15 +193,17 @@ menuMural diretorio = do
 escolherOpcaoMenuMural :: String -> String -> IO()
 escolherOpcaoMenuMural opcao diretorio
     | (opcao == "0") = putStr ""
-    | (opcao == "1") = putStrLn "ver mural"
-    | (opcao == "2") = criarAvisoTurmaController diretorio
+    | (opcao == "1") = do
+        avisos <- Modules.GerenciadorOpcoesDisciplina.exibirAvisosMural diretorio
+        putStrLn avisos
+    | (opcao == "2") = criarAvisoMuralController diretorio
     | otherwise = putStrLn "Opção inválida!"
 
-criarAvisoTurmaController :: String -> IO ()
-criarAvisoTurmaController diretorio = do
+criarAvisoMuralController :: String -> IO ()
+criarAvisoMuralController diretorio = do
     putStrLn "Digite o aviso para toda turma: "
     aviso <- getLine
-    salvarAviso <- Modules.GerenciadorOpcoesDisciplina.criarAvisoTurma diretorio aviso
+    salvarAviso <- Modules.GerenciadorOpcoesDisciplina.criarAvisoMural diretorio aviso
     putStrLn salvarAviso
 
 responseAlunos :: String -> IO()
