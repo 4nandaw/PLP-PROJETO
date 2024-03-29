@@ -50,7 +50,7 @@ escolherOpcaoMenuTurmaAluno :: String -> String -> String -> String -> IO()
 escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
         | (escolha == "0") = putStrLn ""
         | (escolha == "1") = visualizarNotasController matricula disciplina turma
-        | (escolha == "2") = exibirMural disciplina turma
+        | (escolha == "2") = exibirMuralAlunoController disciplina turma
         | (escolha == "3") = chatController matricula disciplina turma
         | (escolha == "4") = menuAvaliacoes matricula disciplina turma
         | otherwise = putStrLn (color Red "Opção Inválida!")
@@ -60,10 +60,9 @@ visualizarNotasController matricula disciplina turma = do
     situacao <- Modules.GerenciadorOpcoesAluno.visualizarNotas matricula disciplina turma
     putStrLn situacao
 
-exibirMural :: String -> String -> IO()
-exibirMural disciplina turma = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/mural/"
-    avisos <- Modules.GerenciadorOpcoesDisciplina.exibirAvisosMural diretorio
+exibirMuralAlunoController :: String -> String -> IO()
+exibirMuralAlunoController disciplina codTurma = do
+    avisos <- Modules.GerenciadorOpcoesDisciplina.exibirAvisosMural disciplina codTurma
     putStrLn avisos
 
 menuAvaliacoes :: String -> String -> String -> IO()

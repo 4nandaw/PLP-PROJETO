@@ -174,7 +174,7 @@ menuMural disciplina codTurma = do
 escolherOpcaoMenuMural :: String -> String -> String -> IO()
 escolherOpcaoMenuMural opcao disciplina codTurma
     | (opcao == "0") = putStr ""
-    | (opcao == "1") = exibirMural disciplina codTurma
+    | (opcao == "1") = exibirMuralController disciplina codTurma
     | (opcao == "2") = do
         criarAvisoMuralController disciplina codTurma
         menuMural disciplina codTurma
@@ -212,3 +212,8 @@ exibirAvaliacoes disciplina codTurma = do
     putStrLn media
     putStrLn feedbacks
     putStrLn "==============================================="
+
+exibirMuralController :: String -> String -> IO()
+exibirMuralController disciplina codTurma = do
+    avisos <- Modules.GerenciadorOpcoesDisciplina.exibirAvisosMural disciplina codTurma
+    putStrLn avisos

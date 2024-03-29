@@ -358,38 +358,38 @@ adicionarFalta disciplina codTurma matriculaAluno = do
             return "Faltas do aluno atualizada."
         Nothing -> return "Erro!!!"
 
-criarAvisoMural :: String -> String -> IO String
-criarAvisoMural diretorio novoAviso = do
+criarAvisoMural :: String -> String -> String -> IO String
+criarAvisoMural disciplina codTurma novoAviso = do
 
-    let diretorioArquivo = diretorio ++ "mural.json"
-    createDirectoryIfMissing True $ takeDirectory diretorioArquivo
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/mural/mural.json"
+    createDirectoryIfMissing True $ takeDirectory diretorio
     
-    muralValido <- doesFileExist diretorioArquivo
+    muralValido <- doesFileExist diretorio
     if muralValido then do
-        dadosMural <- B.readFile diretorioArquivo
+        dadosMural <- B.readFile diretorio
         case decode dadosMural of
             Just (Mural avisosAntigos) -> do
                 let muralAtualizado = encode $ Mural { aviso = avisosAntigos ++ [novoAviso] }
-                B.writeFile diretorioArquivo muralAtualizado
+                B.writeFile diretorio muralAtualizado
                 return "Aviso registrado no Mural da Turma!"
             Nothing -> do
                 let mural = encode $ Mural { aviso = [novoAviso] }
-                B.writeFile diretorioArquivo mural
+                B.writeFile diretorio mural
                 return "Aviso registrado no Mural da Turma!"
     else do
         let mural = encode $ Mural { aviso = [novoAviso] }
-        B.writeFile diretorioArquivo mural
+        B.writeFile diretorio mural
         return "Aviso registrado no Mural da Turma!\n"
 
-exibirAvisosMural :: String -> IO String
-exibirAvisosMural diretorio = do
-    let diretorioArquivo = diretorio ++ "mural.json"
-    muralValido <- doesFileExist diretorioArquivo
+exibirAvisosMural :: String -> String -> IO String
+exibirAvisosMural disciplina codTurma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/mural/" ++ "mural.json"
+    muralValido <- doesFileExist diretorio
     if muralValido then do
-        dadosMural <- B.readFile diretorioArquivo
+        dadosMural <- B.readFile diretorio
         case decode dadosMural of
             Just (Mural avisos) -> do
-                let novoAviso = "• " ++ (last avisos) ++ "\n\n"
+                let novoAviso = "= " ++ (last avisos) ++ "\n\n"
                 let avisosAnteriores = intercalate "\n\n" (reverse $ init avisos)
                 let mensagens = novoAviso ++ avisosAnteriores
                 return $ "\n==== MENSAGENS DO MURAL\n\n" ++ mensagens ++ "\n"
