@@ -238,9 +238,14 @@ menuMaterialDidatico disciplina codTurma = do
 escolherOpcaoMaterialDidatico :: String -> String -> String -> IO()
 escolherOpcaoMaterialDidatico opcao disciplina codTurma
     | (opcao == "0") = putStr ""
-    | (opcao == "1") = putStrLn "\nNão implementado.\n"
+    | (opcao == "1") = exibirMaterialDidaticoController disciplina codTurma
     | (opcao == "2") = criarMaterialDidaticoController disciplina codTurma
     | otherwise = putStrLn "\nOpção inválida!\n"
+
+exibirMaterialDidaticoController :: String -> String -> IO()
+exibirMaterialDidaticoController disciplina codTurma = do
+    materiais <- exibirMaterialDidatico disciplina codTurma
+    putStrLn materiais
 
 criarMaterialDidaticoController :: String -> String -> IO()
 criarMaterialDidaticoController disciplina codTurma = do
@@ -258,3 +263,6 @@ criarMaterialDidaticoController disciplina codTurma = do
         else do
             salvarMaterial <- Modules.GerenciadorOpcoesDisciplina.criarMaterialDidatico disciplina codTurma titulo conteudo
             putStrLn salvarMaterial
+
+-- exibirMaterialDidaticoController :: String -> String -> IO()
+-- exibirMaterialDidaticoController disciplina codTurma = do
