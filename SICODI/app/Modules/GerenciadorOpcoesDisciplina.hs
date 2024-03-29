@@ -420,3 +420,26 @@ criarMaterialDidatico disciplina codTurma titulo conteudo = do
         let novoMaterial = MaterialDidatico [(titulo, conteudo)]
         B.writeFile diretorioArquivo (encode novoMaterial)
         return (color Green "\nMaterial didático registrado com sucesso!\n")
+
+exibirMaterialDidatico :: String -> String -> IO String
+exibirMaterialDidatico disciplina codTurma = do
+    let diretorioArquivo = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/materiais/materiaisDidaticos.json"
+    
+    existeArquivo <- doesFileExist diretorioArquivo
+    
+    if existeArquivo then do
+        dadosMaterial <- B.readFile diretorioArquivo
+        case decode dadosMaterial of
+            Just (MaterialDidatico materiais) -> do
+                let formattedMaterials = formatarMateriais materiais
+                return $ (color White . style Bold $ "\n===== MATERIAIS DIDÁTICOS =====\n\n") ++ formattedMaterials
+            Nothing -> return (color Red "\nErro ao decodificar os materiais didáticos!\n")
+    else
+        return (color Red "\nArquivo de materiais didáticos não encontrado!\n")
+
+formatarMateriais :: [(String, String)] -> String
+formatarMateriais [] = ""
+formatarMateriais ((titulo, conteudo):resto) = 
+    (color White . style Bold $ "Título do Material: ")++ titulo ++ "\n" ++
+    (color White . style Bold $ "Conteúdo do Material: ") ++ conteudo ++ "\n\n" ++
+    formatarMateriais resto
