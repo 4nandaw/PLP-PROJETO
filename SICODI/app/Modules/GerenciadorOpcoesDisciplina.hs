@@ -187,7 +187,7 @@ criarAvisoMural diretorio novoAviso = do
     else do
         let mural = encode $ Mural { aviso = [novoAviso] }
         B.writeFile diretorioArquivo mural
-        return "Aviso registrado no Mural da Turma!"
+        return "Aviso registrado no Mural da Turma!\n"
 
 exibirAvisosMural :: String -> IO String
 exibirAvisosMural diretorio = do
@@ -197,7 +197,9 @@ exibirAvisosMural diretorio = do
         dadosMural <- B.readFile diretorioArquivo
         case decode dadosMural of
             Just (Mural avisos) -> do
-                let mensagens = intercalate "\n\n" (reverse avisos)
+                let novoAviso = "• " ++ (last avisos) ++ "\n\n"
+                let avisosAnteriores = intercalate "\n\n" (reverse $ init avisos)
+                let mensagens = novoAviso ++ avisosAnteriores
                 return $ "\n==== MENSAGENS DO MURAL\n\n" ++ mensagens ++ "\n"
             Nothing -> return "Erro ao decodificar o Mural"
     else

@@ -180,7 +180,8 @@ escolherOpcaoMenuMinhasTurmas opcao diretorio codigo
 
 menuMural :: String -> IO()
 menuMural diretorio = do
-    putStrLn "Escolha uma opção: "
+    putStrLn "\nEscolha uma opção: "
+    putStrLn "[0] Voltar"
     putStrLn "[1] Ver Mural"
     putStrLn "[2] Deixar aviso no Mural"
     putStrLn "==============================================="
@@ -196,7 +197,10 @@ escolherOpcaoMenuMural opcao diretorio
     | (opcao == "1") = do
         avisos <- Modules.GerenciadorOpcoesDisciplina.exibirAvisosMural diretorio
         putStrLn avisos
-    | (opcao == "2") = criarAvisoMuralController diretorio
+        menuMural diretorio
+    | (opcao == "2") = do
+        criarAvisoMuralController diretorio
+        menuMural diretorio
     | otherwise = putStrLn "Opção inválida!"
 
 criarAvisoMuralController :: String -> IO ()
