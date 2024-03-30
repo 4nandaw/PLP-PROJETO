@@ -1,21 +1,22 @@
 module Modules.GerenciadorOpcoesAlunoController where
 import Modules.GerenciadorOpcoesAluno
 import Modules.GerenciadorOpcoesDisciplina
+import Modules.GerenciadorOpcoesDisciplinaController
 import System.Console.Pretty
 
 import Modules.Chat
 
 
-chatController :: String -> String -> String -> IO()
-chatController matricula disciplina turma = do
+chatAlunoController :: String -> String -> String -> IO()
+chatAlunoController matricula disciplina turma = do
     putStrLn "Mensagens anteriores: "
     chat <- Modules.GerenciadorOpcoesAluno.acessarChatAluno matricula disciplina turma
     putStrLn chat
 
-    enviarMensagemController disciplina turma matricula
+    enviarMensagemAlunoController disciplina turma matricula
 
-enviarMensagemController :: String -> String -> String -> IO()
-enviarMensagemController disciplina codTurma matriculaAluno = do
+enviarMensagemAlunoController :: String -> String -> String -> IO()
+enviarMensagemAlunoController disciplina codTurma matriculaAluno = do
     putStrLn ":"
     msg <- getLine
 
@@ -23,7 +24,7 @@ enviarMensagemController disciplina codTurma matriculaAluno = do
 
     if msg /= "" then do 
         enviarMensagem disciplina codTurma remetente matriculaAluno msg
-        enviarMensagemController disciplina codTurma matriculaAluno
+        enviarMensagemAlunoController disciplina codTurma matriculaAluno
     else putStrLn "===================="
 
 menuTurmaAluno :: String -> String -> String -> IO()
@@ -36,6 +37,7 @@ menuTurmaAluno matricula disciplina turma = do
     putStrLn "[2] Ver Mural"
     putStrLn "[3] Chat"
     putStrLn "[4] Avaliar professor(a)"
+    putStrLn "[5] Materiais Didáticos"
     putStrLn (color Blue . style Bold $ "==============================================================")
     escolherOpcaoAluno matricula disciplina turma
 
@@ -51,8 +53,9 @@ escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
         | (escolha == "0") = putStrLn ""
         | (escolha == "1") = visualizarNotasController matricula disciplina turma
         | (escolha == "2") = exibirMuralAlunoController disciplina turma
-        | (escolha == "3") = chatController matricula disciplina turma
+        | (escolha == "3") = chatAlunoController matricula disciplina turma
         | (escolha == "4") = menuAvaliacoes matricula disciplina turma
+        | (escolha == "5") = Modules.GerenciadorOpcoesDisciplinaController.exibirMaterialDidaticoController disciplina turma
         | otherwise = putStrLn (color Red "Opção Inválida!")
 
 visualizarNotasController :: String -> String -> String -> IO()
