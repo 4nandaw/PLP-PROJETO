@@ -10,7 +10,6 @@ import GHC.Generics
 import System.Directory(getCurrentDirectory, doesFileExist)
 import Data.Text (Text)
 
--- Função para verificar se um arquivo existe
 arquivoDisciplinaExiste :: String -> IO Bool
 arquivoDisciplinaExiste nomeDisciplina = doesFileExist ("./db/disciplinas/" ++ nomeDisciplina ++ "/" ++ nomeDisciplina ++ ".json")
 

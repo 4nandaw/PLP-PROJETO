@@ -15,7 +15,7 @@ escolherOpcao = do
 printarMenu :: IO()
 printarMenu = do
     putStrLn (color Yellow . style Bold $ "\nMENU INICIAL =======")
-    putStrLn "Digite uma opção: "
+    putStrLn (color Yellow "Digite uma opção: ")
     putStrLn "[0] Sair"
     putStrLn "[1] Login"
     putStrLn "[2] Cadastro"

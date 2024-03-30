@@ -55,7 +55,7 @@ mediaFaltas disciplina codTurma = do
     let totalFaltas = sum faltasValidas
     let media = fromIntegral totalFaltas / fromIntegral tamanho
 
-    return $ "Média de faltas: " ++ show media
+    return $ (color White . style Bold $ "Média de faltas: ") ++ show media
 
 mediaNotas :: String -> String -> IO String
 mediaNotas disciplina codTurma = do
@@ -71,7 +71,7 @@ mediaNotas disciplina codTurma = do
     let totalNotas = sum notasValidas
     let media = totalNotas / fromIntegral tamanho
 
-    return $ "Média de notas: " ++ show media
+    return $ (color White . style Bold $ "Média de notas: ") ++ show media
 
 atualizarMedia :: String -> String -> String -> IO String
 atualizarMedia disciplina codTurma matriculaAluno = do
@@ -107,7 +107,7 @@ exibirAluno matricula diretorio = do
             Just (AlunoTurma _ _ _ _ faltas) -> return $ faltas
             Nothing -> return 0
 
-        return (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)")
+        return (color White . style Bold $ (matriculaDecode ++ " - " ++ nome ++ " ----- " ++ (show faltas) ++ " falta(s)"))
       else return ""
 
 exibirFaltas :: String -> String -> IO Int
@@ -214,8 +214,8 @@ salvarNota disciplina codTurma matriculaAluno escolha nota = do
                         _ -> AlunoTurma nota1 nota2 nota3 media faltas
                 B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoNotaAtualizada)
                 atualizarMedia disciplina codTurma matriculaAluno
-                return "NOTA SALVA NO ARQUIVO"
-            Nothing -> return "Erro!!!"
+                return (color Green "\nNota salva!")
+            Nothing -> return (color Red "Erro!")
     else 
         return "Nota inválida"
 
@@ -225,17 +225,17 @@ situacaoAluno disciplina codTurma matriculaAluno = do
     case decode dados of 
         Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
             let situacao = if media >= 7 && faltas <= 7
-                               then "Aprovado :)"
+                               then (color Green "Aprovado :)")
                                else if media >= 4 && media <= 6.9 && faltas <= 7
-                                        then "Final :|"
-                                        else "Reprovado :("
-            return $ "===== SITUAÇÃO DO ALUNO(A) " ++ matriculaAluno ++ " =====\n\n" ++
-                     "Nota 1: " ++ show nota1 ++ "\n" ++
-                     "Nota 2: " ++ show nota2 ++ "\n" ++
-                     "Nota 3: " ++ show nota3 ++ "\n" ++
-                     "Faltas: " ++ show faltas ++ "\n" ++
-                     printf "Média: %.1f\n" media ++
-                     situacao
+                                        then (color Yellow "Final :|")
+                                        else (color Red "Reprovado :(")
+            return $ (color White . style Bold $ "\n===== SITUAÇÃO DO ALUNO(A) " ++ matriculaAluno ++ " =====\n\n") ++
+                     (color White . style Bold $ "Nota 1: ") ++ show nota1 ++ "\n" ++
+                     (color White . style Bold $ "Nota 2: ") ++ show nota2 ++ "\n" ++
+                     (color White . style Bold $ "Nota 3: ") ++ show nota3 ++ "\n" ++
+                     (color White . style Bold $ "Faltas: ") ++ show faltas ++ "\n" ++
+                     printf (color White . style Bold $ "Média: %.1f\n") media ++
+                     situacao ++ "\n"
         Nothing -> return "Erro: Dados não encontrados para o aluno."
 
 verAvaliacoes :: String -> String -> IO String
@@ -265,7 +265,7 @@ mediaAvaliacoes disciplina codTurma = do
     let somaNotas = sum notasValidas
     let media = fromIntegral somaNotas / fromIntegral quantidade
 
-    return $ "Nota média: " ++ show media
+    return $ (color White . style Bold $ "Nota média dada ao professor: ") ++ show media
 
 adicionarNotasTurma :: String -> String -> String-> IO Bool
 adicionarNotasTurma disciplina codTurma matriculaAluno = do
@@ -308,16 +308,16 @@ acessarChat disciplina codTurma matriculaAluno = do
     if not chatExiste then do
         let chat = encode(Chat{chat = []})
         B.writeFile diretorio chat
-        return "\ESC[31mSem mensagens no chat!\ESC[0m"
+        return (color White "Ainda não há nenhuma mensagem... inicie a conversa!")
     else do
         dadosChat <- B.readFile diretorio
         nomeProfessor <- puxarNomeProfessor disciplina
         case decode dadosChat of 
             Just (Chat chat) -> do
                 let listaMensagensChat = map (\x -> ajustarExibirMensagensChat x nomeProfessor) chat
-                if listaMensagensChat == [] then return "\ESC[33mSem mensagens no chat!\ESC[0m"
+                if listaMensagensChat == [] then return (color White . style Bold $ "Sem mensagens no chat!")
                 else return $ unlines $ listaMensagensChat
-            Nothing -> return "Erro ao pegar as mensagens do chat"
+            Nothing -> return (color Red "Erro ao pegar as mensagens do chat.")
 
 ajustarExibirMensagensChat :: [String] -> String -> String
 ajustarExibirMensagensChat [remetente, mensagem] nomeProfessor
@@ -373,15 +373,15 @@ criarAvisoMural disciplina codTurma novoAviso = do
             Just (Mural avisosAntigos) -> do
                 let muralAtualizado = encode $ Mural { aviso = avisosAntigos ++ [novoAviso] }
                 B.writeFile diretorio muralAtualizado
-                return "Aviso registrado no Mural da Turma!"
+                return (color Green "\nAviso registrado no Mural da Turma!")
             Nothing -> do
                 let mural = encode $ Mural { aviso = [novoAviso] }
                 B.writeFile diretorio mural
-                return "Aviso registrado no Mural da Turma!"
+                return (color Green "\nAviso registrado no Mural da Turma!")
     else do
         let mural = encode $ Mural { aviso = [novoAviso] }
         B.writeFile diretorio mural
-        return "Aviso registrado no Mural da Turma!\n"
+        return (color Green "\nAviso registrado no Mural da Turma!")
 
 exibirAvisosMural :: String -> String -> IO String
 exibirAvisosMural disciplina codTurma = do
@@ -391,13 +391,13 @@ exibirAvisosMural disciplina codTurma = do
         dadosMural <- B.readFile diretorio
         case decode dadosMural of
             Just (Mural avisos) -> do
-                let novoAviso = "= " ++ (last avisos) ++ "\n\n"
+                let novoAviso = (color Blue . style Bold $ "+ ") ++ (last avisos) ++ "\n\n"
                 let avisosAnteriores = intercalate "\n\n" (reverse $ init avisos)
                 let mensagens = novoAviso ++ avisosAnteriores
-                return $ "\n==== MENSAGENS DO MURAL\n\n" ++ mensagens ++ "\n"
+                return $ (color Magenta . style Bold $ "\n===== MENSAGENS DO MURAL\n\n") ++ mensagens ++ "\n"
             Nothing -> return "Erro ao decodificar o Mural"
     else
-        return "Nenhuma mensagem no Mural."
+        return (color Red "\nNenhuma mensagem no Mural.")
 
 criarMaterialDidatico :: String -> String -> String -> String -> IO String
 criarMaterialDidatico disciplina codTurma titulo conteudo = do
