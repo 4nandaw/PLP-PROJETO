@@ -461,16 +461,20 @@ criarQuiz :: String -> String -> String -> IO Bool
 criarQuiz disciplina codTurma titulo = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
     createDirectoryIfMissing True $ takeDirectory diretorio
-    quizValido <- doesFileExist diretorio
+    quizValido <- quizExiste disciplina codTurma titulo
     if quizValido then return False
     else do
         let quiz = encode (Quiz{perguntas = [], respostas = []})
         B.writeFile diretorio quiz
         return True
 
--- Função para adicionar uma nova pergunta ao quiz
---adicionarPergunta :: Quiz -> String -> Bool -> Quiz
---adicionarPergunta quiz texto resposta = quiz ++ [Pergunta texto resposta]
+quizExiste :: String -> String -> String -> IO Bool
+quizExiste disciplina codTurma titulo = do 
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    createDirectoryIfMissing True $ takeDirectory diretorio
+    quizValido <- doesFileExist diretorio
+    return quizValido
+
 
 validarResposta :: String -> Bool
 validarResposta resposta = do

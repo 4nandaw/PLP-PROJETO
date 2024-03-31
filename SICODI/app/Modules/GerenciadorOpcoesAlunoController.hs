@@ -60,7 +60,7 @@ escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
         | (escolha == "3") = chatAlunoController matricula disciplina turma
         | (escolha == "4") = menuAvaliacoes matricula disciplina turma
         | (escolha == "5") = Modules.GerenciadorOpcoesDisciplinaController.exibirMaterialDidaticoController disciplina turma
-        | (escolha == "6") = responderQuizController disciplina turma
+        | (escolha == "6") = escolherQuiz disciplina turma
         | otherwise = putStrLn (color Red "\nOpção inválida.")
 
 visualizarNotasController :: String -> String -> String -> IO()
@@ -102,16 +102,18 @@ escolherOpcaoAvaliacao matricula disciplina turma nota = do
     avaliacaoSave <- Modules.GerenciadorOpcoesAluno.salvarAvaliacao diretorio nota comentario matricula
     putStrLn avaliacaoSave
     
-responderQuizController :: String -> String -> IO ()
-responderQuizController disciplina codTurma = do
-    putStrLn "Digite o titulo do Quiz que você quer respoder: "
+
+escolherQuiz :: String -> String -> IO()
+escolherQuiz disciplina codTurma = do
+    putStrLn "=== ESCOLHA QUAL QUIZ VOCÊ QUER RESPONDER ==="
+    --Lista de quizzes
+    putStrLn "Digite o título do quiz: "
     titulo <- getLine
     tituloValido <- Modules.GerenciadorOpcoesAluno.validarTituloQuiz disciplina codTurma titulo
     if tituloValido then do
         listaPerguntas <- Modules.GerenciadorOpcoesAluno.perguntasQuiz disciplina codTurma titulo
         responderPerguntasQuizController disciplina codTurma titulo listaPerguntas []
-    else do
-        putStrLn "Título de Quiz inválido"
+    else putStrLn "Título de quiz inválido"
 
 responderPerguntasQuizController :: String -> String -> String -> [String] -> [Bool] -> IO ()
 responderPerguntasQuizController disciplina codTurma titulo listaPerguntas listaRespostasAluno = do

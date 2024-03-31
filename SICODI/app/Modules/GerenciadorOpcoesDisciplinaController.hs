@@ -282,54 +282,44 @@ criarMaterialDidaticoController disciplina codTurma = do
 -- Função para exibir o menu principal
 menuQuiz :: String -> String -> IO ()
 menuQuiz disciplina codTurma = do
-    putStrLn "\n===== MENU QUIZZ ======"
-    putStrLn ""
+    putStrLn "\n===== MENU QUIZZ ======\n"
+    putStrLn "[0] para voltar"
     putStrLn "[1] Criar Quiz"
     putStrLn "[2] Adicionar pergunta a um Quiz"
-    putStrLn "[3] Sair"
     opcao <- getLine
-    case opcao of
-        "1" -> criarQuizController disciplina codTurma
-        "2" -> adicionarPerguntasRespostasController disciplina codTurma
-            
-        "3" -> putStrLn "Saindo..."
-      --  _   -> do
-      --      putStrLn "Opção inválida. Tente novamente."
-      --      menuDeQuiz quiz
+    escolherOpcaoQuiz disciplina codTurma opcao
 
--- Função para interagir com o professor e adicionar uma nova pergunta ao quiz
---adicionarPerguntaMenu :: Quiz -> IO ()
---adicionarPerguntaMenu quiz = do
---    putStrLn "\nDigite a pergunta:"
---    texto <- getLine
---    putStrLn "A resposta é verdadeira? (s/n)"
---    respostaStr <- getLine
---    let resposta = respostaStr == "s" || respostaStr == "S"
- --   let novoQuiz = Modules.GerenciadorOpcoesDisciplina.adicionarPergunta quiz texto resposta
-  --  putStrLn "Pergunta adicionada com sucesso!"
-  --  menuDeQuiz novoQuiz
-
--- Função para imprimir um quiz, considerando se está vazio ou não
---imprimirQuiz :: Quiz -> IO ()
---imprimirQuiz quiz
---    | null quiz = putStrLn "Quiz vazio."
---    | otherwise = mapM_ (\(i, Pergunta texto _) -> putStrLn $ show i ++ ". " ++ texto) (zip [1..] quiz)
-
+escolherOpcaoQuiz :: String -> String -> String -> IO()
+escolherOpcaoQuiz disciplina codTurma opcao
+    | (opcao == "0") = putStrLn " "
+    | (opcao == "1") = criarQuizController disciplina codTurma
+    | (opcao == "2") = adicionarPerguntasQuizController disciplina codTurma
+    | (otherwise) = do 
+        putStrLn "Opção inválida"
+        menuQuiz disciplina codTurma
+    
 criarQuizController :: String -> String -> IO ()
 criarQuizController disciplina codTurma = do
     putStrLn "Qual  o título do Quiz ?"
     titulo <- getLine
-    quizValido <- criarQuiz disciplina codTurma titulo
+    quizValido <- Modules.GerenciadorOpcoesDisciplina.criarQuiz disciplina codTurma titulo
     if quizValido then do
      putStrLn "Quiz criado! Agora adicione as perguntas e as respostas" 
-     adicionarPerguntasRespostasController disciplina codTurma 
+     adicionarPerguntasRespostasController disciplina codTurma titulo
     else do
         putStrLn "Já existe Quiz com esse nome!"
 
-adicionarPerguntasRespostasController :: String -> String -> IO ()
-adicionarPerguntasRespostasController disciplina codTurma = do
-    putStrLn "Título? "
+adicionarPerguntasQuizController :: String -> String -> IO()
+adicionarPerguntasQuizController disciplina codTurma = do
+    putStrLn "Qual  o título do Quiz ?"
     titulo <- getLine
+    quizValido <- Modules.GerenciadorOpcoesDisciplina.quizExiste disciplina codTurma titulo
+    if quizValido then do
+        adicionarPerguntasRespostasController disciplina codTurma titulo
+    else putStrLn "Quiz não existe"
+
+adicionarPerguntasRespostasController :: String -> String -> String -> IO ()
+adicionarPerguntasRespostasController disciplina codTurma titulo = do
     putStrLn "Digite a pergunta ou ENTER para sair: "
     pergunta <- getLine
     if pergunta == "" then putStrLn ""
@@ -339,9 +329,9 @@ adicionarPerguntasRespostasController disciplina codTurma = do
         let respostaValida = Modules.GerenciadorOpcoesDisciplina.validarResposta resposta
         if respostaValida then do
             Modules.GerenciadorOpcoesDisciplina.adicionarPergunta disciplina codTurma titulo pergunta resposta 
-            putStrLn ""
+            adicionarPerguntasRespostasController disciplina codTurma titulo
             else do
                 putStrLn "Digite apenas s para verdadeiro ou n para falso "
-                adicionarPerguntasRespostasController disciplina codTurma
+                adicionarPerguntasRespostasController disciplina codTurma titulo
 
                 
