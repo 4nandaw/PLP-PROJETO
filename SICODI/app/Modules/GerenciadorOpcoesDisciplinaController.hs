@@ -186,10 +186,14 @@ escolherOpcaoMenuMural opcao disciplina codTurma
 
 criarAvisoMuralController :: String -> String -> IO ()
 criarAvisoMuralController disciplina codTurma = do
-    putStrLn (color Magenta "\nDigite o aviso para toda turma: ")
+    putStrLn (color Magenta "\nDigite o aviso para toda turma ou ENTER para sair: ")
     aviso <- getLine
-    salvarAviso <- Modules.GerenciadorOpcoesDisciplina.criarAvisoMural disciplina codTurma aviso
-    putStrLn salvarAviso
+
+    if null aviso then
+        putStrLn (color Green "Saindo do Mural da Turma...")
+    else do
+        salvarAviso <- Modules.GerenciadorOpcoesDisciplina.criarAvisoMural disciplina codTurma aviso
+        putStrLn salvarAviso
 
 responseAlunos :: String -> String -> IO()
 responseAlunos disciplina codTurma = do
