@@ -24,7 +24,7 @@ printarMenu = do
 
 escolher :: String -> IO()
 escolher escolha 
-        | (escolha == "0") = putStr (color Green "Programa finalizado!")
+        | (escolha == "0") = putStr (color Green "\nPrograma finalizado!\n")
         | (escolha == "1") = Modules.LoginController.loginGeral
         | (escolha == "2") = Modules.CadastroController.cadastroGeral
         | otherwise = putStrLn (color Red "Opção Inválida!")

@@ -101,7 +101,6 @@ chatController disciplina codTurma = do
 
 enviarMensagemController :: String -> String -> String -> IO()
 enviarMensagemController disciplina codTurma matriculaAluno = do
-    putStr ":"
     msg <- getLine
 
     remetente <- lerNomeProfessor disciplina
@@ -157,7 +156,7 @@ escolherOpcaoMenuMinhasTurmas opcao disciplina codTurma
             menuMaterialDidatico disciplina codTurma
             menuTurmaEscolhida disciplina codTurma
         | otherwise = do
-            putStrLn "Opção Inválida!" 
+            putStrLn (color Red "\nOpção inválida." )
             menuTurmaEscolhida disciplina codTurma
 
 menuMural :: String -> String -> IO()
@@ -172,7 +171,9 @@ menuMural disciplina codTurma = do
 
     if opcao /= "" then do
         escolherOpcaoMenuMural opcao disciplina codTurma
-    else putStrLn (color Red "\nOpção inválida.")
+    else do
+        putStrLn (color Red "\nOpção inválida.")
+        menuMural disciplina codTurma
 
 escolherOpcaoMenuMural :: String -> String -> String -> IO()
 escolherOpcaoMenuMural opcao disciplina codTurma
@@ -233,7 +234,9 @@ menuMaterialDidatico disciplina codTurma = do
 
     if opcao /= "" then do
         escolherOpcaoMaterialDidatico opcao disciplina codTurma
-    else putStrLn (color Red "Opção inválida.")
+    else do
+        putStrLn (color Red "Opção inválida.")
+        menuMaterialDidatico disciplina codTurma
 
 escolherOpcaoMaterialDidatico :: String -> String -> String -> IO()
 escolherOpcaoMaterialDidatico opcao disciplina codTurma
@@ -265,6 +268,3 @@ criarMaterialDidaticoController disciplina codTurma = do
         else do
             salvarMaterial <- Modules.GerenciadorOpcoesDisciplina.criarMaterialDidatico disciplina codTurma titulo conteudo
             putStrLn salvarMaterial
-
--- exibirMaterialDidaticoController :: String -> String -> IO()
--- exibirMaterialDidaticoController disciplina codTurma = do

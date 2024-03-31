@@ -70,21 +70,26 @@ solicitarEAlocarAlunoController :: String -> IO()
 solicitarEAlocarAlunoController disciplina = do
     putStrLn (color Magenta "\nInforme o codigo da turma: ")
     codTurma <- getLine
+    turmaValida <- Modules.GerenciadorTurmas.validarTurma disciplina codTurma
+    if turmaValida then do
+        response <- solicitarEAlocarAluno disciplina codTurma
 
-    response <- solicitarEAlocarAluno disciplina codTurma
-
-    if response /= "Código inválido!" then do
-        putStrLn (color Magenta "\nInforme a matricula: ")
+        if response /= "Código inválido!" then do
+            putStrLn (color Magenta "\nInforme a matricula: ")
         
-        m <- getLine
-        alocarAlunoController m disciplina codTurma
-    else putStrLn ""
+            m <- getLine
+            alocarAlunoController m disciplina codTurma
+        else putStrLn ""
+    else do
+        putStrLn (color Red "\nTurma inválida.")
+        opcoesDeTurmas disciplina
 
 alocarAlunoController :: String -> String -> String -> IO()
 alocarAlunoController matricula disciplina codTurma = do
     if matricula == "" then putStrLn (color Green "\nRegistro finalizado!\n")
     else do
-        alocarAluno matricula disciplina codTurma
+        alunoValido <- alocarAluno matricula disciplina codTurma
+        putStrLn alunoValido
 
         putStrLn (color Magenta "\nInforme o proximo aluno (matricula) ou ENTER para finalizar: ")
         m <- getLine

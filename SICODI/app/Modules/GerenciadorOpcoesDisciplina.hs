@@ -151,16 +151,16 @@ exibirAvaliacao arquivo diretorio = do
 
         notaFormatada <- formataNota nota
 
-        return (notaFormatada ++ "\n" ++ "Comentário: " ++ comentario ++ "\n")
+        return (notaFormatada ++ "\n" ++ (color White . style Bold $ "Comentário: ") ++ comentario ++ "\n")
     else return ""
 
 formataNota :: String -> IO String
 formataNota nota
-    | (nota == "1") = return "⭑☆☆☆☆"
-    | (nota == "2") = return "⭑⭑☆☆☆"
-    | (nota == "3") = return "⭑⭑⭑☆☆"
-    | (nota == "4") = return "⭑⭑⭑⭑☆"
-    | (nota == "5") = return "⭑⭑⭑⭑⭑"
+    | (nota == "1") = return (color Yellow . style Bold $ "⭑☆☆☆☆")
+    | (nota == "2") = return (color Yellow . style Bold $ "⭑⭑☆☆☆")
+    | (nota == "3") = return (color Yellow . style Bold $ "⭑⭑⭑☆☆")
+    | (nota == "4") = return (color Yellow . style Bold $ "⭑⭑⭑⭑☆")
+    | (nota == "5") = return (color Yellow . style Bold $ "⭑⭑⭑⭑⭑")
     | otherwise = return ""
 
 exibirNota :: String -> String -> IO Int
@@ -321,8 +321,8 @@ acessarChat disciplina codTurma matriculaAluno = do
 
 ajustarExibirMensagensChat :: [String] -> String -> String
 ajustarExibirMensagensChat [remetente, mensagem] nomeProfessor
-    | (remetente==nomeProfessor) = nomeProfessor ++ ": " ++ mensagem
-    | otherwise = remetente ++ ": " ++ mensagem 
+    | (remetente==nomeProfessor) = (color White . style Bold $ nomeProfessor) ++ ": " ++ mensagem
+    | otherwise = (color White . style Bold $ remetente) ++ ": " ++ mensagem 
 
 puxarNomeProfessor :: String -> IO String
 puxarNomeProfessor disciplina = do
@@ -394,7 +394,7 @@ exibirAvisosMural disciplina codTurma = do
                 let novoAviso = (color Blue . style Bold $ "+ ") ++ (last avisos) ++ "\n\n"
                 let avisosAnteriores = intercalate "\n\n" (reverse $ init avisos)
                 let mensagens = novoAviso ++ avisosAnteriores
-                return $ (color Magenta . style Bold $ "\n===== MENSAGENS DO MURAL\n\n") ++ mensagens ++ "\n"
+                return $ (color White . style Bold $ "\n===== MENSAGENS DO MURAL\n\n") ++ mensagens ++ "\n"
             Nothing -> return "Erro ao decodificar o Mural"
     else
         return (color Red "\nNenhuma mensagem no Mural.")
@@ -433,9 +433,9 @@ exibirMaterialDidatico disciplina codTurma = do
             Just (MaterialDidatico materiais) -> do
                 let listaMateriais = formatarMateriais $ reverse materiais
                 return $ (color White . style Bold $ "\n===== MATERIAIS DIDÁTICOS =====\n\n") ++ listaMateriais
-            Nothing -> return (color Red "\nErro ao decodificar os materiais didáticos!\n")
+            Nothing -> return (color Red "\nAinda não há materiais didáticos disponíveis.")
     else
-        return (color Red "\nArquivo de materiais didáticos não encontrado!\n")
+        return (color Red "\nAinda não há materiais didáticos disponíveis.")
 
 formatarMateriais :: [(String, String)] -> String
 formatarMateriais [] = ""
