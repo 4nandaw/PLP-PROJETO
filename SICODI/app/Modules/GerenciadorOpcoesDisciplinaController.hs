@@ -82,8 +82,8 @@ menuNotas disciplina codTurma matriculaAluno = do
 chatController :: String -> String -> IO()
 chatController disciplina codTurma = do
     --Possível lista de alunos que estão matriculados na turma // ver depois se necessário fz
-    putStrLn (color Magenta "\nDigite a matrícula do aluno que deseja iniciar um chat: ")
     putStrLn (color Red "AVISO: " ++ color White "se você deseja sair do chat, basta dar ENTER a qualquer momento da conversa. ")
+    putStrLn (color Magenta "\nDigite a matrícula do aluno que deseja iniciar um chat: ")
     matriculaAluno <- getLine
     if matriculaAluno == "" then putStrLn " "
     else do
@@ -206,11 +206,11 @@ exibirRelatorio :: String -> String -> IO()
 exibirRelatorio disciplina codTurma = do
     mediaF <- mediaFaltas disciplina codTurma
     mediaN <- mediaNotas disciplina codTurma
-    putStrLn (color Magenta . style Bold $ "\nRELATÓRIO DA TURMA ============================\n")
+    putStrLn (color Magenta . style Bold $ "\nRELATÓRIO DA TURMA =======================================\n")
     putStrLn mediaN
     putStrLn ""
     putStrLn mediaF
-    putStrLn (color Magenta . style Bold $ "\n===============================================")
+    putStrLn (color Magenta . style Bold $ "\n==========================================================")
 
 exibirAvaliacoes :: String -> String -> IO()
 exibirAvaliacoes disciplina codTurma = do
