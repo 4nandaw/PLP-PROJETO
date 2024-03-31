@@ -52,10 +52,14 @@ mediaFaltas disciplina codTurma = do
 
     let faltasValidas = filter (> -1) faltas
     let tamanho = length faltasValidas
-    let totalFaltas = sum faltasValidas
-    let media = fromIntegral totalFaltas / fromIntegral tamanho
 
-    return $ (color White . style Bold $ "Média de faltas: ") ++ show media
+    if tamanho > 0
+        then do
+            let totalFaltas = sum faltasValidas
+            let media = fromIntegral totalFaltas / fromIntegral tamanho
+            return $ (color White . style Bold $ "Média de faltas: ") ++ show media
+        else
+            return $ (color White . style Bold $ "Não há alunos registrados para calcular a média de faltas.")
 
 mediaNotas :: String -> String -> IO String
 mediaNotas disciplina codTurma = do
@@ -68,10 +72,15 @@ mediaNotas disciplina codTurma = do
 
     let notasValidas = filter (> -1) notas
     let tamanho = length notasValidas
-    let totalNotas = sum notasValidas
-    let media = totalNotas / fromIntegral tamanho
 
-    return $ (color White . style Bold $ "Média de notas: ") ++ show media
+    if tamanho > 0
+        then do 
+            let totalNotas = sum notasValidas
+            let media = totalNotas / fromIntegral tamanho
+            return $ (color White . style Bold $ "Média de notas: ") ++ show media
+    else
+        return $ (color White . style Bold $ "Não há alunos registrados para calcular a média de notas.")
+
 
 atualizarMedia :: String -> String -> String -> IO String
 atualizarMedia disciplina codTurma matriculaAluno = do

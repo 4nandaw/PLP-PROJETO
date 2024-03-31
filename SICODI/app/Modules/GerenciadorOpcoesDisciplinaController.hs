@@ -206,11 +206,11 @@ exibirRelatorio :: String -> String -> IO()
 exibirRelatorio disciplina codTurma = do
     mediaF <- mediaFaltas disciplina codTurma
     mediaN <- mediaNotas disciplina codTurma
-    putStrLn (color Magenta . style Bold $ "\nRELATÓRIO DA TURMA ============================\n")
+    putStrLn (color Magenta . style Bold $ "\nRELATÓRIO DA TURMA =======================================\n")
     putStrLn mediaN
     putStrLn ""
     putStrLn mediaF
-    putStrLn (color Magenta . style Bold $ "\n===============================================")
+    putStrLn (color Magenta . style Bold $ "\n==========================================================")
 
 exibirAvaliacoes :: String -> String -> IO()
 exibirAvaliacoes disciplina codTurma = do
