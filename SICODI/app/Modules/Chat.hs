@@ -7,16 +7,9 @@ import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
-
+import Utils.Chat
 import Utils.Disciplina
 import Utils.Aluno
-
-data Chat = Chat {
-    chat :: [[String]]
-} deriving (Generic, Show)
-
-instance ToJSON Chat
-instance FromJSON Chat
 
 append :: [String] -> [[String]] -> [[String]]
 append a xs = xs ++ [a] 

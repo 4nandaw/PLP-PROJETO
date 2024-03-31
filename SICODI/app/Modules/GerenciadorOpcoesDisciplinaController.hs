@@ -82,8 +82,8 @@ menuNotas disciplina codTurma matriculaAluno = do
 chatController :: String -> String -> IO()
 chatController disciplina codTurma = do
     --Possível lista de alunos que estão matriculados na turma // ver depois se necessário fz
-    putStrLn (color Magenta "\nDigite a matrícula do aluno que deseja iniciar um chat: ")
     putStrLn (color Red "AVISO: " ++ color White "se você deseja sair do chat, basta dar ENTER a qualquer momento da conversa. ")
+    putStrLn (color Magenta "\nDigite a matrícula do aluno que deseja iniciar um chat: ")
     matriculaAluno <- getLine
     if matriculaAluno == "" then putStrLn " "
     else do
