@@ -12,13 +12,24 @@ import System.FilePath.Posix (takeDirectory)
 import Data.Maybe (isJust)
 import Text.Read (readMaybe)
 import Text.Printf
-import Numeric 
+import Numeric
+import Data.Char
 
 data Turma = Turma {
     nome :: String,
     codigo :: String,
     alunos :: [String]
 } deriving (Generic, Show)
+
+data Quiz = Quiz {
+         perguntas :: [String], 
+         respostas :: [Bool]
+} deriving (Generic, Show)
+
+instance ToJSON Quiz
+instance FromJSON Quiz
+
+--instance ToJSON Pergunta
 
 solicitarEAlocarNotas :: String -> String -> IO Bool
 solicitarEAlocarNotas disciplina codTurma = do
@@ -109,3 +120,35 @@ adicionarFalta disciplina codTurma matriculaAluno = do
             B.writeFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json") (encode alunoFaltaAtualizada)
             return "Faltas do aluno atualizada."
         Nothing -> return "Erro!!!"
+
+-- Função para criar um novo quiz vazio
+criarQuiz :: String -> String -> String -> IO Bool
+criarQuiz disciplina codTurma titulo = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    createDirectoryIfMissing True $ takeDirectory diretorio
+    quizValido <- doesFileExist diretorio
+    if quizValido then return False
+    else do
+        let quiz = encode (Quiz{perguntas = [], respostas = []})
+        B.writeFile diretorio quiz
+        return True
+
+-- Função para adicionar uma nova pergunta ao quiz
+--adicionarPergunta :: Quiz -> String -> Bool -> Quiz
+--adicionarPergunta quiz texto resposta = quiz ++ [Pergunta texto resposta]
+
+validarResposta :: String -> Bool
+validarResposta resposta = do
+    if map toUpper resposta /= "S" && map toUpper resposta /= "N" then False
+    else True
+
+adicionarPergunta :: String -> String -> String -> String -> String -> IO String
+adicionarPergunta disciplina codTurma titulo pergunta resposta = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    dados <- B.readFile diretorio
+    case decode dados of
+        Just (Quiz perguntas respostas) -> do
+            let respostaBool = map toUpper resposta == "S"
+            let dadosAtualizados = encode (Quiz{perguntas = perguntas ++ [pergunta], respostas = respostas ++ [respostaBool]})
+            B.writeFile diretorio dadosAtualizados
+            return ""
