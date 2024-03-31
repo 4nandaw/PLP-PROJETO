@@ -41,7 +41,7 @@ menuTurmaAluno matricula disciplina turma = do
     putStrLn "[3] Chat"
     putStrLn "[4] Avaliar professor(a)"
     putStrLn "[5] Materiais Didáticos"
-    putStrLn "[6] Responder quiz
+    putStrLn "[6] Responder quiz"
     putStrLn (color Blue . style Bold $ "==============================================================")
     escolherOpcaoAluno matricula disciplina turma
 

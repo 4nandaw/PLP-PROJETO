@@ -158,7 +158,7 @@ escolherOpcaoMenuMinhasTurmas opcao disciplina codTurma
         | (opcao == "8") = do
             menuMaterialDidatico disciplina codTurma
             menuTurmaEscolhida disciplina codTurma
-        | (opcao == "9" = do
+        | (opcao == "9") = do
             menuQuiz disciplina codTurma
             menuTurmaEscolhida disciplina codTurma
         | otherwise = do
@@ -289,8 +289,8 @@ menuQuiz disciplina codTurma = do
     putStrLn "[3] Sair"
     opcao <- getLine
     case opcao of
-        "1" -> criarQuizController disciplina codTuma
-        "2" -> escolherQuizController disciplina codTurma
+        "1" -> criarQuizController disciplina codTurma
+        "2" -> adicionarPerguntasRespostasController disciplina codTurma
             
         "3" -> putStrLn "Saindo..."
       --  _   -> do
@@ -322,12 +322,14 @@ criarQuizController disciplina codTurma = do
     quizValido <- criarQuiz disciplina codTurma titulo
     if quizValido then do
      putStrLn "Quiz criado! Agora adicione as perguntas e as respostas" 
-     adicionarPerguntasRespostasController disciplina codTurma titulo
+     adicionarPerguntasRespostasController disciplina codTurma 
     else do
         putStrLn "Já existe Quiz com esse nome!"
 
-adicionarPerguntasRespostasController :: String -> String -> String -> IO ()
-adicionarPerguntasRespostasController disciplina codTurma titulo = do
+adicionarPerguntasRespostasController :: String -> String -> IO ()
+adicionarPerguntasRespostasController disciplina codTurma = do
+    putStrLn "Título? "
+    titulo <- getLine
     putStrLn "Digite a pergunta ou ENTER para sair: "
     pergunta <- getLine
     if pergunta == "" then putStrLn ""
@@ -340,6 +342,6 @@ adicionarPerguntasRespostasController disciplina codTurma titulo = do
             putStrLn ""
             else do
                 putStrLn "Digite apenas s para verdadeiro ou n para falso "
-                adicionarPerguntasRespostasController disciplina codTurma titulo
+                adicionarPerguntasRespostasController disciplina codTurma
 
                 
