@@ -7,13 +7,11 @@ import System.Console.Pretty
 exibirMenuAluno :: String -> IO()
 exibirMenuAluno matricula = do
     putStrLn (color Blue . style Bold $ "===== Menu do aluno: " ++ matricula ++ " =====")
-    putStrLn "Digite ENTER para voltar"
-    putStrLn " "
     listaDisciplinasTurmas <- Modules.GerenciadorOpcoesAluno.listarDisciplinasTurmas matricula
     putStrLn listaDisciplinasTurmas
-    putStrLn (color Blue "Digite a disciplina que você quer entrar: ")
+    putStrLn (color Blue "Digite a disciplina que você deseja acessar ou ENTER para sair: ")
     disciplina <- getLine
-    putStrLn (color Blue "Digite a turma: ")
+    putStrLn (color Blue "\nDigite a turma que você deseja acessar ou ENTER para sair: ")
     turma <- getLine
     if (disciplina == "" && turma == "") then putStrLn " "
     else do
@@ -22,6 +20,6 @@ exibirMenuAluno matricula = do
             Modules.GerenciadorOpcoesAlunoController.menuTurmaAluno matricula disciplina turma
             exibirMenuAluno matricula
         else do 
-            putStrLn (color Red "Disciplina e/ou turma inválida")
+            putStrLn (color Red "\nDisciplina e/ou turma inválida.")
             putStrLn " "
             exibirMenuAluno matricula

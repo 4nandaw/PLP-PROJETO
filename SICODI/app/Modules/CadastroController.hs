@@ -4,33 +4,33 @@ import System.Console.Pretty
 
 cadastroDisciplinaController :: IO()
 cadastroDisciplinaController = do
-    putStrLn (color Yellow . style Bold $ "CADASTRO DE DISCIPLINA")
-    putStrLn (color Yellow "Nome do professor: ")
+    putStrLn (color Yellow . style Bold $ "\nCADASTRO DE DISCIPLINA")
+    putStrLn (color Yellow "\nNome do professor: ")
     nomeProfessor <- getLine
-    putStrLn (color Yellow "Matrícula: ")
+    putStrLn (color Yellow "\nMatrícula: ")
     matricula <- getLine
-    putStrLn (color Yellow "Senha: ")
+    putStrLn (color Yellow "\nSenha: ")
     senha <- getLine
-    putStrLn (color Yellow "Nome da disciplina: ")
+    putStrLn (color Yellow "\nNome da disciplina: ")
     nomeDisciplina <- getLine
     cadastroValido <- Modules.Cadastro.cadastroDisciplina nomeProfessor matricula senha nomeDisciplina
     if (cadastroValido) 
-        then putStrLn (color Green "CADASTRO CONCLUÍDO :)")
-        else putStrLn (color Red "Nome de disciplina já está em uso")
+        then putStrLn (color Green "\nCadastro concluído!")
+        else putStrLn (color Red "\nNome de disciplina já está em uso.")
 
 cadastroAlunoController :: IO()
 cadastroAlunoController = do
-    putStrLn (color Yellow . style Bold $ "CADASTRO DE ALUNO")
-    putStrLn (color Yellow "Nome: ")
+    putStrLn (color Yellow . style Bold $ "\nCADASTRO DE ALUNO")
+    putStrLn (color Yellow "\nNome: ")
     nome <- getLine
-    putStrLn (color Yellow "Matrícula: ")
+    putStrLn (color Yellow "\nMatrícula: ")
     matricula <- getLine
-    putStrLn (color Yellow "Senha: ")
+    putStrLn (color Yellow "\nSenha: ")
     senha <- getLine    
     cadastroValido <- Modules.Cadastro.cadastroAluno nome matricula senha
     if(cadastroValido)
-        then putStrLn (color Green "CADASTRO CONCLUÍDO")
-        else putStrLn (color Red "Matrícula já está em uso")
+        then putStrLn (color Green "\nCadastro concluído!")
+        else putStrLn (color Red "\nMatrícula já está em uso.")
 
 escolherOpcaoCadastro :: IO()
 escolherOpcaoCadastro = do
@@ -42,12 +42,12 @@ escolherCadastro escolha
     | (escolha == "0") = putStr ""
     | (escolha == "1") = cadastroDisciplinaController
     | (escolha == "2") = cadastroAlunoController
-    | otherwise = putStrLn (color Red "Opção Inválida")
+    | otherwise = putStrLn (color Red "Opção inválida.")
 
 cadastroGeral :: IO()
 cadastroGeral = do
-    putStrLn (color Yellow . style Bold $ "CADASTRO =====================")
-    putStrLn "Digite uma opção: "
+    putStrLn (color Yellow . style Bold $ "\nCADASTRO =====================")
+    putStrLn (color Yellow "Digite uma opção: ")
     putStrLn "[0] Voltar pro menu inicial"
     putStrLn "[1] Cadastro de professor"
     putStrLn "[2] Cadastro de aluno"

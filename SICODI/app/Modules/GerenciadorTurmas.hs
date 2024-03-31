@@ -17,7 +17,7 @@ import System.FilePath.Posix (takeDirectory)
 import Control.Monad (when)
 import Data.List (intercalate)
 import Data.Bool (Bool)
-
+import System.Console.Pretty
 
 listarTurmas :: String -> IO String
 listarTurmas disciplina = do
@@ -59,9 +59,9 @@ criarTurma disciplina nome codigo = do
 
         let dados = encode (Turma {nome = nome, codigo = codigo, alunos = []})
         B.writeFile diretorio dados
-        return "Cadastro concluído!"
+        return (color Green "\nCadastro concluído!\n")
 
-    else return "Erro: Código de turma já está em uso."
+    else return (color Red "\nErro: Código de turma já está em uso.")
 
 validarTurma :: String -> String -> IO Bool
 validarTurma disciplina codTurma = do
@@ -84,47 +84,65 @@ removerAluno disciplina matricula codigo = do
 
         validarExistenciaAluno <- doesFileExist diretorioAluno
 
-        if not validarExistenciaAluno then return "Aluno nao esta na turma ou nao existe"
+        if not validarExistenciaAluno then return (color Red "\nAluno não está na turma ou não existe\n")
         else do
             removeFile diretorioAluno
-            return "Aluno removido!"
+            return (color Green "\nAluno removido!\n")
 
 excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
 
-    if not validarExistencia then return "Turma invalida"
+    if not validarExistencia then return "\n Turma inválida."
     else do
         removeDirectoryRecursive ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo)
-        return "Turma removida!"
+        return (color Green "\nTurma removida!\n")
 
 solicitarEAlocarAluno :: String -> String -> IO String
 solicitarEAlocarAluno disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
 
-    if not validarExistencia then return "Codigo invalido!"
+    if not validarExistencia then return (color Red "\nCódigo inválido.")
     else return ""
 
+verificarAlunoJaEstaNaTurma :: String -> String -> String -> IO Bool
+verificarAlunoJaEstaNaTurma matriculaAluno disciplina codTurma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/" ++ codTurma ++ ".json"
+    dados <- B.readFile diretorio
+    case decode dados of
+        Just (Turma _ _ alunos) -> do
+            if elem matriculaAluno alunos then return True
+            else return False
+        Nothing -> return False
+
 alocarAluno :: String -> String -> String -> IO String
-alocarAluno matriculaAluno disciplina codigo = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/alunos/" ++ matriculaAluno ++ ".json"
+alocarAluno matriculaAluno disciplina codTurma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json"
     let diretorioAluno = ("./db/alunos/" ++ matriculaAluno ++ ".json")
+    let diretorioTurma = "./db/disciplinas/" ++ disciplina ++ "/turmas/"++ codTurma ++ "/" ++ codTurma ++ ".json"
     validarMatricula <- doesFileExist ("./db/alunos/" ++ matriculaAluno ++ ".json")
 
-    if not validarMatricula then return "Matricula invalida"
+    if not validarMatricula then return (color Red "\nMatricula inválida.")
     else do
-        createDirectoryIfMissing True $ takeDirectory diretorio
-        dadosAluno <- B.readFile diretorioAluno
-        case decode dadosAluno of 
-            Just (Aluno matricula nome senha turmas) -> do
-                let dadosAlunoAtualizado = encode(Aluno {matricula = matricula, nome = nome, senha = senha, turmas = turmas ++ [[disciplina, codigo]]})
-                B.writeFile diretorioAluno dadosAlunoAtualizado
-                
-        let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0, media = 0.0})
-        B.writeFile diretorio dados
+        alunoJaEstaNaTurma <- verificarAlunoJaEstaNaTurma matriculaAluno disciplina codTurma
+        if alunoJaEstaNaTurma then return (color Red "Aluno já está alocado nessa turma.")
+        else do 
+            createDirectoryIfMissing True $ takeDirectory diretorio
+            dadosAluno <- B.readFile diretorioAluno
+            
+            case decode dadosAluno of 
+                Just (Aluno matricula nome senha turmas) -> do
+                    let dadosAlunoAtualizado = encode(Aluno {matricula = matricula, nome = nome, senha = senha, turmas = turmas ++ [[disciplina, codTurma]]})
+                    B.writeFile diretorioAluno dadosAlunoAtualizado
+    
+            let dados = encode (AlunoTurma {faltas = 0, nota1 = 0.0, nota2 = 0.0, nota3 = 0.0, media = 0.0})
+            B.writeFile diretorio dados
 
-        return $ "Adicionado " ++ matriculaAluno
+            dadosTurma <- B.readFile diretorioTurma
+            
+            case decode dadosTurma of
+                Just (Turma nome codigo alunos) -> do
+                    let dadosTurmaAtualizado = encode(Turma {nome = nome, codigo = codigo, alunos = alunos ++ [matriculaAluno]})
+                    B.writeFile diretorioTurma dadosTurmaAtualizado
 
-
-
-
+            return $ (color Green "\nAluno ") ++ matriculaAluno ++ (color Green " adicionado")

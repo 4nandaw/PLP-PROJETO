@@ -7,6 +7,7 @@ import Modules.GerenciadorOpcoesDisciplina as OpcoesDisciplina
 import Data.Aeson
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
+import System.Console.Pretty
 
 data Aluno = Aluno {
     nome :: String,
@@ -26,10 +27,10 @@ listarDisciplinasTurmas matricula = do
         Just (Aluno _ _ _ turmas) -> do
             let listaDiscipinasTurmas = map (\x -> ajustarExibirDisciplinaTurma x) turmas
             return $ unlines $ listaDiscipinasTurmas
-        Nothing -> return "Erro"    
+        Nothing -> return (color Red "Erro.")
 
 ajustarExibirDisciplinaTurma :: [String] -> String
-ajustarExibirDisciplinaTurma [disciplina, turma] = "Disciplina: " ++ disciplina ++ ". Turma: " ++ turma
+ajustarExibirDisciplinaTurma [disciplina, turma] = (color White . style Bold $ "Disciplina: ") ++ disciplina ++ (color White . style Bold $ ". Turma: ") ++ turma
 
 turmaValida :: String -> String -> String -> IO Bool
 turmaValida matricula disciplina turma = do
@@ -56,4 +57,4 @@ salvarAvaliacao diretorio nota comentario matricula = do
     let diretorioAvaliacao = diretorio ++ matricula ++ ".json"
     let dados = encode (Avaliacao {nota = nota, comentario = comentario})
     B.writeFile diretorioAvaliacao dados
-    return "Avaliação registrada!"
+    return (color Green "\nAvaliação registrada!")
