@@ -11,6 +11,7 @@ import Utils.Avaliacao
 import Utils.Aluno
 import Utils.Disciplina
 import Utils.MaterialDidatico
+import Utils.Quizzes
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -459,18 +460,40 @@ formatarMateriais ((titulo, conteudo):resto) =
 -- Função para criar um novo quiz vazio
 criarQuiz :: String -> String -> String -> IO Bool
 criarQuiz disciplina codTurma titulo = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/quizzes/" ++ titulo ++ ".json"
+        diretorioQuizzes = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/" ++ "quizzes.json"
     createDirectoryIfMissing True $ takeDirectory diretorio
     quizValido <- quizExiste disciplina codTurma titulo
     if quizValido then return False
     else do
+        quizzesExiste <- doesFileExist diretorioQuizzes
+        if quizzesExiste then do
+            dados <- B.readFile diretorioQuizzes
+            case decode dados of
+                Just (Quizzes quizzes) -> do
+                    let dadosQuizzes = encode (Quizzes{quizzes = quizzes ++ [titulo]})
+                    B.writeFile diretorioQuizzes dadosQuizzes
+        else do 
+            let dadosQuizzes = encode (Quizzes{quizzes = [titulo]})
+            B.writeFile diretorioQuizzes dadosQuizzes
         let quiz = encode (Quiz{perguntas = [], respostas = []})
         B.writeFile diretorio quiz
         return True
 
+listarQuizzes :: String -> String -> IO String
+listarQuizzes disciplina codTurma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/" ++ "quizzes.json"
+    quizzesValidos <- doesFileExist diretorio
+    if not quizzesValidos then return $ color Red "\nNão existem quizzes criados!"
+    else do 
+        dados <- B.readFile diretorio
+        case decode dados of
+            Just (Quizzes quizzes) -> do
+                return $ unlines quizzes
+
 quizExiste :: String -> String -> String -> IO Bool
 quizExiste disciplina codTurma titulo = do 
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/quizzes/" ++ titulo ++ ".json"
     createDirectoryIfMissing True $ takeDirectory diretorio
     quizValido <- doesFileExist diretorio
     return quizValido
@@ -483,7 +506,7 @@ validarResposta resposta = do
 
 adicionarPergunta :: String -> String -> String -> String -> String -> IO String
 adicionarPergunta disciplina codTurma titulo pergunta resposta = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/quizzes/" ++ titulo ++ ".json"
     dados <- B.readFile diretorio
     case decode dados of
         Just (Quiz perguntas respostas) -> do
@@ -491,3 +514,11 @@ adicionarPergunta disciplina codTurma titulo pergunta resposta = do
             let dadosAtualizados = encode (Quiz{perguntas = perguntas ++ [pergunta], respostas = respostas ++ [respostaBool]})
             B.writeFile diretorio dadosAtualizados
             return ""
+
+verificarQuizzesExistentes :: String -> String -> IO Bool
+verificarQuizzesExistentes disciplina codTurma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/" ++ "quizzes.json"
+    quizzesExistem <- doesFileExist diretorio
+    if quizzesExistem then return True
+    else return False
+    

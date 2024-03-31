@@ -2,6 +2,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 
 module Modules.GerenciadorOpcoesAluno where
+import Utils.Aluno
 import Utils.Avaliacao 
 import Modules.GerenciadorOpcoesDisciplina as OpcoesDisciplina
 import Data.Aeson
@@ -11,15 +12,6 @@ import System.Console.Pretty
 import Data.Char (toUpper)
 import System.Directory (doesFileExist)
 
-data Aluno = Aluno {
-    nome :: String,
-    matricula :: String,
-    senha :: String,
-    turmas :: [[String]]
-} deriving (Generic, Show)
-
-instance ToJSON Aluno
-instance FromJSON Aluno
 
 listarDisciplinasTurmas :: String -> IO String
 listarDisciplinasTurmas matricula = do
@@ -63,7 +55,7 @@ salvarAvaliacao diretorio nota comentario matricula = do
 
 exibirRespostasCertas :: String -> String -> String -> [Bool] -> IO String
 exibirRespostasCertas disciplina codTurma titulo listaRespostasAluno = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/quizzes/" ++ titulo ++ ".json"
     dados <- B.readFile diretorio
     case decode dados of
         Just (Quiz perguntas respostas) -> do
@@ -72,14 +64,22 @@ exibirRespostasCertas disciplina codTurma titulo listaRespostasAluno = do
         Nothing -> return "Erro ao ler dados do quiz"    
 
 ajustarResposta :: String -> Bool -> Bool -> String
-ajustarResposta pergunta resposta respostaAluno = do
-     let acertou = resposta == respostaAluno
-     if acertou then pergunta ++ "\n" ++ "Resposta certa!"
-     else pergunta ++ "\n" ++ "Resposta errada!"
+ajustarResposta pergunta respostaBool respostaAlunoBool = do
+    let respostaAluno = formatarBool respostaAlunoBool
+        resposta = formatarBool respostaBool
+        acertou = respostaBool == respostaAlunoBool
+    if acertou then "\n" ++ pergunta ++ "\n" ++ "Sua resposta: " ++ respostaAluno ++ "\n" ++ "Resposta certa: " ++ resposta ++ "\n" ++ color Green "Acertou!"
+    else "\n" ++ pergunta ++ "\n" ++ "Sua resposta: " ++ respostaAluno ++ "\n" ++ "Resposta certa: " ++ resposta ++ "\n" ++ color Red "Errou!"
+
+formatarBool :: Bool -> String
+formatarBool boolean = 
+    if boolean then "Correto"
+    else "Incorreto"
+
 
 validarTituloQuiz :: String -> String -> String ->  IO Bool
 validarTituloQuiz disciplina codTurma titulo = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/quizzes/" ++ titulo ++ ".json"
     quizValido <- doesFileExist diretorio
     return quizValido
 
@@ -101,7 +101,7 @@ pegarRespostaAlunoBool resposta
 
 perguntasQuiz :: String -> String -> String -> IO [String]
 perguntasQuiz disciplina codTurma titulo = do
-    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quizes/" ++ titulo ++ ".json"
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/quiz/quizzes/" ++ titulo ++ ".json"
     dados <- B.readFile diretorio
     case decode dados of
         Just (Quiz perguntas _) -> return perguntas
