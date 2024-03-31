@@ -67,7 +67,7 @@ exibirRespostasCertas disciplina codTurma titulo listaRespostasAluno = do
     dados <- B.readFile diretorio
     case decode dados of
         Just (Quiz perguntas respostas) -> do
-            let respostasFormatadas = [ajustarResposta pergunta resposta respostaAluno | pergunta <- perguntas, resposta <- respostas, respostaAluno <- listaRespostasAluno]
+            let respostasFormatadas = zipWith3 ajustarResposta perguntas respostas listaRespostasAluno
             return $ unlines respostasFormatadas
         Nothing -> return "Erro ao ler dados do quiz"    
 
