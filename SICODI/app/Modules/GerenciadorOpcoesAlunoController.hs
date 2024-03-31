@@ -17,9 +17,11 @@ chatAlunoController matricula disciplina turma = do
 
     enviarMensagemAlunoController disciplina turma matricula
 
+
 enviarMensagemAlunoController :: String -> String -> String -> IO()
 enviarMensagemAlunoController disciplina codTurma matriculaAluno = do
     msg <- getLine
+
 
     remetente <- lerNomeAluno matriculaAluno
 
@@ -39,6 +41,7 @@ menuTurmaAluno matricula disciplina turma = do
     putStrLn "[3] Chat"
     putStrLn "[4] Avaliar professor(a)"
     putStrLn "[5] Materiais Didáticos"
+    putStrLn "[6] Responder quiz
     putStrLn (color Blue . style Bold $ "==============================================================")
     escolherOpcaoAluno matricula disciplina turma
 
@@ -57,6 +60,7 @@ escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
         | (escolha == "3") = chatAlunoController matricula disciplina turma
         | (escolha == "4") = menuAvaliacoes matricula disciplina turma
         | (escolha == "5") = Modules.GerenciadorOpcoesDisciplinaController.exibirMaterialDidaticoController disciplina turma
+        | (escolha == "6") = responderQuizController disciplina turma
         | otherwise = putStrLn (color Red "\nOpção inválida.")
 
 visualizarNotasController :: String -> String -> String -> IO()
@@ -97,3 +101,38 @@ escolherOpcaoAvaliacao matricula disciplina turma nota = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/avaliacoes/"
     avaliacaoSave <- Modules.GerenciadorOpcoesAluno.salvarAvaliacao diretorio nota comentario matricula
     putStrLn avaliacaoSave
+    
+responderQuizController :: String -> String -> IO ()
+responderQuizController disciplina codTurma = do
+    putStrLn "Digite o titulo do Quiz que você quer respoder: "
+    titulo <- getLine
+    tituloValido <- Modules.GerenciadorOpcoesAluno.validarTituloQuiz disciplina codTurma titulo
+    if tituloValido then do
+        listaPerguntas <- Modules.GerenciadorOpcoesAluno.perguntasQuiz disciplina codTurma titulo
+        responderPerguntasQuizController disciplina codTurma titulo listaPerguntas []
+    else do
+        putStrLn "Título de Quiz inválido"
+
+responderPerguntasQuizController :: String -> String -> String -> [String] -> [Bool] -> IO ()
+responderPerguntasQuizController disciplina codTurma titulo listaPerguntas listaRespostasAluno = do
+    if listaPerguntas == [] then exibirRespostasCertasController disciplina codTurma titulo listaRespostasAluno
+    else do
+        let pergunta = Modules.GerenciadorOpcoesAluno.getHead listaPerguntas
+        putStrLn pergunta
+        putStrLn "Digite sua resposta, apenas S para verdadeiro e N para falso"
+        respostaAluno <- getLine
+        let respostaValida = Modules.GerenciadorOpcoesAluno.validarResposta respostaAluno
+        if not respostaValida then do
+            putStrLn "Digite apenas S para verdadeiro e N para falso"
+            responderPerguntasQuizController disciplina codTurma titulo listaPerguntas listaRespostasAluno
+        else do
+            let respostaAlunoBool = Modules.GerenciadorOpcoesAluno.pegarRespostaAlunoBool respostaAluno
+            let tailListaPerguntas = Modules.GerenciadorOpcoesAluno.getTail listaPerguntas
+            responderPerguntasQuizController disciplina codTurma titulo tailListaPerguntas (listaRespostasAluno ++ [respostaAlunoBool])        
+
+exibirRespostasCertasController :: String -> String -> String -> [Bool] -> IO ()
+exibirRespostasCertasController disciplina codTurma titulo listaRespostasAluno = do
+    stringFormatada <- Modules.GerenciadorOpcoesAluno.exibirRespostasCertas disciplina codTurma titulo listaRespostasAluno
+    putStrLn stringFormatada
+
+            
