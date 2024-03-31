@@ -17,9 +17,11 @@ chatAlunoController matricula disciplina turma = do
 
     enviarMensagemAlunoController disciplina turma matricula
 
+
 enviarMensagemAlunoController :: String -> String -> String -> IO()
 enviarMensagemAlunoController disciplina codTurma matriculaAluno = do
     msg <- getLine
+
 
     remetente <- lerNomeAluno matriculaAluno
 
@@ -39,6 +41,7 @@ menuTurmaAluno matricula disciplina turma = do
     putStrLn "[3] Chat"
     putStrLn "[4] Avaliar professor(a)"
     putStrLn "[5] Materiais Didáticos"
+    putStrLn "[6] Responder quiz"
     putStrLn (color Blue . style Bold $ "==============================================================")
     escolherOpcaoAluno matricula disciplina turma
 
@@ -57,6 +60,7 @@ escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
         | (escolha == "3") = chatAlunoController matricula disciplina turma
         | (escolha == "4") = menuAvaliacoes matricula disciplina turma
         | (escolha == "5") = Modules.GerenciadorOpcoesDisciplinaController.exibirMaterialDidaticoController disciplina turma
+        | (escolha == "6") = escolherQuiz disciplina turma
         | otherwise = putStrLn (color Red "\nOpção inválida.")
 
 visualizarNotasController :: String -> String -> String -> IO()
@@ -97,3 +101,49 @@ escolherOpcaoAvaliacao matricula disciplina turma nota = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ turma ++ "/avaliacoes/"
     avaliacaoSave <- Modules.GerenciadorOpcoesAluno.salvarAvaliacao diretorio nota comentario matricula
     putStrLn avaliacaoSave
+    
+
+escolherQuiz :: String -> String -> IO()
+escolherQuiz disciplina codTurma = do
+    lista <- Modules.GerenciadorOpcoesDisciplina.listarQuizzes disciplina codTurma
+    quizzesExistentes <- Modules.GerenciadorOpcoesDisciplina.verificarQuizzesExistentes disciplina codTurma
+    if not quizzesExistentes then putStrLn lista
+    else do 
+        putStrLn $ color Blue "\n======== LISTA DE QUIZZES ========"
+        putStrLn lista
+        putStrLn (color Blue . style Bold $ "======= ESCOLHA QUAL QUIZ VOCÊ QUER RESPONDER =======")
+        --Lista de quizzes
+        putStrLn $ color Red "Atenção: " ++ "Ao entrar no quiz, ele só irá fechar após responder todas as perguntas!"
+        putStrLn $ color Blue "Digite o título do quiz: "
+        titulo <- getLine
+        tituloValido <- Modules.GerenciadorOpcoesAluno.validarTituloQuiz disciplina codTurma titulo
+        if tituloValido then do
+            listaPerguntas <- Modules.GerenciadorOpcoesAluno.perguntasQuiz disciplina codTurma titulo
+            responderPerguntasQuizController disciplina codTurma titulo listaPerguntas []
+        else putStrLn $ color Red "\nTítulo de quiz inválido"
+
+responderPerguntasQuizController :: String -> String -> String -> [String] -> [Bool] -> IO ()
+responderPerguntasQuizController disciplina codTurma titulo listaPerguntas listaRespostasAluno = do
+    if listaPerguntas == [] then exibirRespostasCertasController disciplina codTurma titulo listaRespostasAluno
+    else do
+        putStrLn $ color Blue "\n==================== RESPONDA A PERGUNTA ===================="
+        let pergunta = Modules.GerenciadorOpcoesAluno.getHead listaPerguntas
+        putStrLn $ color Blue pergunta
+        putStrLn $ color Blue "Digite sua resposta, apenas S para verdadeiro e N para falso: "
+        respostaAluno <- getLine
+        let respostaValida = Modules.GerenciadorOpcoesAluno.validarResposta respostaAluno
+        if not respostaValida then do
+            putStrLn $ color Red "\nDigite apenas S para verdadeiro e N para falso."
+            responderPerguntasQuizController disciplina codTurma titulo listaPerguntas listaRespostasAluno
+        else do
+            let respostaAlunoBool = Modules.GerenciadorOpcoesAluno.pegarRespostaAlunoBool respostaAluno
+            let tailListaPerguntas = Modules.GerenciadorOpcoesAluno.getTail listaPerguntas
+            responderPerguntasQuizController disciplina codTurma titulo tailListaPerguntas (listaRespostasAluno ++ [respostaAlunoBool])        
+
+exibirRespostasCertasController :: String -> String -> String -> [Bool] -> IO ()
+exibirRespostasCertasController disciplina codTurma titulo listaRespostasAluno = do
+    putStrLn $ color Blue "======= RESPOSTAS ======="
+    stringFormatada <- Modules.GerenciadorOpcoesAluno.exibirRespostasCertas disciplina codTurma titulo listaRespostasAluno
+    putStrLn stringFormatada
+
+            

@@ -6,6 +6,7 @@ import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.Console.Pretty
 import Data.Char (toUpper)
 
+
 -- Função para verificar se a turma informada é válida
 verificarTurma :: String -> String -> IO Bool
 verificarTurma disciplina codTurma = do
@@ -79,6 +80,7 @@ menuNotas disciplina codTurma matriculaAluno = do
                 salvarNotaController disciplina codTurma matriculaAluno escolha
                 menuNotas disciplina codTurma matriculaAluno
 
+
 chatController :: String -> String -> IO()
 chatController disciplina codTurma = do
     --Possível lista de alunos que estão matriculados na turma // ver depois se necessário fz
@@ -123,6 +125,7 @@ menuTurmaEscolhida disciplina codTurma = do
     putStrLn "[6] Mural da Turma"
     putStrLn "[7] Chat"
     putStrLn "[8] Materiais Didáticos"
+    putStrLn "[9] Quizzes da turma"
     putStrLn (color Magenta . style Bold $ "=================================")
     opcao <- getLine
 
@@ -154,6 +157,9 @@ escolherOpcaoMenuMinhasTurmas opcao disciplina codTurma
             menuTurmaEscolhida disciplina codTurma
         | (opcao == "8") = do
             menuMaterialDidatico disciplina codTurma
+            menuTurmaEscolhida disciplina codTurma
+        | (opcao == "9") = do
+            menuQuiz disciplina codTurma
             menuTurmaEscolhida disciplina codTurma
         | otherwise = do
             putStrLn (color Red "\nOpção inválida." )
@@ -272,3 +278,71 @@ criarMaterialDidaticoController disciplina codTurma = do
         else do
             salvarMaterial <- Modules.GerenciadorOpcoesDisciplina.criarMaterialDidatico disciplina codTurma titulo conteudo
             putStrLn salvarMaterial
+            
+-- Função para exibir o menu principal
+menuQuiz :: String -> String -> IO ()
+menuQuiz disciplina codTurma = do
+    putStrLn (color Magenta . style Bold $ "\n===== MENU QUIZ ======")
+    putStrLn $ color Magenta "Digite uma opção: "
+    putStrLn "[0] para voltar"
+    putStrLn "[1] Criar Quiz"
+    putStrLn "[2] Adicionar pergunta a um Quiz"
+    putStrLn (color Magenta . style Bold $"======================")
+    opcao <- getLine
+    escolherOpcaoQuiz disciplina codTurma opcao
+
+escolherOpcaoQuiz :: String -> String -> String -> IO()
+escolherOpcaoQuiz disciplina codTurma opcao
+    | (opcao == "0") = putStrLn " "
+    | (opcao == "1") = criarQuizController disciplina codTurma
+    | (opcao == "2") = adicionarPerguntasQuizController disciplina codTurma
+    | (otherwise) = do 
+        putStrLn $ color Red "\nOpção inválida\n"
+        menuQuiz disciplina codTurma
+    
+criarQuizController :: String -> String -> IO ()
+criarQuizController disciplina codTurma = do
+    putStrLn $ color Magenta "\nQual  o título do Quiz?"
+    titulo <- getLine
+    quizValido <- Modules.GerenciadorOpcoesDisciplina.criarQuiz disciplina codTurma titulo
+    if quizValido then do
+     putStrLn $ color Green "\nQuiz criado! Agora adicione as perguntas e as respostas!\n" 
+     adicionarPerguntasRespostasController disciplina codTurma titulo
+    else do
+        putStrLn $ color Red "\nJá existe quiz com esse nome!"
+
+adicionarPerguntasQuizController :: String -> String -> IO()
+adicionarPerguntasQuizController disciplina codTurma = do
+    lista <- Modules.GerenciadorOpcoesDisciplina.listarQuizzes disciplina codTurma
+    quizzesExistentes <- Modules.GerenciadorOpcoesDisciplina.verificarQuizzesExistentes disciplina codTurma
+    if not quizzesExistentes then putStrLn lista
+    else do 
+        putStrLn $ color Magenta "\n======== LISTA DE QUIZZES ========"
+        putStrLn lista
+        putStrLn $ color Magenta "\nQual  o título do Quiz? "
+        titulo <- getLine
+        quizValido <- Modules.GerenciadorOpcoesDisciplina.quizExiste disciplina codTurma titulo
+        if quizValido then do
+            putStrLn ""
+            adicionarPerguntasRespostasController disciplina codTurma titulo
+        else putStrLn $ color Red "\nQuiz não existe."
+
+adicionarPerguntasRespostasController :: String -> String -> String -> IO ()
+adicionarPerguntasRespostasController disciplina codTurma titulo = do
+    putStrLn (color Magenta "============ NOVA PERGUNTA ============")
+    putStrLn $ color Magenta "Digite a pergunta ou ENTER para sair: "
+    pergunta <- getLine
+    if pergunta == "" then putStrLn $ color Green "A adição de novas perguntas foi finalizada."
+    else do
+        putStrLn $ color Magenta "\nDigite a resposta (digite s para verdadeiro e n para falso): "
+        resposta <- getLine
+        let respostaValida = Modules.GerenciadorOpcoesDisciplina.validarResposta resposta
+        if respostaValida then do
+            putStrLn $ color Green "\nPergunta adicionada.\n"
+            Modules.GerenciadorOpcoesDisciplina.adicionarPergunta disciplina codTurma titulo pergunta resposta 
+            adicionarPerguntasRespostasController disciplina codTurma titulo
+            else do
+                putStrLn $ color Red $ "\nDigite apenas s para verdadeiro ou n para falso.\n"
+                adicionarPerguntasRespostasController disciplina codTurma titulo
+
+                
