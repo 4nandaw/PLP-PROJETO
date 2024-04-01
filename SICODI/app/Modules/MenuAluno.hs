@@ -1,6 +1,6 @@
 module Modules.MenuAluno where
 import Modules.GerenciadorOpcoesAluno
-import Modules.GerenciadorOpcoesAlunoController
+import Modules.Controllers.GerenciadorOpcoesAlunoController
 import System.Console.Pretty
 
 
@@ -17,7 +17,7 @@ exibirMenuAluno matricula = do
     else do
         turmaValida <- Modules.GerenciadorOpcoesAluno.turmaValida matricula disciplina turma
         if turmaValida then  do 
-            Modules.GerenciadorOpcoesAlunoController.menuTurmaAluno matricula disciplina turma
+            Modules.Controllers.GerenciadorOpcoesAlunoController.menuTurmaAluno matricula disciplina turma
             exibirMenuAluno matricula
         else do 
             putStrLn (color Red "\nDisciplina e/ou turma inválida.")

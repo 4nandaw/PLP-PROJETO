@@ -1,7 +1,7 @@
-module Modules.GerenciadorOpcoesAlunoController where
+module Modules.Controllers.GerenciadorOpcoesAlunoController where
 import Modules.GerenciadorOpcoesAluno
 import Modules.GerenciadorOpcoesDisciplina
-import Modules.GerenciadorOpcoesDisciplinaController
+import Modules.Controllers.GerenciadorOpcoesDisciplinaController
 import System.Console.Pretty
 
 import Modules.Chat
@@ -59,7 +59,7 @@ escolherOpcaoMenuTurmaAluno escolha matricula disciplina turma
         | (escolha == "2") = exibirMuralAlunoController disciplina turma
         | (escolha == "3") = chatAlunoController matricula disciplina turma
         | (escolha == "4") = menuAvaliacoes matricula disciplina turma
-        | (escolha == "5") = Modules.GerenciadorOpcoesDisciplinaController.exibirMaterialDidaticoController disciplina turma
+        | (escolha == "5") = Modules.Controllers.GerenciadorOpcoesDisciplinaController.exibirMaterialDidaticoController disciplina turma
         | (escolha == "6") = escolherQuiz disciplina turma
         | otherwise = putStrLn (color Red "\nOpção inválida.")
 

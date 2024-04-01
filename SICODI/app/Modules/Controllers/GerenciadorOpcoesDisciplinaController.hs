@@ -1,4 +1,4 @@
-module Modules.GerenciadorOpcoesDisciplinaController where
+module Modules.Controllers.GerenciadorOpcoesDisciplinaController where
 import Modules.GerenciadorOpcoesDisciplina
 import Modules.GerenciadorTurmas
 import Modules.Chat

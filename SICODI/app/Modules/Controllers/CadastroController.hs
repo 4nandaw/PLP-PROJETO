@@ -1,4 +1,4 @@
-module Modules.CadastroController where
+module Modules.Controllers.CadastroController where
 import Modules.Cadastro
 import System.Console.Pretty
 

@@ -1,5 +1,5 @@
-module Modules.GerenciadorTurmasController where
-import Modules.GerenciadorOpcoesDisciplinaController
+module Modules.Controllers.GerenciadorTurmasController where
+import Modules.Controllers.GerenciadorOpcoesDisciplinaController
 import Modules.GerenciadorTurmas
 import System.Directory
 import System.Console.Pretty
@@ -52,7 +52,7 @@ menuMinhasTurmas disciplina = do
 
         if not validacao then putStrLn (color Red "\nCódigo de turma inválido.\n")
         else do 
-                Modules.GerenciadorOpcoesDisciplinaController.menuTurmaEscolhida disciplina codTurma
+                Modules.Controllers.GerenciadorOpcoesDisciplinaController.menuTurmaEscolhida disciplina codTurma
     else putStr ""
  
 criarTurmaController :: String -> IO()

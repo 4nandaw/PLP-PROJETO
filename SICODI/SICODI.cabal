@@ -47,16 +47,16 @@ executable SICODI-exe
   main-is: Main.hs
   other-modules:
       Modules.Cadastro
-      Modules.CadastroController
       Modules.Chat
+      Modules.Controllers.CadastroController
+      Modules.Controllers.GerenciadorOpcoesAlunoController
+      Modules.Controllers.GerenciadorOpcoesDisciplinaController
+      Modules.Controllers.GerenciadorTurmasController
+      Modules.Controllers.LoginController
       Modules.GerenciadorOpcoesAluno
-      Modules.GerenciadorOpcoesAlunoController
       Modules.GerenciadorOpcoesDisciplina
-      Modules.GerenciadorOpcoesDisciplinaController
       Modules.GerenciadorTurmas
-      Modules.GerenciadorTurmasController
       Modules.Login
-      Modules.LoginController
       Modules.MenuAluno
       Modules.MenuPrincipal
       Utils.Aluno

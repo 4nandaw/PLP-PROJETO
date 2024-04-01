@@ -1,8 +1,8 @@
 module Modules.MenuPrincipal where 
 import Modules.Cadastro
 import Modules.Login
-import Modules.LoginController
-import Modules.CadastroController
+import Modules.Controllers.LoginController
+import Modules.Controllers.CadastroController
 import System.Console.Pretty
 
 escolherOpcao :: IO()
@@ -25,7 +25,7 @@ printarMenu = do
 escolher :: String -> IO()
 escolher escolha 
         | (escolha == "0") = putStr (color Green "\nPrograma finalizado!\n")
-        | (escolha == "1") = Modules.LoginController.loginGeral
-        | (escolha == "2") = Modules.CadastroController.cadastroGeral
+        | (escolha == "1") = Modules.Controllers.LoginController.loginGeral
+        | (escolha == "2") = Modules.Controllers.CadastroController.cadastroGeral
         | otherwise = putStrLn (color Red "Opção Inválida!")
        
