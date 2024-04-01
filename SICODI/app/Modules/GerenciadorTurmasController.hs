@@ -62,9 +62,11 @@ criarTurmaController disciplina = do
     nome <- getLine
     putStrLn (color Magenta "\nCódigo da turma: ")
     codTurma <- getLine
-
-    response <- criarTurma disciplina nome codTurma
-    putStrLn response
+    let dadosValidos = Modules.GerenciadorTurmas.validandoDadosTurma nome codTurma
+    if dadosValidos then do
+        response <- criarTurma disciplina nome codTurma
+        putStrLn response
+    else putStrLn $ color Red "\nDados inválidos, não coloque dados brancos ou nulos!"
 
 solicitarEAlocarAlunoController :: String -> IO()
 solicitarEAlocarAlunoController disciplina = do

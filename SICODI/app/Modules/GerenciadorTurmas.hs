@@ -12,6 +12,7 @@ import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
 import Data.Aeson
+import Data.Char (isSpace)
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist)
 import System.FilePath.Posix (takeDirectory)
 import Control.Monad (when)
@@ -146,3 +147,12 @@ alocarAluno matriculaAluno disciplina codTurma = do
                     B.writeFile diretorioTurma dadosTurmaAtualizado
 
             return $ (color Green "\nAluno ") ++ matriculaAluno ++ (color Green " adicionado")
+
+validandoString :: String -> Bool  
+validandoString string = not (all isSpace string || null string)
+
+validandoDadosTurma :: String -> String -> Bool
+validandoDadosTurma nome codTurma = do
+    let valido = validandoString nome && validandoString codTurma
+    if valido then True
+    else False

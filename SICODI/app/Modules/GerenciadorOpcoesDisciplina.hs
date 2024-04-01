@@ -282,11 +282,13 @@ mediaAvaliacoes disciplina codTurma = do
     notas <- notasAvaliacoes
 
     let notasValidas = filter (/= -1) notas
-    let quantidade = length notasValidas
-    let somaNotas = sum notasValidas
-    let media = fromIntegral somaNotas / fromIntegral quantidade
+    if notasValidas == [] then return $ color Red "\nAinda não há avaliações para o professor"
+    else do
+        let quantidade = length notasValidas
+        let somaNotas = sum notasValidas
+        let media = fromIntegral somaNotas / fromIntegral quantidade
 
-    return $ (color White . style Bold $ "Nota média dada ao professor: ") ++ show media
+        return $ (color White . style Bold $ "Nota média dada ao professor: ") ++ show media
 
 adicionarNotasTurma :: String -> String -> String-> IO Bool
 adicionarNotasTurma disciplina codTurma matriculaAluno = do

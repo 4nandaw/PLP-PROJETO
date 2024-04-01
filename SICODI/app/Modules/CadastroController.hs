@@ -19,7 +19,7 @@ cadastroDisciplinaController = do
         if (cadastroValido) 
             then putStrLn (color Green "\nCadastro concluído!")
             else putStrLn (color Red "\nNome de disciplina já está em uso.")
-    else putStrLn $ color Red "\nDádos inválidos, não coloque dados brancos ou nulos"
+    else putStrLn $ color Red "\nDádos inválidos, não coloque dados brancos ou nulos!"
 
 cadastroAlunoController :: IO()
 cadastroAlunoController = do
