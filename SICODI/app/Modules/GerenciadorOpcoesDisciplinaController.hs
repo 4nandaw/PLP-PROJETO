@@ -65,9 +65,9 @@ menuNotas disciplina codTurma matriculaAluno = do
     putStrLn "[3] para adicionar a 3º nota"
     putStrLn "[4] para ver a situação do aluno" 
     escolha <- getLine
-    if (escolha == "0") then putStrLn " "
+    if (escolha == "0") then menuTurmaEscolhida disciplina codTurma
     else do
-        if (escolha /= "1" && escolha /= "2" && escolha /= "3" && escolha /= "4") then do
+        if (escolha /= "0" && escolha /= "1" && escolha /= "2" && escolha /= "3" && escolha /= "4") then do
             putStrLn (color Red "\nOpção inválida.")
             menuNotas disciplina codTurma matriculaAluno
         else do
