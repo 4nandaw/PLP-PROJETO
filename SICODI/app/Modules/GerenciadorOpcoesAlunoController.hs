@@ -109,12 +109,12 @@ escolherQuiz disciplina codTurma = do
     quizzesExistentes <- Modules.GerenciadorOpcoesDisciplina.verificarQuizzesExistentes disciplina codTurma
     if not quizzesExistentes then putStrLn lista
     else do 
-        putStrLn $ color Blue "\n======== LISTA DE QUIZZES ========"
-        putStrLn lista
+        putStrLn $ color Blue . style Bold $ "\n======== LISTA DE QUIZZES ========"
+        putStrLn (color White lista)
         putStrLn (color Blue . style Bold $ "======= ESCOLHA QUAL QUIZ VOCÊ QUER RESPONDER =======")
         --Lista de quizzes
-        putStrLn $ color Red "Atenção: " ++ "Ao entrar no quiz, ele só irá fechar após responder todas as perguntas!"
-        putStrLn $ color Blue "Digite o título do quiz: "
+        putStrLn $ color Red "Atenção: " ++ (color White "Ao entrar no quiz, ele só irá fechar após responder todas as perguntas!")
+        putStrLn $ color Blue "\nDigite o título do quiz: "
         titulo <- getLine
         tituloValido <- Modules.GerenciadorOpcoesAluno.validarTituloQuiz disciplina codTurma titulo
         if tituloValido then do
@@ -126,10 +126,11 @@ responderPerguntasQuizController :: String -> String -> String -> [String] -> [B
 responderPerguntasQuizController disciplina codTurma titulo listaPerguntas listaRespostasAluno = do
     if listaPerguntas == [] then exibirRespostasCertasController disciplina codTurma titulo listaRespostasAluno
     else do
-        putStrLn $ color Blue "\n==================== RESPONDA A PERGUNTA ===================="
+        putStrLn $ color Blue . style Bold $ "\n======== RESPONDA A PERGUNTA ========\n"
         let pergunta = Modules.GerenciadorOpcoesAluno.getHead listaPerguntas
         putStrLn $ color Blue pergunta
-        putStrLn $ color Blue "Digite sua resposta, apenas S para verdadeiro e N para falso: "
+        let msg = (color White "Digite sua resposta, apenas") ++ (color Blue " S") ++ (color White " para verdadeiro e") ++ (color Blue " N") ++ (color White " para falso: ")
+        putStrLn msg
         respostaAluno <- getLine
         let respostaValida = Modules.GerenciadorOpcoesAluno.validarResposta respostaAluno
         if not respostaValida then do
@@ -142,7 +143,7 @@ responderPerguntasQuizController disciplina codTurma titulo listaPerguntas lista
 
 exibirRespostasCertasController :: String -> String -> String -> [Bool] -> IO ()
 exibirRespostasCertasController disciplina codTurma titulo listaRespostasAluno = do
-    putStrLn $ color Blue "======= RESPOSTAS ======="
+    putStrLn $ color Blue . style Bold $ "\n======== RESPOSTAS ========"
     stringFormatada <- Modules.GerenciadorOpcoesAluno.exibirRespostasCertas disciplina codTurma titulo listaRespostasAluno
     putStrLn stringFormatada
 
