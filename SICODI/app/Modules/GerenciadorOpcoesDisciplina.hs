@@ -12,6 +12,7 @@ import Utils.Aluno
 import Utils.Disciplina
 import Utils.MaterialDidatico
 import Utils.Quizzes
+import Utils.Quiz
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
 import System.Directory
@@ -24,26 +25,14 @@ import Text.Printf
 import Numeric 
 import Data.List (intercalate)
 import System.Console.Pretty
--- import Data.Binary (encode)
 import Data.Char
 
 
-data Quiz = Quiz {
-         perguntas :: [String], 
-         respostas :: [Bool]
-} deriving (Generic, Show)
-
-instance ToJSON Quiz
-instance FromJSON Quiz
-
---instance ToJSON Pergunta
 
 solicitarEAlocarNotas :: String -> String -> IO Bool
 solicitarEAlocarNotas disciplina codTurma = do
     turmaValida <- doesDirectoryExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma)
     if turmaValida then do 
-        --let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma
-        --listarAlunosTurma diretorio  NÃO SE SABE SE VAI SER FEITO - DEPENDE DO TEMPO
         return True
     else return False
 
@@ -321,7 +310,6 @@ verificarPossivelChat disciplina codTurma matriculaAluno = do
         if matriculaAlunoValida then return True
         else return False
 
-
 acessarChat :: String -> String -> String -> IO String
 acessarChat disciplina codTurma matriculaAluno = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/chats/" ++ codTurma ++ "-" ++ matriculaAluno ++ ".json"
@@ -467,7 +455,6 @@ formatarMateriais ((titulo, conteudo):resto) =
     (color White . style Bold $ "Conteúdo do Material: ") ++ conteudo ++ "\n\n" ++
     formatarMateriais resto
 
-
 -- Função para criar um novo quiz vazio
 criarQuiz :: String -> String -> String -> IO Bool
 criarQuiz disciplina codTurma titulo = do
@@ -509,7 +496,6 @@ quizExiste disciplina codTurma titulo = do
     quizValido <- doesFileExist diretorio
     return quizValido
 
-
 validarResposta :: String -> Bool
 validarResposta resposta = do
     if map toUpper resposta /= "V" && map toUpper resposta /= "F" then False
@@ -532,4 +518,3 @@ verificarQuizzesExistentes disciplina codTurma = do
     quizzesExistem <- doesFileExist diretorio
     if quizzesExistem then return True
     else return False
-    
