@@ -4,6 +4,7 @@
 module Modules.GerenciadorOpcoesAluno where
 import Utils.Aluno
 import Utils.Avaliacao 
+import Utils.Quiz
 import Modules.GerenciadorOpcoesDisciplina as OpcoesDisciplina
 import Data.Aeson
 import GHC.Generics

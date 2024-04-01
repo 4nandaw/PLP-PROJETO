@@ -66,6 +66,7 @@ executable SICODI-exe
       Utils.Disciplina
       Utils.MaterialDidatico
       Utils.Mural
+      Utils.Quiz
       Utils.Quizzes
       Utils.Turma
       Paths_SICODI

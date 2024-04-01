@@ -37,7 +37,6 @@ adicionarNotasTurmaController disciplina codTurma = do
     matriculaAluno <- getLine
     if (matriculaAluno == "") then putStrLn (color Green "\nRegistro de notas finalizado!")
     else do
-        -- let diretorioAluno = diretorio ++ matriculaAluno ++ ".json"
         alunoValido <- Modules.GerenciadorOpcoesDisciplina.verificarAlunoTurma disciplina codTurma matriculaAluno
         
         if (alunoValido) then do 
@@ -65,7 +64,7 @@ menuNotas disciplina codTurma matriculaAluno = do
     putStrLn "[3] para adicionar a 3º nota"
     putStrLn "[4] para ver a situação do aluno" 
     escolha <- getLine
-    if (escolha == "0") then menuTurmaEscolhida disciplina codTurma
+    if (escolha == "0") then putStr ""
     else do
         if (escolha /= "0" && escolha /= "1" && escolha /= "2" && escolha /= "3" && escolha /= "4") then do
             putStrLn (color Red "\nOpção inválida.")
@@ -80,10 +79,10 @@ menuNotas disciplina codTurma matriculaAluno = do
                 salvarNotaController disciplina codTurma matriculaAluno escolha
                 menuNotas disciplina codTurma matriculaAluno
 
-
 chatController :: String -> String -> IO()
 chatController disciplina codTurma = do
-    --Possível lista de alunos que estão matriculados na turma // ver depois se necessário fz
+    alunos <- Modules.GerenciadorOpcoesDisciplina.verAlunosChat disciplina codTurma
+    putStrLn $ alunos
     putStrLn (color Red "AVISO: " ++ color White "se você deseja sair do chat, basta dar ENTER a qualquer momento da conversa. ")
     putStrLn (color Magenta "\nDigite a matrícula do aluno que deseja iniciar um chat: ")
     matriculaAluno <- getLine
@@ -99,7 +98,7 @@ chatController disciplina codTurma = do
             enviarMensagemController disciplina codTurma matriculaAluno
         else do
             putStrLn (color Red "\nAluno não está na turma.")
-            putStrLn " "
+            putStrLn ""
 
 enviarMensagemController :: String -> String -> String -> IO()
 enviarMensagemController disciplina codTurma matriculaAluno = do
@@ -346,5 +345,3 @@ adicionarPerguntasRespostasController disciplina codTurma titulo = do
             else do
                 putStrLn $ color Red $ "\nDigite apenas V para verdadeiro ou F para falso.\n"
                 adicionarPerguntasRespostasController disciplina codTurma titulo
-
-                

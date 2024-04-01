@@ -82,7 +82,6 @@ mediaNotas disciplina codTurma = do
     else
         return $ (color White . style Bold $ "Não há alunos registrados para calcular a média de notas.")
 
-
 atualizarMedia :: String -> String -> String -> IO String
 atualizarMedia disciplina codTurma matriculaAluno = do
     let diretorio = ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
@@ -95,6 +94,18 @@ atualizarMedia disciplina codTurma matriculaAluno = do
             B.writeFile diretorio (encode alunoMediaAtualizada)
             return "Média atualizada"
         Nothing -> return "Erro na atualização da média"
+
+verAlunos :: String -> String -> IO String
+verAlunos disciplina codTurma = do
+    let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/"
+
+    listaDeAlunos <- getDirectoryContents diretorio
+
+    createDirectoryIfMissing True $ takeDirectory diretorio
+
+    response <- mapM (\x -> (exibirAluno x diretorio)) listaDeAlunos
+
+    return (unlines $ response)
 
 exibirAluno :: String -> String -> IO String
 exibirAluno matricula diretorio = do
@@ -234,11 +245,10 @@ situacaoAluno disciplina codTurma matriculaAluno = do
     dados <- B.readFile ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/" ++ matriculaAluno ++ ".json")
     case decode dados of 
         Just (AlunoTurma nota1 nota2 nota3 media faltas) -> do
-            let situacao = if media >= 7 && faltas <= 7
-                               then (color Green "Aprovado :)")
-                               else if media >= 4 && media <= 6.9 && faltas <= 7
-                                        then (color Yellow "Final :|")
-                                        else (color Red "Reprovado :(")
+            let situacao = if (faltas > 7) then (color Red "Reprovado por faltas :(")
+                            else if media >= 7 then (color Green "Aprovado :)")
+                                else if media >= 4 && media <= 6.9 then (color Yellow "Final :|")
+                                    else (color Red "Reprovado :(")
             return $ (color White . style Bold $ "\n===== SITUAÇÃO DO ALUNO(A) " ++ matriculaAluno ++ " =====\n\n") ++
                      (color White . style Bold $ "Nota 1: ") ++ show nota1 ++ "\n" ++
                      (color White . style Bold $ "Nota 2: ") ++ show nota2 ++ "\n" ++
@@ -259,7 +269,6 @@ verAvaliacoes disciplina codTurma = do
     response <- mapM (\x -> (exibirAvaliacao x diretorio)) listaDeAvaliacoes
 
     return (unlines $ response)
-
 
 mediaAvaliacoes :: String -> String -> IO String
 mediaAvaliacoes disciplina codTurma = do
@@ -287,17 +296,35 @@ adicionarNotasTurma disciplina codTurma matriculaAluno = do
     else do 
         return False
 
-verAlunos :: String -> String -> IO String
-verAlunos disciplina codTurma = do
+verAlunosChat :: String -> String -> IO String
+verAlunosChat disciplina codTurma = do
     let diretorio = "./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codTurma ++ "/alunos/"
 
     listaDeAlunos <- getDirectoryContents diretorio
 
     createDirectoryIfMissing True $ takeDirectory diretorio
 
-    response <- mapM (\x -> (exibirAluno x diretorio)) listaDeAlunos
+    response <- mapM (\x -> (exibirAlunoChat x diretorio)) listaDeAlunos
 
     return (unlines $ response)
+
+exibirAlunoChat :: String -> String -> IO String
+exibirAlunoChat matricula diretorio = do
+    if matricula /= "." && matricula /= ".." then do
+        let diretorioInfo = "./db/alunos/" ++ matricula
+
+        aluno <- B.readFile diretorioInfo
+
+        nome <- case decode aluno of 
+            Just (Aluno nome _ _ _) -> return $ nome
+            Nothing -> return ""
+
+        matriculaDecode <- case decode aluno of 
+            Just (Aluno _ matricula _ _ ) -> return $ matricula
+            Nothing -> return ""
+
+        return (color White . style Bold $ (nome ++ " --- " ++ matriculaDecode))
+      else return ""
 
 verificarPossivelChat :: String -> String -> String -> IO Bool
 verificarPossivelChat disciplina codTurma matriculaAluno = do
