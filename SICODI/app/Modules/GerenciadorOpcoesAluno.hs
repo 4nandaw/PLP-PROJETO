@@ -90,12 +90,12 @@ getTail (_:t) = t
 
 validarResposta :: String -> Bool
 validarResposta resposta
-    | map toUpper resposta == "S" || map toUpper resposta == "N" = True
+    | map toUpper resposta == "V" || map toUpper resposta == "F" = True
     | otherwise = False
 
 pegarRespostaAlunoBool :: String -> Bool
 pegarRespostaAlunoBool resposta
-    | (map toUpper resposta == "S") = True
+    | (map toUpper resposta == "V") = True
     | (otherwise) = False    
 
 perguntasQuiz :: String -> String -> String -> IO [String]

@@ -512,7 +512,7 @@ quizExiste disciplina codTurma titulo = do
 
 validarResposta :: String -> Bool
 validarResposta resposta = do
-    if map toUpper resposta /= "S" && map toUpper resposta /= "N" then False
+    if map toUpper resposta /= "V" && map toUpper resposta /= "F" then False
     else True
 
 adicionarPergunta :: String -> String -> String -> String -> String -> IO String
@@ -521,7 +521,7 @@ adicionarPergunta disciplina codTurma titulo pergunta resposta = do
     dados <- B.readFile diretorio
     case decode dados of
         Just (Quiz perguntas respostas) -> do
-            let respostaBool = map toUpper resposta == "S"
+            let respostaBool = map toUpper resposta == "V"
             let dadosAtualizados = encode (Quiz{perguntas = perguntas ++ [pergunta], respostas = respostas ++ [respostaBool]})
             B.writeFile diretorio dadosAtualizados
             return ""

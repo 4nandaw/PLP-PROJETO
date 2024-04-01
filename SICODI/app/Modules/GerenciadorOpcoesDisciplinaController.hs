@@ -334,7 +334,7 @@ adicionarPerguntasRespostasController disciplina codTurma titulo = do
     pergunta <- getLine
     if pergunta == "" then putStrLn $ color Green "A adição de novas perguntas foi finalizada."
     else do
-        putStrLn $ color Magenta "\nDigite a resposta (digite s para verdadeiro e n para falso): "
+        putStrLn $ color Magenta "\nDigite a resposta (digite V para verdadeiro e F para falso): "
         resposta <- getLine
         let respostaValida = Modules.GerenciadorOpcoesDisciplina.validarResposta resposta
         if respostaValida then do
@@ -342,7 +342,7 @@ adicionarPerguntasRespostasController disciplina codTurma titulo = do
             Modules.GerenciadorOpcoesDisciplina.adicionarPergunta disciplina codTurma titulo pergunta resposta 
             adicionarPerguntasRespostasController disciplina codTurma titulo
             else do
-                putStrLn $ color Red $ "\nDigite apenas s para verdadeiro ou n para falso.\n"
+                putStrLn $ color Red $ "\nDigite apenas V para verdadeiro ou F para falso.\n"
                 adicionarPerguntasRespostasController disciplina codTurma titulo
 
                 

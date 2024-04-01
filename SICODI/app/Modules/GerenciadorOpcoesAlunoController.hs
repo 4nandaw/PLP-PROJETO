@@ -129,12 +129,12 @@ responderPerguntasQuizController disciplina codTurma titulo listaPerguntas lista
         putStrLn $ color Blue . style Bold $ "\n======== RESPONDA A PERGUNTA ========\n"
         let pergunta = Modules.GerenciadorOpcoesAluno.getHead listaPerguntas
         putStrLn $ color Blue pergunta
-        let msg = (color White "Digite sua resposta, apenas") ++ (color Blue " S") ++ (color White " para verdadeiro e") ++ (color Blue " N") ++ (color White " para falso: ")
+        let msg = (color White "Digite sua resposta, apenas") ++ (color Blue " V") ++ (color White " para verdadeiro e") ++ (color Blue " F") ++ (color White " para falso: ")
         putStrLn msg
         respostaAluno <- getLine
         let respostaValida = Modules.GerenciadorOpcoesAluno.validarResposta respostaAluno
         if not respostaValida then do
-            putStrLn $ color Red "\nDigite apenas S para verdadeiro e N para falso."
+            putStrLn $ color Red "\nDigite apenas V para verdadeiro e F para falso."
             responderPerguntasQuizController disciplina codTurma titulo listaPerguntas listaRespostasAluno
         else do
             let respostaAlunoBool = Modules.GerenciadorOpcoesAluno.pegarRespostaAlunoBool respostaAluno
