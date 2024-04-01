@@ -61,21 +61,20 @@ exibirRespostasCertas disciplina codTurma titulo listaRespostasAluno = do
         Just (Quiz perguntas respostas) -> do
             let respostasFormatadas = zipWith3 ajustarResposta perguntas respostas listaRespostasAluno
             return $ unlines respostasFormatadas
-        Nothing -> return "Erro ao ler dados do quiz"    
+        Nothing -> return "Erro ao ler dados do quiz."    
 
 ajustarResposta :: String -> Bool -> Bool -> String
 ajustarResposta pergunta respostaBool respostaAlunoBool = do
     let respostaAluno = formatarBool respostaAlunoBool
         resposta = formatarBool respostaBool
         acertou = respostaBool == respostaAlunoBool
-    if acertou then "\n" ++ pergunta ++ "\n" ++ "Sua resposta: " ++ respostaAluno ++ "\n" ++ "Resposta certa: " ++ resposta ++ "\n" ++ color Green "Acertou!"
-    else "\n" ++ pergunta ++ "\n" ++ "Sua resposta: " ++ respostaAluno ++ "\n" ++ "Resposta certa: " ++ resposta ++ "\n" ++ color Red "Errou!"
+    if acertou then "\n" ++ (color Blue pergunta) ++ "\n" ++ (color White "Sua resposta: ") ++ respostaAluno ++ "\n" ++ (color White "Resposta certa: ") ++ resposta ++ "\n" ++ color Green "Acertou!"
+    else "\n" ++ (color Blue pergunta) ++ "\n" ++ (color White "Sua resposta: ") ++ respostaAluno ++ "\n" ++ (color White "Resposta certa: ") ++ resposta ++ "\n" ++ color Red "Errou!"
 
 formatarBool :: Bool -> String
 formatarBool boolean = 
     if boolean then "Correto"
     else "Incorreto"
-
 
 validarTituloQuiz :: String -> String -> String ->  IO Bool
 validarTituloQuiz disciplina codTurma titulo = do

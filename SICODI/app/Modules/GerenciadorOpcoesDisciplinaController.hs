@@ -284,7 +284,7 @@ menuQuiz :: String -> String -> IO ()
 menuQuiz disciplina codTurma = do
     putStrLn (color Magenta . style Bold $ "\n===== MENU QUIZ ======")
     putStrLn $ color Magenta "Digite uma opção: "
-    putStrLn "[0] para voltar"
+    putStrLn "[0] Voltar"
     putStrLn "[1] Criar Quiz"
     putStrLn "[2] Adicionar pergunta a um Quiz"
     putStrLn (color Magenta . style Bold $"======================")
@@ -302,7 +302,7 @@ escolherOpcaoQuiz disciplina codTurma opcao
     
 criarQuizController :: String -> String -> IO ()
 criarQuizController disciplina codTurma = do
-    putStrLn $ color Magenta "\nQual  o título do Quiz?"
+    putStrLn $ color Magenta "\nQual o título do Quiz?"
     titulo <- getLine
     quizValido <- Modules.GerenciadorOpcoesDisciplina.criarQuiz disciplina codTurma titulo
     if quizValido then do
@@ -317,9 +317,9 @@ adicionarPerguntasQuizController disciplina codTurma = do
     quizzesExistentes <- Modules.GerenciadorOpcoesDisciplina.verificarQuizzesExistentes disciplina codTurma
     if not quizzesExistentes then putStrLn lista
     else do 
-        putStrLn $ color Magenta "\n======== LISTA DE QUIZZES ========"
-        putStrLn lista
-        putStrLn $ color Magenta "\nQual  o título do Quiz? "
+        putStrLn $ color Magenta . style Bold $ "\n======== LISTA DE QUIZZES ========"
+        putStrLn (color White lista)
+        putStrLn $ color Magenta "\nQual o título do Quiz? "
         titulo <- getLine
         quizValido <- Modules.GerenciadorOpcoesDisciplina.quizExiste disciplina codTurma titulo
         if quizValido then do
@@ -329,7 +329,7 @@ adicionarPerguntasQuizController disciplina codTurma = do
 
 adicionarPerguntasRespostasController :: String -> String -> String -> IO ()
 adicionarPerguntasRespostasController disciplina codTurma titulo = do
-    putStrLn (color Magenta "============ NOVA PERGUNTA ============")
+    putStrLn (color Magenta . style Bold $ "============ NOVA PERGUNTA ============")
     putStrLn $ color Magenta "Digite a pergunta ou ENTER para sair: "
     pergunta <- getLine
     if pergunta == "" then putStrLn $ color Green "A adição de novas perguntas foi finalizada."

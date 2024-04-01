@@ -94,7 +94,7 @@ excluirTurma :: String -> String -> IO String
 excluirTurma disciplina codigo = do
     validarExistencia <- doesFileExist ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo ++ "/" ++ codigo ++ ".json")
 
-    if not validarExistencia then return "\n Turma inválida."
+    if not validarExistencia then return (color Red "\n Turma inválida.")
     else do
         removeDirectoryRecursive ("./db/disciplinas/" ++ disciplina ++ "/turmas/" ++ codigo)
         return (color Green "\nTurma removida!\n")
