@@ -13,7 +13,6 @@ import Data.Aeson
 import System.Directory (createDirectoryIfMissing)
 import System.FilePath.Posix (takeDirectory)
 
-
 cadastroDisciplina :: String -> String -> String -> String -> IO Bool
 cadastroDisciplina nomeProfessor matriculaProfessor senha nomeDisciplina = do
     createDirectoryIfMissing True $ takeDirectory "./db/disciplinas/"
