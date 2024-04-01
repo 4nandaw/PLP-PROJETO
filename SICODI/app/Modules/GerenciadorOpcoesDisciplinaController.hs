@@ -304,12 +304,14 @@ criarQuizController :: String -> String -> IO ()
 criarQuizController disciplina codTurma = do
     putStrLn $ color Magenta "\nQual o título do Quiz?"
     titulo <- getLine
-    quizValido <- Modules.GerenciadorOpcoesDisciplina.criarQuiz disciplina codTurma titulo
-    if quizValido then do
-     putStrLn $ color Green "\nQuiz criado! Agora adicione as perguntas e as respostas!\n" 
-     adicionarPerguntasRespostasController disciplina codTurma titulo
-    else do
-        putStrLn $ color Red "\nJá existe quiz com esse nome!"
+    if (titulo /= "") then do
+        quizValido <- Modules.GerenciadorOpcoesDisciplina.criarQuiz disciplina codTurma titulo
+        if quizValido then do
+            putStrLn $ color Green "\nQuiz criado! Agora adicione as perguntas e as respostas!\n" 
+            adicionarPerguntasRespostasController disciplina codTurma titulo
+            else do
+                putStrLn $ color Red "\nJá existe quiz com esse nome!"
+    else putStrLn $ color Red "\nDigite um título válido, que não seja branco ou nulo!"
 
 adicionarPerguntasQuizController :: String -> String -> IO()
 adicionarPerguntasQuizController disciplina codTurma = do
