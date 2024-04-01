@@ -7,6 +7,7 @@ import Utils.Disciplina
 import Utils.Aluno
 import GHC.Generics
 import qualified Data.ByteString.Lazy as B
+import Data.Char (isSpace)
 import System.Directory
 import Data.Aeson
 import System.Directory (createDirectoryIfMissing)
@@ -41,4 +42,18 @@ cadastroAluno nome matricula senha = do
         B.writeFile ("./db/alunos/" ++ matricula ++ ".json") dados
         return True
     else return False
-  
+
+validandoString :: String -> Bool  
+validandoString string = not (all isSpace string || null string)
+
+validandoDadosProfessor :: String -> String -> String -> String -> Bool
+validandoDadosProfessor nomeProfessor matricula senha nomeDisciplina = do
+    let valido = validandoString nomeProfessor && validandoString matricula && validandoString senha && validandoString nomeDisciplina
+    if valido then True
+    else False
+
+validandoDadosAluno :: String -> String -> String -> Bool
+validandoDadosAluno nome matricula senha = do
+    let valido = validandoString nome && validandoString matricula && validandoString senha
+    if valido then True
+    else False

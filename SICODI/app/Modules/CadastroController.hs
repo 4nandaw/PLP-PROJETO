@@ -13,10 +13,13 @@ cadastroDisciplinaController = do
     senha <- getLine
     putStrLn (color Yellow "\nNome da disciplina: ")
     nomeDisciplina <- getLine
-    cadastroValido <- Modules.Cadastro.cadastroDisciplina nomeProfessor matricula senha nomeDisciplina
-    if (cadastroValido) 
-        then putStrLn (color Green "\nCadastro concluído!")
-        else putStrLn (color Red "\nNome de disciplina já está em uso.")
+    let dadosValidos = Modules.Cadastro.validandoDadosProfessor  nomeProfessor matricula senha nomeDisciplina
+    if dadosValidos then do
+        cadastroValido <- Modules.Cadastro.cadastroDisciplina nomeProfessor matricula senha nomeDisciplina
+        if (cadastroValido) 
+            then putStrLn (color Green "\nCadastro concluído!")
+            else putStrLn (color Red "\nNome de disciplina já está em uso.")
+    else putStrLn $ color Red "\nDádos inválidos, não coloque dados brancos ou nulos"
 
 cadastroAlunoController :: IO()
 cadastroAlunoController = do
@@ -26,11 +29,14 @@ cadastroAlunoController = do
     putStrLn (color Yellow "\nMatrícula: ")
     matricula <- getLine
     putStrLn (color Yellow "\nSenha: ")
-    senha <- getLine    
-    cadastroValido <- Modules.Cadastro.cadastroAluno nome matricula senha
-    if(cadastroValido)
-        then putStrLn (color Green "\nCadastro concluído!")
-        else putStrLn (color Red "\nMatrícula já está em uso.")
+    senha <- getLine
+    let dadosValidos = Modules.Cadastro.validandoDadosAluno nome matricula senha 
+    if dadosValidos then do    
+        cadastroValido <- Modules.Cadastro.cadastroAluno nome matricula senha
+        if(cadastroValido)
+            then putStrLn (color Green "\nCadastro concluído!")
+            else putStrLn (color Red "\nMatrícula já está em uso.")
+     else putStrLn $ color Red "\nDádos inválidos, não coloque dados brancos ou nulos"
 
 escolherOpcaoCadastro :: IO()
 escolherOpcaoCadastro = do
