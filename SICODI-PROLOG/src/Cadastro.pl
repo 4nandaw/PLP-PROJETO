@@ -12,6 +12,21 @@ cadastrarAluno:-
     /*validandoDados(Matricula, Nome, Senha),*/
     write('Passou').
 
+cadastrarDisciplina:-
+    shell(clear),
+    writeln('Digite a matricula do professor'),
+    read(Matricula), nl,
+    write("Digite o nome do professor"),
+    read(Nome), nl,
+    write("Digite o nome da disciplina"),nl,
+    read(Disciplina),
+    write("Digite a senha do professor"),nl,
+    read(Senha),
+    # validandoDados(Matricula, Nome, Senha) -> (
+        make_directory('SICODI-PROLOG/db/disciplinas/').
+
+    # )
+
 cadastroMenu:-
     write("============== CADASTRO ==============="),
     write("
@@ -21,6 +36,7 @@ cadastroMenu:-
     read(Opcao),
     escolherOpcaoCadastro(Opcao), !.
 
+escolherOpcaoCadastro(1):- cadastroDisiplina(), !.
 escolherOpcaoCadastro(2):- cadastrarAluno(), !.
 
 
