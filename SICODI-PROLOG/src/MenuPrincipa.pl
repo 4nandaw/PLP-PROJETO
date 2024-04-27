@@ -1,8 +1,12 @@
 
 
 :- initialization(main).
+:- set_prolog_flag(encoding, utf8).
 
-:- use_module("./Cadastro", [cadastro_menu/0]).
+
+:- use_module("./Cadastro", [cadastroMenu/0]).
+:- use_module("./Login", [loginMenu/0]).
+
 
 main:-
     write("\n============== MENU INICIAL ===============\n"),
@@ -15,8 +19,8 @@ main:-
 
 
 
+escolherOpcao(0):- write("Saindo.. :)"), halt.
+escolherOpcao(1):- cadastro_menu, !.
+escolherOpcao(2):- loginMenu, !.
+escolherOpcao(_):- write("\n Opcao invalida! \n").
 
-escolher_opcao(0):- cls, write("Saindo.. :)"), halt.
-escolher_opcao(1):- cadastro_menu, !.
-/*escolherOpcao(2):- loginMenu, !.*/
-escolher_opcao(_):- write("\n Opcao invalida! \n").
