@@ -5,7 +5,6 @@ not_exists_file/1]).
 
 :- use_module(library(http/json)).
 
-
 validando_dados(Matricula, Nome, Senha):-
     dado_valido(Matricula), dado_valido(Nome), dado_valido(Senha).
 
@@ -13,7 +12,6 @@ dado_valido(Dado):- dif(Dado, ""), dif(Dado, " ").
 
 not_exists_file(Path):-
     \+ exists_file(Path).
-
 
 read_json(Path, D):-
     open(Path, read, Stream),
