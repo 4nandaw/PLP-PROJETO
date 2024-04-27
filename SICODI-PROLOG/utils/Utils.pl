@@ -1,5 +1,7 @@
 :- module(utils, [validando_dados/3,
-escrever_json/2]).
+write_json/2,
+read_json/2, 
+not_exists_file/1]).
 
 :- use_module(library(http/json)).
 
@@ -9,13 +11,16 @@ validando_dados(Matricula, Nome, Senha):-
 
 dado_valido(Dado):- dif(Dado, ""), dif(Dado, " ").
 
+not_exists_file(Path):-
+    \+ exists_file(Path).
 
-ler_json(Caminho, D):-
-    open(Caminho, read, Stream),
+
+read_json(Path, D):-
+    open(Path, read, Stream),
     json_read_dict(Stream, D),
     close(Stream).
 
-escrever_json(Caminho, D):-
-    open(Caminho, write, Stream),
+write_json(Path, D):-
+    open(Path, write, Stream),
     json_write_dict(Stream, D),
     close(Stream).
