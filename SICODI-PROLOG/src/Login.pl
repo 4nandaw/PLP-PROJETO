@@ -35,7 +35,7 @@ senha_correta(Senha1, Senha2):- Senha1 == Senha2.
 login_disciplina :- 
     write('Digite o nome da disciplina'),
     read(Disciplina), nl,
-    concat_atom(['../db/disciplinas/', Disciplina, '.json'], Path),
+    concat_atom(['../db/disciplinas/', Disciplina, "/", Disciplina,'.json'], Path),
     exists_file(Path) -> (
         write("Digite a senha"),
         read(Senha),
@@ -67,19 +67,36 @@ disciplina_menu(Disciplina):-
     write("\nMENU DE "), write(X), write(" ========\n"),
     write("Digite uma opção: \n"),
     write("[0] Voltar\n"),
-    write("[1] Minhas turmas\n"),
-    write("[2] Criar turma\n"),
+    write("[1] Criar turma\n"),
+    write("[2] Minhas turmas\n"),
     write("[3] Adicionar aluno\n"),
     write("[4] Excluir aluno\n"),
     write("[5] Excluir turma\n"),
     write("====================\n"),
     read(Opcao),
-    escolher_opcao_disciplina_menu(Opcao), !.
+    escolher_opcao_disciplina_menu(Opcao, Disciplina), !.
 
-escolher_opcao_disciplina_menu(0):- main, !.
-escolher_opcao_disciplina_menu(1):- write("Em construção").
-escolher_opcao_disciplina_menu(2):- write("Em construção").
-escolher_opcao_disciplina_menu(3):- write("Em construção").
-escolher_opcao_disciplina_menu(4):- write("Em construção").
-escolher_opcao_disciplina_menu(5):- write("Em construção").
-escolher_opcao_disciplina_menu(_):- nl, write("ENTRADA INVÁLIDA"), nl.
+% escolher_opcao_disciplina_menu(0, _):- main, !.
+escolher_opcao_disciplina_menu(1, Disciplina):- criar_turma(Disciplina).
+escolher_opcao_disciplina_menu(2, Disciplina):- write(Disciplina).
+escolher_opcao_disciplina_menu(3, _):- write("Em construção").
+escolher_opcao_disciplina_menu(4, _):- write("Em construção").
+escolher_opcao_disciplina_menu(5, _):- write("Em construção").
+escolher_opcao_disciplina_menu(_, _):- nl, write("ENTRADA INVÁLIDA"), nl.
+
+criar_turma(Disciplina):-
+    write("\nCADASTRO DE TURMA\n"),
+    write("Nome da turma: \n"),
+    read(NomeTurma),
+    write("Código da turma: \n"),
+    read(CodTurma),
+    % validar dados / verificar se já existe?
+
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas"], DirectoryPath),
+    make_directory_path(DirectoryPath),
+    concat_atom([DirectoryPath, "/", CodTurma], CodTurmaPath),
+    make_directory_path(CodTurmaPath),
+    concat_atom([CodTurmaPath, "/", CodTurma, ".json"], TurmaJsonPath),
+    not_exists_file(TurmaJsonPath),
+    write_json(TurmaJsonPath, _{alunos : [], nome : NomeTurma, codigo : CodTurma}),
+    write("\nCadastro concluído!\n").

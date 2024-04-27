@@ -32,9 +32,9 @@ cadastrar_disciplina:-
 gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
     % Cria diretório de DB caso nao exista
     make_directory_path("../db/disciplinas"),
-    concat_atom(["../db/disciplinas/", Disciplina], DisciplinaPath),
+    concat_atom(["../db/disciplinas/", Disciplina, "/"], DisciplinaPath),
     make_directory_path(DisciplinaPath),
-    concat_atom([DisciplinaPath, "/", Disciplina, ".json"], Path),
+    concat_atom([DisciplinaPath, Disciplina, ".json"], Path),
     not_exists_file(Path),
     write_json(Path, _{nome : Nome, matricula : Matricula, disciplina : Disciplina, senha : Senha}),
     write("\nCadastro concluído!\n"), !.
