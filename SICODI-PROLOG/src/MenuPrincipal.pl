@@ -1,7 +1,7 @@
 :- initialization(main).
 :- set_prolog_flag(encoding, utf8).
 
-:- use_module(cadastro, [cadastro_menu/0]).
+:- use_module("./Cadastro", [cadastro_menu/0]).
 :- use_module("./Login", [login_menu/0]).
 
 main:-

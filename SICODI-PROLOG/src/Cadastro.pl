@@ -49,11 +49,11 @@ gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
 
 % RECEBE OS DADOS
 cadastrar_aluno:-
-    writeln('Digite a matricula do aluno'),
-    read(Matricula), nl,
-    write("Digite o nome do aluno"),
-    read(Nome), nl,
-    write("Digite a senha do aluno"),nl,
+    write("Digite a matricula do aluno: \n"),
+    read(Matricula),
+    write("Digite o nome do aluno: \n"),
+    read(Nome),
+    write("Digite a senha do aluno: \n"),
     read(Senha),
     validar_dados(Matricula, Nome, Senha).
 
@@ -67,7 +67,8 @@ gravar_dados_aluno(Matricula, Nome, Senha):-
     make_directory_path("../db/alunos"),
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     not_exists_file(Path),
-    write_json(Path, _{nome : Nome, matricula : Matricula, senha : Senha}), !.
+    write_json(Path, _{nome : Nome, matricula : Matricula, senha : Senha}), 
+    write("\nCadastro concluído!\n"), !.
 
 % MATRÍCULA JÁ EXISTE
 gravar_dados_aluno(Matricula, Nome, Senha):-
@@ -85,5 +86,6 @@ cadastro_menu:-
     read(Opcao),
     escolher_opcao_cadastro(Opcao), !.
 
+escolher_opcao_cadastro(0):- main, !.
 escolher_opcao_cadastro(1):- cadastrar_disciplina, !.
 escolher_opcao_cadastro(2):- cadastrar_aluno, !.
