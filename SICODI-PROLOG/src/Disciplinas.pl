@@ -22,8 +22,8 @@ escolher_opcao_disciplina_menu(0, _):- main.
 escolher_opcao_disciplina_menu(1, Disciplina):- criar_turma(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(2, Disciplina):- minhas_turmas(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(3, Disciplina):- adicionar_aluno(Disciplina), disciplina_menu(Disciplina).
-escolher_opcao_disciplina_menu(4, _):- write("Em construção").
-escolher_opcao_disciplina_menu(5, _):- write("Em construção").
+escolher_opcao_disciplina_menu(4, Disciplina):- excluir_aluno(Disciplina), disciplina_menu(Disciplina).
+escolher_opcao_disciplina_menu(5, Disciplina):- write("Em construção").
 escolher_opcao_disciplina_menu(_, _):- write("\nOPÇÃO INVÁLIDA\n").
 
 criar_turma(Disciplina):-
@@ -79,14 +79,16 @@ print_turmas([Turma|Turmas]):-
     print_turmas(Turmas).
 
 adicionar_aluno(Disciplina):-
-    write("\nInforme o código da turma: \n"),
+    write("\nInforme o código da turma ou 'q' para voltar: \n"),
     read(CodTurma),
-    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
-    (exists_file(CodTurmaPath) -> 
-        write("\nInforme a matricula do aluno: \n"),
-        read(Matricula),
-        alocar_aluno(Matricula, Disciplina, CodTurma)
-    ; write("\nCódigo de turma inválido!\n"), adicionar_aluno(Disciplina)).
+    (CodTurma \= 'q' -> 
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
+        (exists_file(CodTurmaPath) -> 
+            write("\nInforme a matricula do aluno: \n"),
+            read(Matricula),
+            alocar_aluno(Matricula, Disciplina, CodTurma)
+        ; write("\nCódigo de turma inválido!\n"), adicionar_aluno(Disciplina))
+    ; disciplina_menu(Disciplina)).
 
 alocar_aluno(Matricula, Disciplina, CodTurma):-
     (Matricula \= 'q' ->
@@ -96,12 +98,37 @@ alocar_aluno(Matricula, Disciplina, CodTurma):-
             (not_exists_file(AlunoTurmaPath) ->
                 write_json(AlunoTurmaPath, _{faltas : 0, media : 0, nota1 : 0, nota2 : 0, nota3 : 0}),
                 write("\nAluno "), write(Matricula), write(" adicionado!\n"),
-                write("\nInforme o proximo aluno (matricula) ou 'q' para finalizar: \n"),
+                write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
                 read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma)
             ; write("\nAluno já adicionado!\n"),
-              write("\nInforme o proximo aluno (matricula) ou 'q' para finalizar: \n"),
+              write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
               read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
         ; write("\nMatrícula inválida!\n"),
-          write("\nInforme o proximo aluno (matricula) ou 'q' para finalizar: \n"),
+          write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
           read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
+    ; write("\nRegistro finalizado!\n")).
+
+excluir_aluno(Disciplina):-
+    write("\nInforme o código da turma ou 'q' para voltar: \n"),
+    read(CodTurma),
+    (CodTurma \= 'q' ->
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
+        (exists_file(CodTurmaPath) -> 
+            write("\nInforme a matrícula do aluno: \n"),
+            read(Matricula),
+            remove_aluno(Matricula, Disciplina, CodTurma)
+        ; write("\nCódigo de turma inválido!\n"), excluir_aluno(Disciplina))
+    ; disciplina_menu(Disciplina)).
+
+remove_aluno(Matricula, Disciplina, CodTurma):-
+    (Matricula \= 'q' ->
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], AlunoTurmaPath),
+        (exists_file(AlunoTurmaPath) -> 
+            delete_file(AlunoTurmaPath),
+            write("\nAluno "), write(Matricula), write(" removido!\n"),
+            write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+            read(NovaMatricula), remove_aluno(NovaMatricula, Disciplina, CodTurma)
+        ; write("\nMatrícula inválida!\n"),
+          write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+          read(NovaMatricula), remove_aluno(NovaMatricula, Disciplina, CodTurma))
     ; write("\nRegistro finalizado!\n")).
