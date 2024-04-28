@@ -21,15 +21,19 @@ realizar_login_aluno(Matricula, Senha) :-
     nl, write("NÃO EXISTE ALUNO COM ESSA MATRÍCULA!"), nl, !.
 
 realizar_login_aluno(Matricula, Senha) :-
-    concat_atom(['../db/alunos/', Matricula, '.json'], Path),
+    % write(Matricula),
+    % write(Senha),
+    concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     read_json(Path, Dados),
     senha_correta(Dados.senha, Senha),
     write("\nLogin realizado :)\n"), !.
 
-realizar_login_aluno(_, _) :-
-    nl, write("Senha incorreta"), nl.
+realizar_login_aluno(X, _) :-
+    nl, write("Senha incorreta!!"), nl.
 
-senha_correta(Senha1, Senha2):- Senha1 == Senha2.
+senha_correta(Senha, Senha1):- convert_to_string(Senha, SenhaStr), convert_to_string(Senha1, SenhaStr).
+
+
 
 
 % LOGIN DISCIPLINA
@@ -40,11 +44,9 @@ login_disciplina :-
     exists_file(Path) -> (
         write("\nDigite a senha: \n"),
         read(Senha),
-        open(Path, read, Stream),
-        json_read_dict(Stream, Dict),
-        ((Dict.senha =:= Senha) -> write("\nLogin realizado com sucesso!\n") ; write("\nSenha incorreta!\n")),
-        close(Stream),
-        disciplina_menu(Disciplina)
+        read_json(Path, Dados),
+        (senha_correta(Dados.senha, Senha) -> write("\nLogin realizado com sucesso!\n"), disciplina_menu(Disciplina) 
+        ; write("\nSenha incorreta!\n"), !)
     ) ;  write("\nEssa disciplina não existe!\n").
 /* % shell(clear) */
 
