@@ -5,9 +5,9 @@
 
 % LOGIN ALUNOS
 login_aluno :-
-    write("Digite a matrícula do aluno: "), nl,
-    read(Matricula), nl,
-    write("Digite a senha"),
+    write("\nDigite a matrícula do aluno: \n"),
+    read(Matricula),
+    write("\nDigite a senha: \n"),
     read(Senha),
     validar_dados(Matricula, Senha).
 
@@ -24,7 +24,7 @@ realizar_login_aluno(Matricula, Senha) :-
     concat_atom(['../db/alunos/', Matricula, '.json'], Path),
     read_json(Path, Dados),
     senha_correta(Dados.senha, Senha),
-    write("Login realizado :)"), !.
+    write("\nLogin realizado :)\n"), !.
 
 realizar_login_aluno(_, _) :-
     nl, write("Senha incorreta"), nl.

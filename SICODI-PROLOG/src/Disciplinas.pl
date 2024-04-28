@@ -61,10 +61,20 @@ make_directory(CodTurmaPath, Diretorio):-
 
 minhas_turmas(Disciplina):-
     string_upper(Disciplina, X),
-    write("\nTurmas de "), write(X), nl,
-
+    write("\nTurmas de "), write(X), nl, nl,
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas"], Path),
+    directory_files(Path, ListaDeTurmas),
+    print_turmas(ListaDeTurmas),
     write("\n===============================================\n"),
     write("Informe um codigo de turma:\n"),
     read(CodTurma),
     % validar
     turma_menu(Disciplina, CodTurma).
+
+print_turmas([]).
+print_turmas([.|Turmas]):- print_turmas(Turmas).
+print_turmas([..|Turmas]):- print_turmas(Turmas).
+print_turmas([Turma|Turmas]):-
+    string_upper(Turma, X),
+    write(X), nl,
+    print_turmas(Turmas).
