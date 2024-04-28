@@ -2,7 +2,6 @@
 
 :- set_prolog_flag(encoding, utf8).
 
-
 %:- use_module(library(http/json)).
 :- use_module(library(filesex)).
 :- use_module(library(json)).
@@ -12,17 +11,16 @@
 
 % RECEBE OS DADOS
 cadastrar_disciplina:-
-    %shell(clear) Essa linha só irá funcionar em Mac ou linux, no windows essa função n vai pegar
-    write('Digite a matricula do professor'),
-    read(Matricula), nl,
-    write("Digite o nome do professor"),
-    read(Nome), nl,
-    write("Digite o nome da disciplina"),nl,
+    % shell(clear) Essa linha só irá funcionar em Mac ou linux, no windows essa função n vai pegar
+    write("Digite a matricula do professor: \n"),
+    read(Matricula),
+    write("Digite o nome do professor: \n"),
+    read(Nome),
+    write("Digite o nome da disciplina: \n"),
     read(Disciplina),
-    write("Digite a senha do professor"),nl,
+    write("Digite a senha do professor: \n"),
     read(Senha),
     validar_dados_disciplina(Matricula, Nome, Disciplina, Senha).
-
 
 % FUNCAO PARA VALIDAR OS DADOS RECEBIDOS
 % ESSA PRIMEIRA AINDA IRÁ TER UMA FUNÇÃO NO UTILS QUE SERÁ CHAMADA AQUI ANTES DE gravar_dados_disciplina
@@ -34,9 +32,12 @@ cadastrar_disciplina:-
 gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
     % Cria diretório de DB caso nao exista
     make_directory_path("../db/disciplinas"),
-    concat_atom(["../db/disciplinas/", Disciplina, ".json"], Path),
+    concat_atom(["../db/disciplinas/", Disciplina, "/"], DisciplinaPath),
+    make_directory_path(DisciplinaPath),
+    concat_atom([DisciplinaPath, Disciplina, ".json"], Path),
     not_exists_file(Path),
-    write_json(Path, _{nome : Nome, matricula : Matricula, disciplina : Disciplina, senha : Senha}), !.
+    write_json(Path, _{nome : Nome, matricula : Matricula, disciplina : Disciplina, senha : Senha}),
+    write("\nCadastro concluído!\n"), !.
 
 % MATRÍCULA JÁ EXISTE
 gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
@@ -48,11 +49,11 @@ gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
 
 % RECEBE OS DADOS
 cadastrar_aluno:-
-    writeln('Digite a matricula do aluno'),
-    read(Matricula), nl,
-    write("Digite o nome do aluno"),
-    read(Nome), nl,
-    write("Digite a senha do aluno"),nl,
+    write("Digite a matricula do aluno: \n"),
+    read(Matricula),
+    write("Digite o nome do aluno: \n"),
+    read(Nome),
+    write("Digite a senha do aluno: \n"),
     read(Senha),
     validar_dados(Matricula, Nome, Senha).
 
@@ -66,7 +67,8 @@ gravar_dados_aluno(Matricula, Nome, Senha):-
     make_directory_path("../db/alunos"),
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     not_exists_file(Path),
-    write_json(Path, _{nome : Nome, matricula : Matricula, senha : Senha}), !.
+    write_json(Path, _{nome : Nome, matricula : Matricula, senha : Senha}), 
+    write("\nCadastro concluído!\n"), !.
 
 % MATRÍCULA JÁ EXISTE
 gravar_dados_aluno(Matricula, Nome, Senha):-
@@ -76,14 +78,14 @@ gravar_dados_aluno(Matricula, Nome, Senha):-
 
 % MENU
 cadastro_menu:-
-    write("============== CADASTRO ==============="),
-    write("
-    [0] Sair \n
-    [1] Cadastro Disciplina \n
-    [2] Cadastro Aluno "),
+    write("\nCADASTRO =====================\n"),
+    write("[0] Sair\n"),
+    write("[1] Cadastro de professor\n"),
+    write("[2] Cadastro de aluno\n"),
+    write("==============================\n"),
     read(Opcao),
     escolher_opcao_cadastro(Opcao), !.
 
+escolher_opcao_cadastro(0):- main, !.
 escolher_opcao_cadastro(1):- cadastrar_disciplina, !.
 escolher_opcao_cadastro(2):- cadastrar_aluno, !.
-
