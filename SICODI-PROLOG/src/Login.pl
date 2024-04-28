@@ -42,7 +42,7 @@ login_disciplina :-
         read(Senha),
         open(Path, read, Stream),
         json_read_dict(Stream, Dict),
-        ((Dict.senha =:= Senha) -> write('Login realizado com sucesso!\n') ; write('Senha incorreta!\n')),
+        ((Dict.senha =:= Senha) -> write("\nLogin realizado com sucesso!\n") ; write("\nSenha incorreta!\n")),
         close(Stream),
         disciplina_menu(Disciplina)
     ) ;  write("\nEssa disciplina não existe!\n").

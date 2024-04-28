@@ -23,7 +23,7 @@ escolher_opcao_disciplina_menu(1, Disciplina):- criar_turma(Disciplina), discipl
 escolher_opcao_disciplina_menu(2, Disciplina):- minhas_turmas(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(3, Disciplina):- adicionar_aluno(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(4, Disciplina):- excluir_aluno(Disciplina), disciplina_menu(Disciplina).
-escolher_opcao_disciplina_menu(5, Disciplina):- write("Em construção").
+escolher_opcao_disciplina_menu(5, Disciplina):- excluir_turma(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(_, _):- write("\nOPÇÃO INVÁLIDA\n").
 
 criar_turma(Disciplina):-
@@ -87,8 +87,8 @@ adicionar_aluno(Disciplina):-
             write("\nInforme a matricula do aluno: \n"),
             read(Matricula),
             alocar_aluno(Matricula, Disciplina, CodTurma)
-        ; write("\nCódigo de turma inválido!\n"), adicionar_aluno(Disciplina))
-    ; disciplina_menu(Disciplina)).
+        ;    write("\nCódigo de turma inválido!\n"), adicionar_aluno(Disciplina))
+    ;   disciplina_menu(Disciplina)).
 
 alocar_aluno(Matricula, Disciplina, CodTurma):-
     (Matricula \= 'q' ->
@@ -100,13 +100,13 @@ alocar_aluno(Matricula, Disciplina, CodTurma):-
                 write("\nAluno "), write(Matricula), write(" adicionado!\n"),
                 write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
                 read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma)
-            ; write("\nAluno já adicionado!\n"),
-              write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
-              read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
-        ; write("\nMatrícula inválida!\n"),
-          write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
-          read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
-    ; write("\nRegistro finalizado!\n")).
+            ;   write("\nAluno já adicionado!\n"),
+                write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+                read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
+        ;   write("\nMatrícula inválida!\n"),
+            write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+            read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
+    ;   write("\nRegistro finalizado!\n")).
 
 excluir_aluno(Disciplina):-
     write("\nInforme o código da turma ou 'q' para voltar: \n"),
@@ -117,8 +117,8 @@ excluir_aluno(Disciplina):-
             write("\nInforme a matrícula do aluno: \n"),
             read(Matricula),
             remove_aluno(Matricula, Disciplina, CodTurma)
-        ; write("\nCódigo de turma inválido!\n"), excluir_aluno(Disciplina))
-    ; disciplina_menu(Disciplina)).
+        ;   write("\nCódigo de turma inválido!\n"), excluir_aluno(Disciplina))
+    ;   disciplina_menu(Disciplina)).
 
 remove_aluno(Matricula, Disciplina, CodTurma):-
     (Matricula \= 'q' ->
@@ -128,7 +128,20 @@ remove_aluno(Matricula, Disciplina, CodTurma):-
             write("\nAluno "), write(Matricula), write(" removido!\n"),
             write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
             read(NovaMatricula), remove_aluno(NovaMatricula, Disciplina, CodTurma)
-        ; write("\nMatrícula inválida!\n"),
-          write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
-          read(NovaMatricula), remove_aluno(NovaMatricula, Disciplina, CodTurma))
-    ; write("\nRegistro finalizado!\n")).
+        ;   write("\nMatrícula inválida!\n"),
+            write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+            read(NovaMatricula), remove_aluno(NovaMatricula, Disciplina, CodTurma))
+    ;   write("\nRegistro finalizado!\n")).
+
+excluir_turma(Disciplina):-
+    write("\nInforme o codigo da turma a ser excluida: \n"),
+    read(CodTurma),
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma], CodTurmaPath),
+    (exists_directory(CodTurmaPath) ->
+        force_delete_directory(CodTurmaPath),
+        write("\nTurma removida!\n")
+    ;   write("\nCódigo de turma inválido!\n")).
+
+force_delete_directory(Directory) :-
+    atom_concat('rm -rf ', Directory, Command),
+    shell(Command).
