@@ -14,7 +14,7 @@ main:-
     escolher_opcao(Opcao),
     main.
 
-escolher_opcao(0):- write("Saindo.. :)"), halt.
+escolher_opcao(0):- write("Saindo... :)"), halt.
 escolher_opcao(1):- cadastro_menu, !.
 escolher_opcao(2):- login_menu, !.
 escolher_opcao(_):- write("\nOPÇÃO INVÁLIDA!\n").

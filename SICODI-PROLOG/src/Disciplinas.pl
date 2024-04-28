@@ -20,7 +20,7 @@ disciplina_menu(Disciplina):-
 
 escolher_opcao_disciplina_menu(0, _):- main.
 escolher_opcao_disciplina_menu(1, Disciplina):- criar_turma(Disciplina), disciplina_menu(Disciplina).
-escolher_opcao_disciplina_menu(2, Disciplina):- minhas_turmas(Disciplina), nl, disciplina_menu(Disciplina).
+escolher_opcao_disciplina_menu(2, Disciplina):- minhas_turmas(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(3, _):- write("Em construção").
 escolher_opcao_disciplina_menu(4, _):- write("Em construção").
 escolher_opcao_disciplina_menu(5, _):- write("Em construção").
@@ -68,13 +68,12 @@ minhas_turmas(Disciplina):-
     write("\n===============================================\n"),
     write("Informe um codigo de turma:\n"),
     read(CodTurma),
-    % validar
-    turma_menu(Disciplina, CodTurma).
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
+    (exists_file(CodTurmaPath) -> turma_menu(Disciplina, CodTurma); write("\nCódigo de turma inválido!\n"), minhas_turmas(Disciplina)).
 
 print_turmas([]).
 print_turmas([.|Turmas]):- print_turmas(Turmas).
 print_turmas([..|Turmas]):- print_turmas(Turmas).
 print_turmas([Turma|Turmas]):-
-    string_upper(Turma, X),
-    write(X), nl,
+    write(Turma), nl,
     print_turmas(Turmas).
