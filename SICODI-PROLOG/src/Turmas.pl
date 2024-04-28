@@ -20,7 +20,43 @@ turma_menu(Disciplina, CodTurma):-
     write("[9] Quizzes da turma\n"),
     write("=======================================\n"),
     read(Opcao),
-    escolher_opcao_turma_menu(Opcao, Disciplina).
+    convert_to_string(Opcao, Op),
+    escolher_opcao_turma_menu(Op, Disciplina, CodTurma).
 
-escolher_opcao_turma_menu(0, Disciplina):- disciplina_menu(Disciplina).
-escolher_opcao_turma_menu(_, _):- write("\nOPÇÃO INVÁLIDA\n").
+alocar_notas(Disciplina, CodTurma):- 
+    write("Digite a matrícula do aluno que você deseja alocar notas ou ver sua situação ou 'q' para sair: \n"),
+    read(Matricula), convert_to_string(Matricula, M),
+    ((M \== "q") -> 
+        (concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
+        ((exists_file(Path)) -> 
+            (alocar_notas_aluno(Disciplina, CodTurma, Matricula), 
+            alocar_notas(Disciplina, CodTurma)) 
+        ; (write("\n Aluno não está na turma \n"), alocar_notas(Disciplina, CodTurma))))
+     ; nl).
+
+alocar_notas_aluno(Disciplina, CodTurma, Matricula):-
+    write("\n Digite qual opção deseja: "), nl,
+    write("[0] Voltar"), nl,
+    write("[1] Alocar 1º nota"), nl,
+    write("[2] Alocar 2º nota"), nl,
+    write("[3] Alocar 3º nota"), nl,
+    read(Opcao),
+    convert_to_string(Opcao, Op).
+    % (opcao_valida(Op)) -> alocar_nota(Disciplina, CodTurma, Matricula, Opcao) ; write("Opção inválida"),
+    % escolher_opcao_alocar_notas_aluno(Disciplina, CodTurma, Matricula).
+
+alocar_nota(Disciplina, CodTurma, Matricula, Opcao):-
+    write("Em andamento...").
+
+
+opcao_valida("1").
+opcao_valida("2").
+opcao_valida("3").
+
+
+
+solicitar__e_alocar_aluno:- write()
+
+escolher_opcao_turma_menu("0", Disciplina, CodTurma):- disciplina_menu(Disciplina), !.
+escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu(_, _, _):- write("\nOPÇÃO INVÁLIDA\n").
