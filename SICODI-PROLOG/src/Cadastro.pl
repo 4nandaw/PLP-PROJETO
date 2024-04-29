@@ -67,7 +67,7 @@ gravar_dados_aluno(Matricula, Nome, Senha):-
     make_directory_path("../db/alunos"),
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     not_exists_file(Path),
-    write_json(Path, _{nome : Nome, matricula : Matricula, senha : Senha}), 
+    write_json(Path, _{nome : Nome, matricula : Matricula, senha : Senha, turmas : []}), 
     write("\nCadastro concluído!\n"), !.
 
 % MATRÍCULA JÁ EXISTE
