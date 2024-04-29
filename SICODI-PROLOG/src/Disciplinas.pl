@@ -96,6 +96,10 @@ alocar_aluno(Matricula, Disciplina, CodTurma):-
         (exists_file(MatriculaPath) -> 
             concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], AlunoTurmaPath),
             (not_exists_file(AlunoTurmaPath) ->
+                read_json(MatriculaPath, DadosAluno),
+                append([[Disciplina, CodTurma]], DadosAluno.turmas, TurmasAtualizadas),
+                put_dict(turmas, DadosAluno, TurmasAtualizadas, DadosAtualizaddos),
+                write_json(MatriculaPath, DadosAtualizaddos),
                 write_json(AlunoTurmaPath, _{faltas : 0, media : 0, nota1 : 0, nota2 : 0, nota3 : 0}),
                 write("\nAluno "), write(Matricula), write(" adicionado!\n"),
                 write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
