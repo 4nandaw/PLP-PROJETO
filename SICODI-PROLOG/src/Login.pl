@@ -2,6 +2,7 @@
 :- use_module(library(http/json)).
 :- use_module("../utils/Utils").
 :- use_module("./Disciplinas", [disciplina_menu/1]).
+:- use_module("./Alunos", [aluno_menu/1]).
 
 % LOGIN ALUNOS
 login_aluno :-
@@ -26,7 +27,8 @@ realizar_login_aluno(Matricula, Senha) :-
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     read_json(Path, Dados),
     senha_correta(Dados.senha, Senha),
-    write("\nLogin realizado :)\n"), !.
+    write("\nLogin realizado :)\n"),
+    aluno_menu(Matricula), !.
 
 realizar_login_aluno(X, _) :-
     nl, write("Senha incorreta!!"), nl.

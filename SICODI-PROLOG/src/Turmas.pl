@@ -1,4 +1,4 @@
-:- module(turma, [turma_menu/2]).
+:- module(turma, [turma_menu/2, situacao_aluno/3]).
 :- use_module(library(json)).
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
