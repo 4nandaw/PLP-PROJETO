@@ -11,7 +11,6 @@
 
 % RECEBE OS DADOS
 cadastrar_disciplina:-
-    % shell(clear) Essa linha só irá funcionar em Mac ou linux, no windows essa função n vai pegar
     write("Digite a matricula do professor: \n"),
     read(Matricula),
     write("Digite o nome do professor: \n"),
@@ -49,11 +48,11 @@ gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
 
 % RECEBE OS DADOS
 cadastrar_aluno:-
-    write("Digite a matricula do aluno: \n"),
+    write("\nDigite a matricula do aluno:\n"),
     read(Matricula),
-    write("Digite o nome do aluno: \n"),
+    write("\nDigite o nome do aluno: \n"),
     read(Nome),
-    write("Digite a senha do aluno: \n"),
+    write("\nDigite a senha do aluno: \n"),
     read(Senha),
     validar_dados(Matricula, Nome, Senha).
 

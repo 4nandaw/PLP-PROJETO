@@ -2,9 +2,6 @@
 :- use_module("../utils/Utils").
 :- use_module("./Turmas").
 
-
-
-
 aluno_menu(Matricula):-
     write("===== MENU DO ALUNO "), write(Matricula), write(" ===="), nl,
     printar_todas_turmas(Matricula), nl,
