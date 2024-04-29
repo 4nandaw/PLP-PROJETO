@@ -26,22 +26,6 @@ turma_valida(Matricula, Disciplina, CodTurma):-
     member([Disciplina, CodTurma], Dados.turmas).
 
 
-/*
-menuTurmaAluno :: String -> String -> String -> IO()
-menuTurmaAluno matricula disciplina turma = do
-    let msg = "\n===== Menu do aluno " ++ matricula ++ ", na disciplina " ++ disciplina ++ " e turma " ++ turma ++ "! ====="
-    putStrLn (color Blue . style Bold $ msg)
-    putStrLn (color Blue "Digite uma opção:")
-    putStrLn "[0] Voltar"
-    putStrLn "[1] Ver notas"
-    putStrLn "[2] Ver Mural"
-    putStrLn "[3] Chat"
-    putStrLn "[4] Avaliar professor(a)"
-    putStrLn "[5] Materiais Didáticos"
-    putStrLn "[6] Responder quiz"
-    putStrLn (color Blue . style Bold $ "==============================================================")
-    escolherOpcaoAluno matricula disciplina turma
-*/
 
 aluno_menu_turma(Matricula, Disciplina, CodTurma):- 
     nl, 

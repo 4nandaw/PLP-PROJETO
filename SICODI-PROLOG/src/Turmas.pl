@@ -25,7 +25,8 @@ turma_menu(Disciplina, CodTurma):-
 
 escolher_opcao_turma_menu("0", Disciplina, CodTurma):- disciplina_menu(Disciplina), !.
 escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
-escolher_opcao_turma_menu(_, _, _):- write("\nOPÇÃO INVÁLIDA\n").
+escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu(_, Disciplina, CodTurma):- write("\nOPÇÃO INVÁLIDA\n"), turma_menu(Disciplina, CodTurma).
 
 alocar_notas(Disciplina, CodTurma):- 
     write("Digite a matrícula do aluno que você deseja alocar notas ou ver sua situação ou 'q' para sair: \n"),
@@ -106,3 +107,17 @@ calcular_media(Dados, Media):-
     M is (Dados.nota1 + Dados.nota2 + Dados.nota3)/3,
     format(atom(MediaFormatada), '~2f', M),
     atom_number(MediaFormatada, Media).
+
+alocar_faltas(Disciplina, CodTurma):- 
+    nl, write("Digite a matrícula do aluno que deseja alocar faltas ou q para sair: "),
+    read(Matricula),
+    convert_to_string(Matricula, M),
+    ((M == "q") -> nl ;
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
+        ((not_exists_file(Path))-> (nl, write("Aluno não está na turma"), nl) ;
+            read_json(Path, Dados),
+            Faltas is (Dados.faltas + 1),
+            put_dict(faltas, Dados, Faltas, DadosGravados),
+            write_json(Path, DadosGravados),
+            nl, write("Falta adicionada")), nl,
+            alocar_faltas(Disciplina, CodTurma)).
