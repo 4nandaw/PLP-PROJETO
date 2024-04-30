@@ -42,12 +42,13 @@ alocar_notas(Disciplina, CodTurma):-
      ; nl).
 
 alocar_notas_aluno(Disciplina, CodTurma, Matricula):-
-    nl, print_purple_bold("Digite qual opção deseja: "), nl,
-    print_purple("[0] Voltar"), nl,
-    print_purple("[1] Alocar 1º nota"), nl,
-    print_purple("[2] Alocar 2º nota"), nl,
-    print_purple("[3] Alocar 3º nota"), nl,
-    print_purple("[4] Ver situação do aluno"), nl,
+    print_purple_bold("===== ADICIONANDO NOTAS DO ALUNO ,"), print_purple_bold(Matricula), print_purple_bold(" ====="),
+    print_purple_bold("\nDigite qual opção deseja: \n"),
+    write("[0] Voltar"), nl,
+    write("[1] Alocar 1º nota"), nl,
+    write("[2] Alocar 2º nota"), nl,
+    write("[3] Alocar 3º nota"), nl,
+    write("[4] Ver situação do aluno"), nl,
     read(Opcao),
     convert_to_string(Opcao, Op),
     ((Op == "0") ->
@@ -124,14 +125,20 @@ alocar_faltas(Disciplina, CodTurma):-
             alocar_faltas(Disciplina, CodTurma)).
 
 ver_avaliacoes(Disciplina, CodTurma):-
+    print_purple_bold("\nAVALIAÇÕES ====================================\n"),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/avaliacoes"], Path),
     directory_files(Path, Lista),
     remove_pontos(Lista, ListaDeAvaliacoes),
     length(ListaDeAvaliacoes, Length),
     (Length > 0 -> 
+        media_avaliacoes(ListaDeAvaliacoes, Path, M),
+        Media is M/Length,
+        print_white_bold("\nNota média dada ao professor: "), write(Media), nl,
         print_avaliacoes(ListaDeAvaliacoes, Path)
-    ;   print_red("\nAinda não há avaliações para o professor...\n")).
+    ;   print_red("\nAinda não há avaliações para o professor...\n")),
+    print_purple_bold("\n===============================================\n").
 
+print_avaliacoes([], _).
 print_avaliacoes([H|T], Path):-
     concat_atom([Path, "/", H], AvaliacaoPath),
     read_json(AvaliacaoPath, Dados),
@@ -146,3 +153,11 @@ formata_nota(2):- print_yellow_bold("\n⭑⭑☆☆☆\n").
 formata_nota(3):- print_yellow_bold("\n⭑⭑⭑☆☆\n").
 formata_nota(4):- print_yellow_bold("\n⭑⭑⭑⭑☆\n").
 formata_nota(5):- print_yellow_bold("\n⭑⭑⭑⭑⭑\n").
+
+media_avaliacoes([], _, 0).
+media_avaliacoes([H|T], Path, M):-
+    concat_atom([Path, "/", H], AvaliacaoPath),
+    read_json(AvaliacaoPath, Dados),
+    Nota = (Dados.nota),
+    media_avaliacoes(T, Path, Media),
+    M is Media + Nota.

@@ -3,6 +3,7 @@
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Turmas", [turma_menu/2]).
+:- use_module("../utils/Utils", [remove_pontos/2]).
 
 disciplina_menu(Disciplina):-
     string_upper(Disciplina, X),
@@ -62,20 +63,23 @@ minhas_turmas(Disciplina):-
     string_upper(Disciplina, X),
     print_purple_bold("\nTurmas de "), print_purple_bold(X), nl, nl,
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas"], Path),
-    directory_files(Path, ListaDeTurmas),
-    print_turmas(ListaDeTurmas),
+    directory_files(Path, Lista),
+    remove_pontos(Lista, ListaDeTurmas),
+    print_turmas(ListaDeTurmas, Path),
     print_purple_bold("\n===============================================\n"),
     print_purple("Informe um codigo de turma:\n"),
     read(CodTurma),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
     (exists_file(CodTurmaPath) -> turma_menu(Disciplina, CodTurma); print_red("\nCódigo de turma inválido.\n"), minhas_turmas(Disciplina)).
 
-print_turmas([]).
-print_turmas([.|Turmas]):- print_turmas(Turmas).
-print_turmas([..|Turmas]):- print_turmas(Turmas).
-print_turmas([Turma|Turmas]):-
-    print_purple(Turma), nl,
-    print_turmas(Turmas).
+print_turmas([], _).
+print_turmas([Turma|Turmas], Path):-
+    concat_atom([Path, "/", Turma, "/alunos"], AlunosPath),
+    directory_files(AlunosPath, Lista),
+    remove_pontos(Lista, Alunos),
+    length(Alunos, Length),
+    write(Turma), write(" ------ "), write(Length), write(" aluno(s)\n"),
+    print_turmas(Turmas, Path).
 
 adicionar_aluno(Disciplina):-
     print_purple("\nInforme o código da turma ou "), print_white_bold('q'), print_purple(" para voltar: \n"),
