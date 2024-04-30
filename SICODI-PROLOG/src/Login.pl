@@ -41,9 +41,10 @@ login_disciplina :-
 
 login_menu:-
     print_yellow_bold("\nLOGIN ======================\n"),
-    print_yellow("[0] Voltar ao menu principal\n"),
-    print_yellow("[1] Login de professor\n"),
-    print_yellow("[2] Login de aluno\n"),
+    print_yellow_bold("Digite uma opção: \n")
+    write("[0] Voltar ao menu principal\n"),
+    write("[1] Login de professor\n"),
+    write("[2] Login de aluno\n"),
     print_yellow_bold("=============================\n"),
     read(Opcao),
     escolher_opcao_login(Opcao), !.

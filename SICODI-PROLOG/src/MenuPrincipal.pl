@@ -7,9 +7,10 @@
 
 main:-
     print_yellow_bold("\nMENU INICIAL ========\n"),
-    print_yellow("[0] Sair\n"),
-    print_yellow("[1] Cadastro\n"),
-    print_yellow("[2] Login\n"),
+    print_yellow_bold("Digite uma opção: \n")
+    write("[0] Sair\n"),
+    write("[1] Cadastro\n"),
+    write("[2] Login\n"),
     print_yellow_bold("=====================\n"),
     read(Opcao),
     escolher_opcao(Opcao),
