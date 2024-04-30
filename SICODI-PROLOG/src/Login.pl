@@ -14,7 +14,7 @@ login_aluno :-
 
 % Terá uma função em utils antes para validar as entradas
 validar_dados(Matricula, Senha) :- realizar_login_aluno(Matricula, Senha), !.
-validar_dados(Matricula, Senha) :- nl, write("DIGITE APENAS ENTRADAS VÁLIDAS"), nl.
+validar_dados(Matricula, Senha) :- nl, write("DIGITE APENAS ENTRADAS VÁLIDAS!"), nl.
 
 realizar_login_aluno(Matricula, Senha) :- 
     concat_atom(['../db/alunos/', Matricula, '.json'], Path),
@@ -34,8 +34,6 @@ realizar_login_aluno(X, _) :-
     nl, write("Senha incorreta!!"), nl.
 
 senha_correta(Senha, Senha1):- convert_to_string(Senha, SenhaStr), convert_to_string(Senha1, SenhaStr).
-
-
 
 
 % LOGIN DISCIPLINA

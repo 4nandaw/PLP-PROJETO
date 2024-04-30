@@ -3,29 +3,25 @@
 :- use_module("./Turmas").
 
 
-
-
 aluno_menu(Matricula):-
-    write("===== MENU DO ALUNO "), write(Matricula), write(" ===="), nl,
+    write("\n===== MENU DO ALUNO "), write(Matricula), write(" ====\n"),
     printar_todas_turmas(Matricula), nl,
-    write("Digite a disciplina que você deseja entrar ou 'q' para sair: "), nl,
+    write("Digite a disciplina que você deseja entrar ou 'q' para sair: \n"),
     read(Disciplina), nl,
-    write("Digite a turma que você dessa disciplina que você deseja entrar ou q para sair: "), nl,
+    write("Digite a turma que você dessa disciplina que você deseja entrar ou 'q' para sair: \n"),
     read(CodTurma),
     convert_to_string(Disciplina, D),
     convert_to_string(CodTurma, C),
-    ((D == "q", C == "q") -> nl ;
+    ((D == "q"; C == "q") -> nl ;
         ((turma_valida(Matricula, D, C)) -> 
             aluno_menu_turma(Matricula, Disciplina, CodTurma) ;
-            write("Disciplina ou turma inválida")),
+            write("\nDisciplina ou turma inválida\n")),
             aluno_menu(Matricula)).
 
 turma_valida(Matricula, Disciplina, CodTurma):- 
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     read_json(Path, Dados),
     member([Disciplina, CodTurma], Dados.turmas).
-
-
 
 aluno_menu_turma(Matricula, Disciplina, CodTurma):- 
     nl, 
@@ -45,8 +41,6 @@ aluno_menu_turma(Matricula, Disciplina, CodTurma):-
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "1"):- situacao_aluno(Disciplina, CodTurma, Matricula).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, _):- write("OPÇÃO INVÁLIDA").
-
-
 
 
 printar_todas_turmas(Matricula):- 
