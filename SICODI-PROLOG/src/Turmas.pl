@@ -27,7 +27,7 @@ turma_menu(Disciplina, CodTurma):-
 escolher_opcao_turma_menu("0", Disciplina, CodTurma):- disciplina_menu(Disciplina), !.
 escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
-escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma).
+escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
 alocar_notas(Disciplina, CodTurma):- 
@@ -135,10 +135,10 @@ ver_avaliacoes(Disciplina, CodTurma):-
 print_avaliacoes([H|T], Path):-
     concat_atom([Path, "/", H], AvaliacaoPath),
     read_json(AvaliacaoPath, Dados),
-    Nota is (Dados.nota),
-    Comentario is (Dado.comentario),
+    Nota = (Dados.nota),
+    Comentario = (Dados.comentario),
     formata_nota(Nota),
-    write("Comentário: "), write(Comentario), nl,
+    print_white_bold("Comentário: "), write(Comentario), nl,
     print_avaliacoes(T, Path).
 
 formata_nota(1):- print_yellow_bold("\n⭑☆☆☆☆\n").
