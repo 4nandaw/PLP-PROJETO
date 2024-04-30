@@ -6,15 +6,15 @@
 
 disciplina_menu(Disciplina):-
     string_upper(Disciplina, X),
-    write("\nMENU DE "), write(X), write(" ========\n"),
-    write("Digite uma opção: \n"),
-    write("[0] Voltar\n"),
-    write("[1] Criar turma\n"),
-    write("[2] Minhas turmas\n"),
-    write("[3] Adicionar aluno\n"),
-    write("[4] Excluir aluno\n"),
-    write("[5] Excluir turma\n"),
-    write("====================\n"),
+    print_purple_bold("\nMENU DE "), print_purple_bold(X), print_purple_bold(" ========\n"),
+    print_purple("Digite uma opção: \n"),
+    print_purple("[0] Voltar\n"),
+    print_purple("[1] Criar turma\n"),
+    print_purple("[2] Minhas turmas\n"),
+    print_purple("[3] Adicionar aluno\n"),
+    print_purple("[4] Excluir aluno\n"),
+    print_purple("[5] Excluir turma\n"),
+    print_purple_bold("====================\n"),
     read(Opcao),
     escolher_opcao_disciplina_menu(Opcao, Disciplina), !.
 
@@ -24,13 +24,13 @@ escolher_opcao_disciplina_menu(2, Disciplina):- minhas_turmas(Disciplina), disci
 escolher_opcao_disciplina_menu(3, Disciplina):- adicionar_aluno(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(4, Disciplina):- excluir_aluno(Disciplina), disciplina_menu(Disciplina).
 escolher_opcao_disciplina_menu(5, Disciplina):- excluir_turma(Disciplina), disciplina_menu(Disciplina).
-escolher_opcao_disciplina_menu(_, _):- write("\nOPÇÃO INVÁLIDA\n").
+escolher_opcao_disciplina_menu(_, _):- print_red("\nOpção inválida.\n").
 
 criar_turma(Disciplina):-
-    write("\nCADASTRO DE TURMA\n\n"),
-    write("Nome da turma: \n"),
+    print_purple_bold("\nCADASTRO DE TURMA\n"),
+    print_purple("\nNome da turma: \n"),
     read(NomeTurma),
-    write("Código da turma: \n"),
+    print_purple("\nCódigo da turma: \n"),
     read(CodTurma),
     % validar dados / verificar se já existe?
 
@@ -53,7 +53,7 @@ criar_turma(Disciplina):-
     concat_atom([CodTurmaPath, "/", CodTurma, ".json"], TurmaJsonPath),
     not_exists_file(TurmaJsonPath),
     write_json(TurmaJsonPath, _{alunos : [], nome : NomeTurma, codigo : CodTurma}),
-    write("\nCadastro concluído!\n").
+    print_green("\nCadastro concluído!\n").
 
 make_directory(CodTurmaPath, Diretorio):-
     concat_atom([CodTurmaPath, "/", Diretorio], Path),
@@ -61,33 +61,33 @@ make_directory(CodTurmaPath, Diretorio):-
 
 minhas_turmas(Disciplina):-
     string_upper(Disciplina, X),
-    write("\nTurmas de "), write(X), nl, nl,
+    print_purple_bold("\nTurmas de "), print_purple_bold(X), nl, nl,
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas"], Path),
     directory_files(Path, ListaDeTurmas),
     print_turmas(ListaDeTurmas),
-    write("\n===============================================\n"),
-    write("Informe um codigo de turma:\n"),
+    print_purple_bold("\n===============================================\n"),
+    print_purple("Informe um codigo de turma:\n"),
     read(CodTurma),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
-    (exists_file(CodTurmaPath) -> turma_menu(Disciplina, CodTurma); write("\nCódigo de turma inválido!\n"), minhas_turmas(Disciplina)).
+    (exists_file(CodTurmaPath) -> turma_menu(Disciplina, CodTurma); print_red("\nCódigo de turma inválido.\n"), minhas_turmas(Disciplina)).
 
 print_turmas([]).
 print_turmas([.|Turmas]):- print_turmas(Turmas).
 print_turmas([..|Turmas]):- print_turmas(Turmas).
 print_turmas([Turma|Turmas]):-
-    write(Turma), nl,
+    print_purple(Turma), nl,
     print_turmas(Turmas).
 
 adicionar_aluno(Disciplina):-
-    write("\nInforme o código da turma ou 'q' para voltar: \n"),
+    print_purple("\nInforme o código da turma ou "), print_white_bold('q'), print_purple(" para voltar: \n"),
     read(CodTurma),
     (CodTurma \= 'q' -> 
         concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
         (exists_file(CodTurmaPath) -> 
-            write("\nInforme a matricula do aluno: \n"),
+            print_purple("\nInforme a matricula do aluno: \n"),
             read(Matricula),
             alocar_aluno(Matricula, Disciplina, CodTurma)
-        ;    write("\nCódigo de turma inválido!\n"), adicionar_aluno(Disciplina))
+        ;    print_red("\nCódigo de turma inválido!\n"), adicionar_aluno(Disciplina))
     ;   disciplina_menu(Disciplina)).
 
 alocar_aluno(Matricula, Disciplina, CodTurma):-
@@ -101,27 +101,28 @@ alocar_aluno(Matricula, Disciplina, CodTurma):-
                 put_dict(turmas, DadosAluno, TurmasAtualizadas, DadosAtualizaddos),
                 write_json(MatriculaPath, DadosAtualizaddos),
                 write_json(AlunoTurmaPath, _{faltas : 0, media : 0, nota1 : 0, nota2 : 0, nota3 : 0}),
-                write("\nAluno "), write(Matricula), write(" adicionado!\n"),
-                write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+                print_green("\nAluno "), print_white_bold(Matricula), print_green(" adicionado!\n"),
+                print_purple("\nInforme a matrícula do próximo aluno ou "), print_white_bold('q'), print_purple(" para finalizar: \n"),
                 read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma)
-            ;   write("\nAluno já adicionado!\n"),
-                write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+            ;   print_red("\nAluno já adicionado!\n"),
+                print_purple("\nInforme a matrícula do próximo aluno ou "), print_white_bold('q'), print_purple(" para finalizar: \n"),
                 read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
-        ;   write("\nMatrícula inválida!\n"),
-            write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+        ;   print_red("\nMatrícula inválida!\n"),
+        
+                print_purple("\nInforme a matrícula do próximo aluno ou "), print_white_bold('q'), print_purple(" para finalizar: \n"),
             read(NovaMatricula), alocar_aluno(NovaMatricula, Disciplina, CodTurma))
-    ;   write("\nRegistro finalizado!\n")).
+    ;   print_green("\nRegistro finalizado!\n")).
 
 excluir_aluno(Disciplina):-
-    write("\nInforme o código da turma ou 'q' para voltar: \n"),
+    print_purple("\nInforme o código da turma ou "), print_white_bold('q'), print_purple(" para voltar: \n"),
     read(CodTurma),
     (CodTurma \= 'q' ->
         concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
         (exists_file(CodTurmaPath) -> 
-            write("\nInforme a matrícula do aluno: \n"),
+            print_purple("\nInforme a matrícula do aluno: \n"),
             read(Matricula),
             remove_aluno(Matricula, Disciplina, CodTurma)
-        ;   write("\nCódigo de turma inválido!\n"), excluir_aluno(Disciplina))
+        ;   print_red("\nCódigo de turma inválido!\n"), excluir_aluno(Disciplina))
     ;   disciplina_menu(Disciplina)).
 
 remove_aluno(Matricula, Disciplina, CodTurma):-
@@ -129,22 +130,22 @@ remove_aluno(Matricula, Disciplina, CodTurma):-
         concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], AlunoTurmaPath),
         (exists_file(AlunoTurmaPath) -> 
             delete_file(AlunoTurmaPath),
-            write("\nAluno "), write(Matricula), write(" removido!\n"),
-            write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+            print_green("\nAluno "), print_white_bold(Matricula), print_green(" removido!\n"),
+            print_purple("\nInforme a matrícula do próximo aluno ou "), print_white_bold('q'), print_purple(" para finalizar: \n"),
             read(NovaMatricula), remove_aluno(NovaMatricula, Disciplina, CodTurma)
-        ;   write("\nMatrícula inválida!\n"),
-            write("\nInforme a matrícula do próximo aluno ou 'q' para finalizar: \n"),
+        ;   print_red("\nMatrícula inválida!\n"),
+            print_purple("\nInforme a matrícula do próximo aluno ou "), print_white_bold('q'), print_purple(" para finalizar: \n"),
             read(NovaMatricula), remove_aluno(NovaMatricula, Disciplina, CodTurma))
-    ;   write("\nRegistro finalizado!\n")).
+    ;   print_green("\nRegistro finalizado!\n")).
 
 excluir_turma(Disciplina):-
-    write("\nInforme o codigo da turma a ser excluida: \n"),
+    print_purple("\nInforme o codigo da turma a ser excluida: \n"),
     read(CodTurma),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma], CodTurmaPath),
     (exists_directory(CodTurmaPath) ->
         force_delete_directory(CodTurmaPath),
-        write("\nTurma removida!\n")
-    ;   write("\nCódigo de turma inválido!\n")).
+        print_green("\nTurma removida!\n")
+    ;   print_red("\nCódigo de turma inválido!\n")).
 
 force_delete_directory(Directory) :-
     atom_concat('rm -rf ', Directory, Command),
