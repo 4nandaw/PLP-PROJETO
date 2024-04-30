@@ -3,8 +3,7 @@
 :- use_module("./Turmas").
 
 aluno_menu(Matricula):-
-    print_blue_bold("\n"),
-    print_blue_bold("===== MENU DO ALUNO "), print_blue_bold(Matricula), print_blue_bold(" ===="), nl,
+    print_blue_bold("\n===== MENU DO ALUNO "), print_blue_bold(Matricula), print_blue_bold(" ===="), nl,
     printar_todas_turmas(Matricula), nl, nl,
     print_blue("Digite a DISCIPLINA que você deseja entrar ou "), print_white_bold('q'), print_blue(" para sair:"), nl,
     read(Disciplina), nl,

@@ -3,21 +3,22 @@
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Disciplinas", [disciplina_menu/1]).
+:- use_module("../utils/Utils", [remove_pontos/2]).
 
 turma_menu(Disciplina, CodTurma):-
     string_upper(CodTurma, X),
     print_purple_bold("\nMENU "), print_purple_bold(X), print_purple_bold(" =====================\n"),
     print_purple("Escolha uma opção: \n"),
-    print_purple("[0] Voltar\n"),
-    print_purple("[1] Ver alunos da turma\n"),
-    print_purple("[2] Adicionar notas e ver situação de um aluno\n"),
-    print_purple("[3] Adicionar faltas\n"),
-    print_purple("[4] Ver relatório da turma\n"),
-    print_purple("[5] Ver avaliações\n"),
-    print_purple("[6] Mural da Turma\n"),
-    print_purple("[7] Chat\n"),
-    print_purple("[8] Materiais Didáticos\n"),
-    print_purple("[9] Quizzes da turma\n"),
+    write("[0] Voltar\n"),
+    write("[1] Ver alunos da turma\n"),
+    write("[2] Adicionar notas e ver situação de um aluno\n"),
+    write("[3] Adicionar faltas\n"),
+    write("[4] Ver relatório da turma\n"),
+    write("[5] Ver avaliações\n"),
+    write("[6] Mural da Turma\n"),
+    write("[7] Chat\n"),
+    write("[8] Materiais Didáticos\n"),
+    write("[9] Quizzes da turma\n"),
     print_purple_bold("=======================================\n"),
     read(Opcao),
     convert_to_string(Opcao, Op),
@@ -26,6 +27,7 @@ turma_menu(Disciplina, CodTurma):-
 escolher_opcao_turma_menu("0", Disciplina, CodTurma):- disciplina_menu(Disciplina), !.
 escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma).
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
 alocar_notas(Disciplina, CodTurma):- 
@@ -67,8 +69,7 @@ situacao_aluno(Disciplina, CodTurma, Matricula):-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
     read_json(Path, Dados),
     Nota1 = Dados.nota1, Nota2 = Dados.nota2, Nota3 = Dados.nota3, Media = Dados.media, Faltas = Dados.faltas,
-    write("\n"),
-    print_purple_bold("==== SITUAÇÃO DO ALUNO "), print_white_bold(Matricula), print_purple_bold(" ==="), nl,
+    print_purple_bold("\n==== SITUAÇÃO DO ALUNO "), print_white_bold(Matricula), print_purple_bold(" ===\n"),
     print_purple("Nota 1: "), print_white_bold(Nota1), nl,
     print_purple("Nota 2: "), print_white_bold(Nota2), nl,
     print_purple("Nota 3: "), print_white_bold(Nota2), nl,
@@ -76,10 +77,10 @@ situacao_aluno(Disciplina, CodTurma, Matricula):-
     print_purple("Quantidade de faltas: "), print_white_bold(Faltas), nl,
     situacao(Faltas, Media).
 
-situacao(Faltas, _):- Faltas >= 8, nl, print_red("REPROVADO POR FALTA :("), nl, !.
-situacao(_, Media):- Media>=7.0, nl, print_green("APROVADO :)"), nl, !.
-situacao(_, Media):- Media>=4.0, nl, print_yellow("FINAL :|"), nl.
-situacao(_, Media):- nl, print_red("REPROVADO :("), nl.
+situacao(Faltas, _):- Faltas >= 8, print_red("\nREPROVADO POR FALTA :(\n"), !.
+situacao(_, Media):- Media>=7.0, print_green("\nAPROVADO :)\n"), !.
+situacao(_, Media):- Media>=4.0, print_yellow("\nFINAL :|\n").
+situacao(_, Media):- print_red("\nREPROVADO :(\n").
 
 
 alocar_nota(Disciplina, CodTurma, Matricula, Opcao):-
@@ -103,22 +104,45 @@ atualizar_media(Disciplina, CodTurma, Matricula):-
     put_dict(media, Dados, Media, Dados_gravados),
     write_json(Path, Dados_gravados).
 
-    
 calcular_media(Dados, Media):- 
     M is (Dados.nota1 + Dados.nota2 + Dados.nota3)/3,
     format(atom(MediaFormatada), '~2f', M),
     atom_number(MediaFormatada, Media).
 
 alocar_faltas(Disciplina, CodTurma):- 
-    nl, print_purple("\nDigite a matrícula do aluno que deseja alocar faltas ou "), print_white_bold('q'), print_purple(" para sair: \n"),
+    print_purple("\nDigite a matrícula do aluno que deseja alocar faltas ou "), print_white_bold('q'), print_purple(" para sair: \n"),
     read(Matricula),
     convert_to_string(Matricula, M),
     ((M == "q") -> nl ;
         concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
-        ((not_exists_file(Path))-> (nl, print_red("\nAluno não está na turma.\n"), nl) ;
+        ((not_exists_file(Path))-> (print_red("\nAluno não está na turma.\n")) ;
             read_json(Path, Dados),
             Faltas is (Dados.faltas + 1),
             put_dict(faltas, Dados, Faltas, DadosGravados),
             write_json(Path, DadosGravados),
-            nl, print_green("\nFalta adicionada!\n")), nl,
+            print_green("\nFalta adicionada!\n")), nl,
             alocar_faltas(Disciplina, CodTurma)).
+
+ver_avaliacoes(Disciplina, CodTurma):-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/avaliacoes"], Path),
+    directory_files(Path, Lista),
+    remove_pontos(Lista, ListaDeAvaliacoes),
+    length(ListaDeAvaliacoes, Length),
+    (Length > 0 -> 
+        print_avaliacoes(ListaDeAvaliacoes, Path)
+    ;   print_red("\nAinda não há avaliações para o professor...\n")).
+
+print_avaliacoes([H|T], Path):-
+    concat_atom([Path, "/", H], AvaliacaoPath),
+    read_json(AvaliacaoPath, Dados),
+    Nota is (Dados.nota),
+    Comentario is (Dado.comentario),
+    formata_nota(Nota),
+    write("Comentário: "), write(Comentario), nl,
+    print_avaliacoes(T, Path).
+
+formata_nota(1):- print_yellow_bold("\n⭑☆☆☆☆\n").
+formata_nota(2):- print_yellow_bold("\n⭑⭑☆☆☆\n").
+formata_nota(3):- print_yellow_bold("\n⭑⭑⭑☆☆\n").
+formata_nota(4):- print_yellow_bold("\n⭑⭑⭑⭑☆\n").
+formata_nota(5):- print_yellow_bold("\n⭑⭑⭑⭑⭑\n").
