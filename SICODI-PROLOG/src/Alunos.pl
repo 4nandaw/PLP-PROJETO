@@ -42,6 +42,7 @@ aluno_menu_turma(Matricula, Disciplina, CodTurma):-
         (escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, Op), aluno_menu_turma(Matricula, Disciplina, CodTurma))).
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "1"):- situacao_aluno(Disciplina, CodTurma, Matricula).
+escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "4"):- avaliar_prof_menu(Disciplina, CodTurma, Matricula), aluno_menu_turma(Matricula, Disciplina, CodTurma).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, _):- write("\nOPÇÃO INVÁLIDA\n").
 
 
@@ -53,3 +54,30 @@ printar_todas_turmas(Matricula):-
 printar_turmas([]).
 printar_turmas([[Disciplina|[Turma | _]]|T]):- 
     nl, write("Disciplina: "), write(Disciplina), write(" | Turma: "), write(Turma), printar_turmas(T).
+
+avaliar_prof_menu(Disciplina, CodTurma, Matricula):-
+    write("\nAVALIAÇÃO DE DESEMPENHO DO PROFESSOR =====\n"),
+    write("Digite uma opção ou 'q' para sair: \n"),
+    write("[1] Péssimo\n"),
+    write("[2] Ruim\n"),
+    write("[3] Ok\n"),
+    write("[4] Bom\n"),
+    write("[5] Excelente\n"),
+    write("==========================================\n"),
+    read(Nota),
+    (Nota \= 'q' ->
+        ((Nota \= 1, Nota \= 2, Nota \= 3, Nota \= 4, Nota \= 5) ->
+            write("\nOpção inválida!\n"), avaliar_prof_menu(Disciplina, CodTurma, Matricula)
+        ;   registra_avaliacao_prof(Disciplina, CodTurma, Matricula, Nota))
+    ;   write("")).
+
+registra_avaliacao_prof(Disciplina, CodTurma, Matricula, Nota):-
+    write("\nComentário: (digite 'nn' para não registrar um comentário)\n"),
+    read(Comentario),
+    convert_to_string(Comentario, C),
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/avaliacoes/", Matricula, ".json"], AvaliacaoPath),
+    (C \= "nn" ->
+        write_json(AvaliacaoPath, _{comentario : C, nota : Nota}),
+        write("\nAvaliação registrada!\n")
+    ;   write_json(AvaliacaoPath, _{comentario : "", nota : Nota}),
+        write("\nAvaliação registrada!\n")).
