@@ -7,7 +7,22 @@
 :- use_module(library(json)).
 :- use_module("../utils/Utils").
 
-% DISCIPLINAS 
+
+% MENU
+cadastro_menu:-
+    print_yellow_bold("\nCADASTRO =====================\n"),
+    print_yellow("[0] Sair\n"),
+    print_yellow("[1] Cadastro de professor\n"),
+    print_yellow("[2] Cadastro de aluno\n"),
+    print_yellow_bold("==============================\n"),
+    read(Opcao),
+    escolher_opcao_cadastro(Opcao).
+
+escolher_opcao_cadastro(0):- main, !.
+escolher_opcao_cadastro(1):- cadastrar_disciplina, !.
+escolher_opcao_cadastro(2):- cadastrar_aluno, !.
+
+% DISCIPLINAS
 
 % RECEBE OS DADOS
 cadastrar_disciplina:-
@@ -16,7 +31,7 @@ cadastrar_disciplina:-
     print_yellow("\nDigite o nome do professor: \n"),
     read(Nome),
     print_yellow("\nDigite o nome da disciplina: \n"),
-    read(Disciplina),0
+    read(Disciplina),
     print_yellow("\nDigite a senha do professor: \n"),
     read(Senha),
     validar_dados_disciplina(Matricula, Nome, Disciplina, Senha).
@@ -25,7 +40,6 @@ cadastrar_disciplina:-
 % ESSA PRIMEIRA AINDA IRÁ TER UMA FUNÇÃO NO UTILS QUE SERÁ CHAMADA AQUI ANTES DE gravar_dados_disciplina
  validar_dados_disciplina(Matricula, Nome, Disciplina, Senha):- gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha), !.
  validar_dados_disciplina(Matricula, Nome, Disciplina, Senha):- print_red("\nEntrada inválida. Tente novamente.\n").
-
 
 % SALVA NO JSON
 gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
@@ -72,18 +86,3 @@ gravar_dados_aluno(Matricula, Nome, Senha):-
 gravar_dados_aluno(Matricula, Nome, Senha):-
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     exists_file(Path), nl, print_red("\nJá existe um aluno com esta matrícula.\n"), nl.
-
-
-% MENU
-cadastro_menu:-
-    print_yellow_bold("\nCADASTRO =====================\n"),
-    print_yellow("[0] Sair\n"),
-    print_yellow("[1] Cadastro de professor\n"),
-    print_yellow("[2] Cadastro de aluno\n"),
-    print_yellow_bold("==============================\n"),
-    read(Opcao),
-    escolher_opcao_cadastro(Opcao), !.
-
-escolher_opcao_cadastro(0):- main, !.
-escolher_opcao_cadastro(1):- cadastrar_disciplina, !.
-escolher_opcao_cadastro(2):- cadastrar_aluno, !.
