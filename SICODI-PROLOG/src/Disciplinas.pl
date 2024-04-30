@@ -30,7 +30,7 @@ escolher_opcao_disciplina_menu(_, _):- write("\nOPÇÃO INVÁLIDA\n").
 criar_turma(Disciplina):-
     write("\nCADASTRO DE TURMA\n\n"),
     write("Nome da turma: \n"),
-    read(NomeTurma),
+    read(NomeTurma), nl,
     write("Código da turma: \n"),
     read(CodTurma),
 
@@ -53,7 +53,6 @@ criar_turma(Disciplina):-
 
         write("\nCadastro concluído!\n")
     ;   write("\nTurma já exitente!\n")).
-
 
 make_directory(CodTurmaPath, Diretorio):-
     concat_atom([CodTurmaPath, "/", Diretorio], Path),

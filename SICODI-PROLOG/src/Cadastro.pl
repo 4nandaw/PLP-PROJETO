@@ -49,17 +49,17 @@ gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
 
 % RECEBE OS DADOS
 cadastrar_aluno:-
-    write("Digite a matricula do aluno: \n"),
+    write("\nDigite a matricula do aluno: \n"),
     read(Matricula),
-    write("Digite o nome do aluno: \n"),
+    write("\nDigite o nome do aluno: \n"),
     read(Nome),
-    write("Digite a senha do aluno: \n"),
+    write("\nDigite a senha do aluno: \n"),
     read(Senha),
     validar_dados(Matricula, Nome, Senha).
 
 % FUNÇÃO QUE CHAMA A FUNÇÃO DO UTILS PARA VALIDAR OS DADOS
  validar_dados(Matricula, Nome, Senha):- gravar_dados_aluno(Matricula, Nome, Senha), !.
- validar_dados(Matricula, Nome, Senha):- write("ENTRADA INVÁLIDA!").
+ validar_dados(Matricula, Nome, Senha):- write("\nENTRADA INVÁLIDA!\n").
 
 
 % SALVA NO ARQUIVO JSON
@@ -73,7 +73,7 @@ gravar_dados_aluno(Matricula, Nome, Senha):-
 % MATRÍCULA JÁ EXISTE
 gravar_dados_aluno(Matricula, Nome, Senha):-
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
-    exists_file(Path), nl, write("JÁ EXISTE ALUNO COM ESSA MATRÍCULA!"), nl.
+    exists_file(Path), nl, write("\nJÁ EXISTE ALUNO COM ESSA MATRÍCULA!\n"), nl.
 
 
 % MENU

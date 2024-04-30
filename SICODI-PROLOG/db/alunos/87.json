@@ -1,1 +1,6 @@
-{"matricula":87, "nome":"filipinho", "senha":123}
+{
+  "matricula":87,
+  "nome":"joão",
+  "senha":123,
+  "turmas": [ ["plp", "t1" ] ]
+}
