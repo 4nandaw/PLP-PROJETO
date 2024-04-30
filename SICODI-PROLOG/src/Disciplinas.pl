@@ -3,6 +3,7 @@
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Turmas", [turma_menu/2]).
+:- use_module("../utils/Utils", [dado_valido/1]). 
 
 disciplina_menu(Disciplina):-
     string_upper(Disciplina, X),
@@ -32,7 +33,6 @@ criar_turma(Disciplina):-
     read(NomeTurma),
     write("Código da turma: \n"),
     read(CodTurma),
-    % validar dados / verificar se já existe?
 
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas"], DirectoryPath),
     make_directory_path(DirectoryPath),
@@ -40,20 +40,20 @@ criar_turma(Disciplina):-
     concat_atom([DirectoryPath, "/", CodTurma], CodTurmaPath),
     make_directory_path(CodTurmaPath),
 
-    make_directory(CodTurmaPath, "alunos"),
-
-    make_directory(CodTurmaPath, "avaliacoes"),
-
-    make_directory(CodTurmaPath, "mural"),
-
-    make_directory(CodTurmaPath, "chats"),
-
-    make_directory(CodTurmaPath, "quiz"),
-
     concat_atom([CodTurmaPath, "/", CodTurma, ".json"], TurmaJsonPath),
-    not_exists_file(TurmaJsonPath),
-    write_json(TurmaJsonPath, _{alunos : [], nome : NomeTurma, codigo : CodTurma}),
-    write("\nCadastro concluído!\n").
+    
+    (not_exists_file(TurmaJsonPath) -> 
+        write_json(TurmaJsonPath, _{alunos : [], nome : NomeTurma, codigo : CodTurma}),
+
+        make_directory(CodTurmaPath, "alunos"),
+        make_directory(CodTurmaPath, "avaliacoes"),
+        make_directory(CodTurmaPath, "mural"),
+        make_directory(CodTurmaPath, "chats"),
+        make_directory(CodTurmaPath, "quiz"),
+
+        write("\nCadastro concluído!\n")
+    ;   write("\nTurma já exitente!\n")).
+
 
 make_directory(CodTurmaPath, Diretorio):-
     concat_atom([CodTurmaPath, "/", Diretorio], Path),
