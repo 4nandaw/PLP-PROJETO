@@ -70,10 +70,10 @@ print_blue_bold(Texto) :-
     ansi_format([bold, fg(blue)], '~w', [Texto]).
 
 print_purple(Texto) :-
-    ansi_format([fg(purple)], '~w', [Texto]).
+    ansi_format([fg(magenta)], '~w', [Texto]).
 
 print_purple_bold(Texto) :-
-    ansi_format([bold, fg(purple)], '~w', [Texto]).
+    ansi_format([bold, fg(magenta)], '~w', [Texto]).
 
 print_red(Texto) :-
     ansi_format([fg(red)], '~w', [Texto]).
