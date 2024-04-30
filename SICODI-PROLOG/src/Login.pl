@@ -8,18 +8,14 @@
 login_aluno :-
     write("\nDigite a matrícula do aluno: \n"),
     read(Matricula),
-    write("\nDigite a senha: \n"),
-    read(Senha),
-    validar_dados(Matricula, Senha).
-
-% Terá uma função em utils antes para validar as entradas
-validar_dados(Matricula, Senha) :- realizar_login_aluno(Matricula, Senha), !.
-validar_dados(Matricula, Senha) :- nl, write("DIGITE APENAS ENTRADAS VÁLIDAS"), nl.
-
-realizar_login_aluno(Matricula, Senha) :- 
     concat_atom(['../db/alunos/', Matricula, '.json'], Path),
-    not_exists_file(Path),
-    nl, write("NÃO EXISTE ALUNO COM ESSA MATRÍCULA!"), nl, !.
+    exists_file(Path) -> (
+        write("\nDigite a senha: \n"),
+        read(Senha),
+        read_json(Path, Dados),
+        (senha_correta(Dados.senha, Senha) -> write("\nLogin realizado com sucesso!\n"), aluno_menu(Matricula) 
+        ; write("\nSenha incorreta!\n"), !)
+    ) ;  write("\nEsse aluno não existe.\n").
 
 realizar_login_aluno(Matricula, Senha) :-
     % write(Matricula),
@@ -30,13 +26,7 @@ realizar_login_aluno(Matricula, Senha) :-
     write("\nLogin realizado :)\n"),
     aluno_menu(Matricula), !.
 
-realizar_login_aluno(X, _) :-
-    nl, write("Senha incorreta!!"), nl.
-
 senha_correta(Senha, Senha1):- convert_to_string(Senha, SenhaStr), convert_to_string(Senha1, SenhaStr).
-
-
-
 
 % LOGIN DISCIPLINA
 login_disciplina :- 
@@ -50,7 +40,6 @@ login_disciplina :-
         (senha_correta(Dados.senha, Senha) -> write("\nLogin realizado com sucesso!\n"), disciplina_menu(Disciplina) 
         ; write("\nSenha incorreta!\n"), !)
     ) ;  write("\nEssa disciplina não existe!\n").
-/* % shell(clear) */
 
 login_menu:-
     write("\nLOGIN ======================\n"),
@@ -60,7 +49,6 @@ login_menu:-
     write("=============================\n"),
     read(Opcao),
     escolher_opcao_login(Opcao), !.
-    /*% shell(clear) Essa linha só irá funcionar em Mac ou linux/windows essa função n vai pegar*/
 
 escolher_opcao_login(1):- login_disciplina, !.
 escolher_opcao_login(2):- login_aluno, !.

@@ -27,10 +27,10 @@ escolher_opcao_disciplina_menu(5, Disciplina):- excluir_turma(Disciplina), disci
 escolher_opcao_disciplina_menu(_, _):- write("\nOPÇÃO INVÁLIDA\n").
 
 criar_turma(Disciplina):-
-    write("\nCADASTRO DE TURMA\n\n"),
-    write("Nome da turma: \n"),
+    write("\nCADASTRO DE TURMA\n"),
+    write("\nNome da turma: \n"),
     read(NomeTurma),
-    write("Código da turma: \n"),
+    write("\nCódigo da turma: \n"),
     read(CodTurma),
     % validar dados / verificar se já existe?
 

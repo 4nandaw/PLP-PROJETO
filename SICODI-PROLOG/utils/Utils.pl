@@ -3,10 +3,20 @@ write_json/2,
 read_json/2, 
 not_exists_file/1,
 convert_to_string/2,
-limparTela/0]).
+limparTela/0,
+print_yellow/1,
+print_yellow_bold/1,
+print_blue/1,
+print_blue_bold/1,
+print_purple/1,
+print_purple_bold/1,
+print_red/1,
+print_green/1,
+print_white_bold/1]).
 
 :- use_module(library(http/json)).
 :- usemodule(library(process)).
+- use_module(library(ansi_term)).
 
 limparTela :-
     (   current_prolog_flag(unix, true) % Verifica se é linux e limpa, se não limpa para outros OS.
@@ -46,3 +56,31 @@ convert_to_string(Data, String) :-
     ;
         term_string(Data, String)
     ).
+
+print_yellow(Texto) :-
+    ansi_format([fg(yellow)], '~w', [Texto]).
+
+print_yellow_bold(Texto) :-
+    ansi_format([bold, fg(yellow)], '~w', [Texto]).
+
+print_blue(Texto) :-
+    ansi_format([fg(blue)], '~w', [Texto]).
+
+print_blue_bold(Texto) :-
+    ansi_format([bold, fg(blue)], '~w', [Texto]).
+
+print_purple(Texto) :-
+    ansi_format([fg(purple)], '~w', [Texto]).
+
+print_purple_bold(Texto) :-
+    ansi_format([bold, fg(purple)], '~w', [Texto]).
+
+print_red(Texto) :-
+    ansi_format([fg(red)], '~w', [Texto]).
+
+print_green(Texto) :-
+    ansi_format([fg(green)], '~w', [Texto]).
+
+print_white_bold(Texto) :-
+    ansi_format([bold, fg(white)], '~w', [Texto]).
+

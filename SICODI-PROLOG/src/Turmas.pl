@@ -67,6 +67,7 @@ situacao_aluno(Disciplina, CodTurma, Matricula):-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
     read_json(Path, Dados),
     Nota1 = Dados.nota1, Nota2 = Dados.nota2, Nota3 = Dados.nota3, Media = Dados.media, Faltas = Dados.faltas,
+    write("\n"),
     write("==== SITUAÇÃO DO ALUNO "), write(Matricula), write(" ==="), nl,
     write("Nota 1: "), write(Nota1), nl,
     write("Nota 2: "), write(Nota2), nl,
