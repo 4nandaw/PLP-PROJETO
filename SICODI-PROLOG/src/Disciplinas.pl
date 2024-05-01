@@ -47,6 +47,7 @@ criar_turma(Disciplina):-
 
         make_directory(CodTurmaPath, "alunos"),
         make_directory(CodTurmaPath, "avaliacoes"),
+        make_directory(CodTurmaPath, "materiais"),
         make_directory(CodTurmaPath, "mural"),
         make_directory(CodTurmaPath, "chats"),
         make_directory(CodTurmaPath, "quiz"),

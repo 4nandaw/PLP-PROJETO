@@ -30,6 +30,7 @@ escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, 
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("8", Disciplina, CodTurma):- materiais_didaticos_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
 ver_alunos(Disciplina, CodTurma):-
@@ -212,3 +213,29 @@ media_avaliacoes([H|T], Path, M):-
     Nota = (Dados.nota),
     media_avaliacoes(T, Path, Media),
     M is Media + Nota.
+
+materiais_didaticos_menu(Disciplina, CodTurma):-
+    print_purple_bold("\nMATERIAIS DIDÁTICOS ============================\n"),
+    print_purple("Escolha uma opção: \n"),
+    write("[0] Voltar\n"),
+    write("[1] Ver Materiais Didáticos\n"),
+    write("[2] Adicionar novo Material Didático para turma\n"),
+    print_purple_bold("===============================================\n"),
+    read(Opcao),
+    escolher_opcao_materiais_didaticos_menu(Op, Disciplina, CodTurma).
+
+escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
+escolher_opcao_materiais_didaticos_menu(0, Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu(1, Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu(2, Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+
+ver_materiais_didaticos(Disciplina, CodTurma):- 
+    print_white_bold("\n===== MATERIAIS DIDÁTICOS =====\n"),
+
+    print_white_bold("\n================================\n").
+
+adicionar_material_didatico(Disciplina, CodTurma):-
+    print_purple("\nInsira o TÍTULO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
+    read(Titulo),
+    print_purple("\nInsira o CONTEÚDO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
+    read(Conteudo).
