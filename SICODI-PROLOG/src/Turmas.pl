@@ -235,11 +235,13 @@ adicionar_aviso_mural(Disciplina, CodTurma) :-
     print_purple("\nDigite o aviso para toda turma ou "), print_white_bold('q'), print_purple(" para sair: \n"),
     read(Aviso),
     convert_to_string(Aviso, A),
-    ((A == "q") -> nl ;
-    write("Funcionando!")
-    ).
 
-    #     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
+    ((A == "q") -> nl ;
+    
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/mural/", CodTurma, ".json"], Path),
+    write_json(Path, _{avisos : [A]}),
+    print_green("\nAviso adicionado ao Mural!\n")
+    ).
 
 materiais_didaticos_menu(Disciplina, CodTurma):-
     print_purple_bold("\nMATERIAIS DIDÁTICOS ============================\n"),
