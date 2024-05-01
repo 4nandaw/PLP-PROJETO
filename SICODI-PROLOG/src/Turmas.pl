@@ -25,11 +25,36 @@ turma_menu(Disciplina, CodTurma):-
     escolher_opcao_turma_menu(Op, Disciplina, CodTurma).
 
 escolher_opcao_turma_menu("0", Disciplina, CodTurma):- disciplina_menu(Disciplina), !.
+escolher_opcao_turma_menu("1", Disciplina, CodTurma):- ver_alunos(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
+
+ver_alunos(Disciplina, CodTurma):-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos"], AlunosTurmaPath),
+    concat_atom(["../db/alunos"], AlunosPath),
+    directory_files(AlunosTurmaPath, Lista),
+    remove_pontos(Lista, AlunosTurma),
+    length(AlunosTurma, Length),
+    print_purple_bold("\nALUNOS ================================\n\n"),
+    (Length > 0 ->
+        print_alunos(AlunosTurma, AlunosTurmaPath, AlunosPath)
+    ;   write("\nAinda não há alunos nessa turma...\n\n")),
+    print_purple_bold("\n=======================================\n").
+
+print_alunos([], _, _).
+print_alunos([H|T], AlunosTurmaPath, AlunosPath):-
+    concat_atom([AlunosTurmaPath, "/", H], AlunoTurma),
+    read_json(AlunoTurma, DadosTurma),
+    Faltas = (DadosTurma.faltas),
+    concat_atom([AlunosPath, "/", H], Aluno),
+    read_json(Aluno, DadosAluno),
+    Matricula = (DadosAluno.matricula),
+    Nome = (DadosAluno.nome),
+    print_white_bold(Matricula), print_white_bold(" - "), print_white_bold(Nome), print_white_bold(" ----- "), print_white_bold(Faltas), print_white_bold(" falta(s)\n"),
+    print_alunos(T, AlunosTurmaPath, AlunosPath).
 
 alocar_notas(Disciplina, CodTurma):- 
     print_purple("\nDigite a matrícula do aluno que deseja alocar notas/ver situação ou "), print_white_bold('q'), print_purple(" para sair: \n"),
@@ -65,7 +90,6 @@ opcao_valida_alocar_nota("1").
 opcao_valida_alocar_nota("2").
 opcao_valida_alocar_nota("3").
 opcao_valida_alocar_nota("4").
-
 
 situacao_aluno(Disciplina, CodTurma, Matricula):- 
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
