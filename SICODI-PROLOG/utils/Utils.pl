@@ -57,8 +57,12 @@ convert_to_string(Data, String):-
     ;
         term_string(Data, String)
     ).
+    
+remove_pontos(List, CleanList) :-
+    exclude(is_dot_or_dotdot, List, CleanList).
 
-remove_pontos([H,H1|T], L):- L = T.
+is_dot_or_dotdot('.').
+is_dot_or_dotdot('..').
 
 print_yellow(Texto):-
     ansi_format([fg(yellow)], '~w', [Texto]).
