@@ -95,12 +95,12 @@ situacao_aluno(Disciplina, CodTurma, Matricula):-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
     read_json(Path, Dados),
     Nota1 = Dados.nota1, Nota2 = Dados.nota2, Nota3 = Dados.nota3, Media = Dados.media, Faltas = Dados.faltas,
-    print_purple_bold("\n==== SITUAÇÃO DO ALUNO "), print_white_bold(Matricula), print_purple_bold(" ===\n"),
-    print_purple("Nota 1: "), print_white_bold(Nota1), nl,
-    print_purple("Nota 2: "), print_white_bold(Nota2), nl,
-    print_purple("Nota 3: "), print_white_bold(Nota2), nl,
-    print_purple("Média: "), print_white_bold(Media), nl,
-    print_purple("Quantidade de faltas: "), print_white_bold(Faltas), nl,
+    print_white_bold("\n==== SITUAÇÃO DO ALUNO "), print_white_bold(Matricula), print_white_bold(" ===\n\n"),
+    print_white_bold("Nota 1: "), write(Nota1), nl,
+    print_white_bold("Nota 2: "), write(Nota2), nl,
+    print_white_bold("Nota 3: "), write(Nota2), nl,
+    print_white_bold("Faltas: "), write(Faltas), nl,
+    print_white_bold("Média: "), print_white_bold(Media), nl,
     situacao(Faltas, Media).
 
 situacao(Faltas, _):- Faltas >= 8, print_red("\nREPROVADO POR FALTA :(\n"), !.
