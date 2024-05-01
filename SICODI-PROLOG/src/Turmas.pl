@@ -222,12 +222,12 @@ materiais_didaticos_menu(Disciplina, CodTurma):-
     write("[2] Adicionar novo Material Didático para turma\n"),
     print_purple_bold("===============================================\n"),
     read(Opcao),
-    escolher_opcao_materiais_didaticos_menu(Op, Disciplina, CodTurma).
+    escolher_opcao_materiais_didaticos_menu(Opcao, Disciplina, CodTurma).
 
-escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
 escolher_opcao_materiais_didaticos_menu(0, Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_materiais_didaticos_menu(1, Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
-escolher_opcao_materiais_didaticos_menu(2, Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu(2, Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
 
 ver_materiais_didaticos(Disciplina, CodTurma):- 
     print_white_bold("\n===== MATERIAIS DIDÁTICOS =====\n"),
