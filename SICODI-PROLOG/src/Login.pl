@@ -6,11 +6,11 @@
 
 % LOGIN ALUNOS
 login_aluno :-
-    print_purple("\nDigite a matrícula do aluno: \n"),
+    print_yellow("\nDigite a matrícula do aluno: \n"),
     read(Matricula),
     concat_atom(['../db/alunos/', Matricula, '.json'], Path),
     exists_file(Path) -> (
-        print_purple("\nDigite a senha: \n"),
+        print_yellow("\nDigite a senha: \n"),
         read(Senha),
         read_json(Path, Dados),
         (senha_correta(Dados.senha, Senha) -> print_green("\nLogin realizado com sucesso!\n"), aluno_menu(Matricula) 
