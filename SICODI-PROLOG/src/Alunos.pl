@@ -3,12 +3,11 @@
 :- use_module("./Turmas").
 
 aluno_menu(Matricula):-
-    print_blue_bold("\n"),
-    print_blue_bold("===== MENU DO ALUNO "), print_blue_bold(Matricula), print_blue_bold(" ===="), nl,
-    printar_todas_turmas(Matricula), nl, nl,
-    print_blue("Digite a DISCIPLINA que você deseja entrar ou "), print_white_bold('q'), print_blue(" para sair:"), nl,
-    read(Disciplina), nl,
-    print_blue("Digite a TURMA que você deseja entrar ou "), print_white_bold('q'), print_blue(" para sair:"), nl,
+    print_blue_bold("\n===== MENU DO ALUNO "), print_blue_bold(Matricula), print_blue_bold(" ====\n"),
+    printar_todas_turmas(Matricula), nl,
+    print_blue("\nDigite a DISCIPLINA que você deseja entrar ou "), print_white_bold('q'), print_blue(" para sair: \n"),
+    read(Disciplina),
+    print_blue("\nDigite a TURMA que você deseja entrar ou "), print_white_bold('q'), print_blue(" para sair: \n"),
     read(CodTurma),
     convert_to_string(Disciplina, D),
     convert_to_string(CodTurma, C),
@@ -26,7 +25,7 @@ turma_valida(Matricula, Disciplina, CodTurma):-
 aluno_menu_turma(Matricula, Disciplina, CodTurma):- 
     string_upper(Disciplina, D),
     string_upper(CodTurma, C),
-    print_blue_bold("\n==== Menu do aluno "), print_white_bold(Matricula), print_blue_bold(" na disciplina "), print_white_bold(D), print_blue_bold(" na turma "), print_white_bold(C), print_blue_bold("! ===="), nl,
+    print_blue_bold("\n==== Menu do aluno "), print_blue_bold(Matricula), print_blue_bold(" na disciplina "), print_blue_bold(D), print_blue_bold(" na turma "), print_blue_bold(C), print_blue_bold("! ====\n"),
     print_blue("Digite uma opção: \n"),
     write("[0] Voltar\n"),
     write("[1] Ver notas\n"),

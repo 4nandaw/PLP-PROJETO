@@ -4,6 +4,7 @@ read_json/2,
 not_exists_file/1,
 convert_to_string/2,
 limparTela/0,
+remove_pontos/2,
 print_yellow/1,
 print_yellow_bold/1,
 print_blue/1,
@@ -56,6 +57,8 @@ convert_to_string(Data, String) :-
     ;
         term_string(Data, String)
     ).
+
+remove_pontos([H,H1|T], L):- L = T.
 
 print_yellow(Texto) :-
     ansi_format([fg(yellow)], '~w', [Texto]).
