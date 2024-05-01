@@ -27,6 +27,7 @@ turma_menu(Disciplina, CodTurma):-
 escolher_opcao_turma_menu("0", Disciplina, CodTurma):- disciplina_menu(Disciplina), !.
 escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
@@ -123,6 +124,32 @@ alocar_faltas(Disciplina, CodTurma):-
             write_json(Path, DadosGravados),
             print_green("\nFalta adicionada!\n")), nl,
             alocar_faltas(Disciplina, CodTurma)).
+
+ver_relatorio(Disciplina, CodTurma):-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos"], Path),
+    directory_files(Path, Lista),
+    remove_pontos(Lista, Alunos),
+    medias_e_faltas(Alunos, Path, M, F),
+    length(Alunos, Length),
+    print_purple_bold("\nRELATÓRIO DA TURMA =======================================\n"),
+    (Length > 0 ->
+        Media is M/Length,
+        Faltas is F/Length,
+        print_white_bold("\nMédia de notas: "), write(Media), nl,
+        print_white_bold("\nMédia de faltas: "), write(Faltas), nl
+    ;   print_white_bold("\nNão há alunos para calcular a média de notas.\n"),
+        print_white_bold("\nNão há alunos para calcular a média de faltas.\n")),
+    print_purple_bold("\n==========================================================\n").
+
+medias_e_faltas([], _, 0, 0).
+medias_e_faltas([H|T], Path, M, F):-
+    concat_atom([Path, "/", H], DadosPath),
+    read_json(DadosPath, Dados),
+    Media = (Dados.media),
+    Falta = (Dados.faltas),
+    medias_e_faltas(T, Path, Medias, Faltas),
+    M is Medias + Media,
+    F is Faltas + Falta.
 
 ver_avaliacoes(Disciplina, CodTurma):-
     print_purple_bold("\nAVALIAÇÕES ====================================\n"),
