@@ -30,6 +30,7 @@ escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, 
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("6", Disciplina, CodTurma):- mural_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("8", Disciplina, CodTurma):- materiais_didaticos_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
@@ -214,6 +215,26 @@ media_avaliacoes([H|T], Path, M):-
     media_avaliacoes(T, Path, Media),
     M is Media + Nota.
 
+mural_menu(Disciplina, CodTurma) :-
+    print_purple_bold("\nMURAL DA TURMA ==============="),
+    print_purple("\nEscolha uma opção: "),
+    write("\n[0] Voltar\n"),
+    write("[1] Ver Mural\n"),
+    write("[2] Deixar aviso no Mural\n"),
+    print_purple_bold("================================\n"),
+    read(Opcao).
+    escolher_opcao_mural(Opcao, Disciplina, CodTurma).
+
+# escolher_opcao_mural(0, Disciplina, CodTurma) :- turma_menu(Disciplina, CodTurma), !.
+# escolher_opcao_mural(1, Disciplina, CodTurma) :- ver_mural(Disciplina, CodTurma), mural_menu(Disciplina, CodTurma), !.
+# escolher_opcao_mural(2, Disciplina, CodTurma) :- adicionar_aviso_mural(Disciplina, CodTurma), mural_menu(Disciplina, CodTurma), !.
+escolher_opcao_mural(_, Disciplina, CodTurma) :- print_red("\nOpção inválida!\n").
+
+# escolher_opcao_materiais_didaticos_menu(0, Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
+# escolher_opcao_materiais_didaticos_menu(1, Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+# escolher_opcao_materiais_didaticos_menu(2, Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+# escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
+
 materiais_didaticos_menu(Disciplina, CodTurma):-
     print_purple_bold("\nMATERIAIS DIDÁTICOS ============================\n"),
     print_purple("Escolha uma opção: \n"),
@@ -224,10 +245,11 @@ materiais_didaticos_menu(Disciplina, CodTurma):-
     read(Opcao),
     escolher_opcao_materiais_didaticos_menu(Opcao, Disciplina, CodTurma).
 
-escolher_opcao_materiais_didaticos_menu(0, Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
-escolher_opcao_materiais_didaticos_menu(1, Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
-escolher_opcao_materiais_didaticos_menu(2, Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+# escolher_opcao_materiais_didaticos_menu("0", Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
+# escolher_opcao_materiais_didaticos_menu("1", Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+# escolher_opcao_materiais_didaticos_menu("2", Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
 escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
+
 
 ver_materiais_didaticos(Disciplina, CodTurma):- 
     print_white_bold("\n===== MATERIAIS DIDÁTICOS =====\n"),
