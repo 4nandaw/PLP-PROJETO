@@ -30,6 +30,7 @@ escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, 
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("6", Disciplina, CodTurma):- solicitar_chat(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
 ver_alunos(Disciplina, CodTurma):-
@@ -212,3 +213,43 @@ media_avaliacoes([H|T], Path, M):-
     Nota = (Dados.nota),
     media_avaliacoes(T, Path, Media),
     M is Media + Nota.
+
+chat(Disciplina, CodTurma):-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos"], Path),
+    directory_files(Path, Lista),
+    (Lista == []) -> 
+        print_red("\nAinda não há alunos nessa turma para iniciar um chat") ; 
+        ver_alunos_turma(Lista),
+        print_purple("\nDigite a matrícula do aluno ou q para sair do chat: ")
+        read(Matricula), 
+        convert_to_string(Matricula, M),
+        (M == "q") -> print_green("\nChat's encerrados") ;
+        (member(Matricula, Lista)) -> acessar_chat(Disciplina, CodTurma, Matricula), chat(Disciplina, CodTurma) ;
+                                    print_red("\nAluno não está na turma"), chat(Disciplina, CodTurma).
+
+ver_alunos_turma([]).
+ver_alunos_turma([Matricula|T]):-
+    concat_atom(["../db/alunos/", Matricula, ".json"], Path),
+    read_json(Path, Dados),
+    print_white_bold(Dados.matricula), print_white_bold("--"), print_white_bold(Dados.nome),
+    ver_alunos_turma(T). 
+
+acessar_chat(Disciplina, CodTurma, Matricula):-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/chats"], DirectoryPath),
+    make_directory_path(DirectoryPath),
+    concat_atom([DirectoryPath, "/", CodTurma, "-", Matricula, ".json"], Path),
+    read_json(Path, Dados),
+    ((Dados.chat == []) -> 
+        write("Ainda não há nenhuma mensagem... inicie a conversa!") ;
+        ver_mensagens_anteriores(CodTurma, Dados.chat)),
+    enviar_mensagem_chat(Disciplina, CodTurma, Matricula).
+
+
+ver_mensagens_anteriores(_, []).
+ver_mensagens_anteriores(CodTurma, [[Remetente|Mensagem|T1]|T2]):-
+    print_white_bold:
+
+enviar_mensagem_chat(Disciplina, CodTurma, Matricula):-
+    concat_atom(["../db/disciplinas/", Disciplina, "/", CodTurma, "/chats/", CodTurma, "-", Matricula, ".json"], Path),
+    read_json(Path, Dados),
+
