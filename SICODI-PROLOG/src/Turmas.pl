@@ -245,7 +245,7 @@ chat(Disciplina, CodTurma):-
                                     print_red("\nAluno não está na turma\n"), chat(Disciplina, CodTurma))).
 
 print_aviso_chat:-
-    print_red("\nAVISO:"), print_white_bold(" para parar de mandar mensagens digite  'q'").
+    print_red("\nAVISO:"), print_white_bold(" para parar de mandar mensagens aperte apenas ENTER").
 
 ver_alunos_turma([]):- nl.
 ver_alunos_turma([Matricula|T]):-
@@ -275,9 +275,8 @@ print_mensagem([Mensagem|T]):- print_white_bold(Mensagem).
 
 enviar_mensagem_chat(Disciplina, CodTurma, Matricula):-
     write("\nMsg: "),
-    read(Mensagem),
-    convert_to_string(Mensagem, M),
-    ((M == "q") -> nl ;
+    read_line_to_string(user_input, Mensagem),
+    ((Mensagem == "q") -> nl ;
         (salvar_mensagem(Disciplina, CodTurma, Matricula, Mensagem),
         enviar_mensagem_chat(Disciplina, CodTurma, Matricula))).
 

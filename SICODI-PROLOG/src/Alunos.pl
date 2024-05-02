@@ -90,9 +90,8 @@ chat_aluno(Matricula, Disciplina, CodTurma):-
 
 enviar_mensagem_chat_aluno(Matricula, Disciplina, CodTurma):-
     print_white_bold("\nMsg: "),
-    read(Mensagem),
-    convert_to_string(Mensagem, M),
-    ((M == "q") -> nl ; 
+    read_line_to_string(user_input, Mensagem),
+    ((Mensagem == "q") -> nl ; 
         (concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/chats/", CodTurma, "-", Matricula, ".json"], Path),
         concat_atom(["../db/alunos/", Matricula, ".json"], AlunoPath),
         read_json(AlunoPath, DadosAluno),

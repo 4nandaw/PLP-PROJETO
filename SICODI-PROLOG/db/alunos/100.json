@@ -1,0 +1,6 @@
+{
+  "matricula":100,
+  "nome":"jardel",
+  "senha":123,
+  "turmas": [ ["oac", "t1" ] ]
+}
