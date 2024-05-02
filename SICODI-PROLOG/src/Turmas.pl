@@ -3,7 +3,7 @@
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Disciplinas", [disciplina_menu/1]).
-:- use_module("../utils/Utils", [remove_pontos/2]).
+:- use_module("../utils/Utils", [remove_pontos/2], [leitor/1]).
 
 turma_menu(Disciplina, CodTurma):-
     string_upper(CodTurma, X),
@@ -233,14 +233,21 @@ escolher_opcao_mural(_, Disciplina, CodTurma) :- print_red("\nOpção inválida!
 
 adicionar_aviso_mural(Disciplina, CodTurma) :-
     print_purple("\nDigite o aviso para toda turma ou "), print_white_bold('q'), print_purple(" para sair: \n"),
-    read(Aviso),
-    convert_to_string(Aviso, A),
+    input(Aviso),
 
-    ((A == "q") -> nl ;
-    
-    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/mural/", CodTurma, ".json"], Path),
-    write_json(Path, _{avisos : [A]}),
-    print_green("\nAviso adicionado ao Mural!\n")
+    (Aviso == "q" -> nl ;
+
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/mural/", CodTurma, ".json"], Path),
+        (exists_file(Path) -> 
+            read_json(Path, Mural),
+            get_dict(avisos, Mural, Atuais),
+            append(Atuais, [Aviso], NovosAvisos),
+            MuralAtual = Mural.put(avisos, NovosAvisos)
+        ;
+            MuralAtual = _{avisos: [Aviso]}
+        ),
+        write_json(Path, MuralAtual),
+        print_green("\nAviso adicionado ao Mural!\n")
     ).
 
 materiais_didaticos_menu(Disciplina, CodTurma):-

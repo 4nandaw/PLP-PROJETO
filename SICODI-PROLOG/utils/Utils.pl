@@ -13,7 +13,8 @@ print_purple/1,
 print_purple_bold/1,
 print_red/1,
 print_green/1,
-print_white_bold/1]).
+print_white_bold/1,
+input/1]).
 
 :- use_module(library(http/json)).
 :- usemodule(library(process)).
@@ -57,7 +58,17 @@ convert_to_string(Data, String):-
     ;
         term_string(Data, String)
     ).
-    
+
+input(Entrada) :-
+    clear_input_buffer,
+    read_line_to_string(user_input, Entrada).
+
+clear_input_buffer :-
+    repeat,
+    read_line_to_string(user_input, X),
+    X == "",
+    !.
+
 remove_pontos(List, CleanList) :-
     exclude(is_dot_or_dotdot, List, CleanList).
 
