@@ -227,9 +227,33 @@ mural_menu(Disciplina, CodTurma) :-
     escolher_opcao_mural(Op, Disciplina, CodTurma).
 
 escolher_opcao_mural("0", Disciplina, CodTurma) :- turma_menu(Disciplina, CodTurma), !.
-# escolher_opcao_mural(1, Disciplina, CodTurma) :- ver_mural(Disciplina, CodTurma), mural_menu(Disciplina, CodTurma), !.
+escolher_opcao_mural("1", Disciplina, CodTurma) :- ver_mural(Disciplina, CodTurma), mural_menu(Disciplina, CodTurma), !.
 escolher_opcao_mural("2", Disciplina, CodTurma) :- adicionar_aviso_mural(Disciplina, CodTurma), mural_menu(Disciplina, CodTurma), !.
 escolher_opcao_mural(_, Disciplina, CodTurma) :- print_red("\nOpção inválida!\n"), mural_menu(Disciplina, CodTurma).
+
+ver_mural(Disciplina, CodTurma) :-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/mural/", CodTurma, ".json"], Path),
+    (exists_file(Path) ->
+        read_json(Path, Mural),
+        (   get_dict(avisos, Mural, Avisos),
+            Avisos \= []
+        ->  print_white_bold("\nAvisos no Mural da Turma:\n\n"),
+            reverse(Avisos, ReversedAvisos),
+            print_avisos(ReversedAvisos, true)
+        ;   print_red("\nAinda não há avisos no Mural da Turma.\n")
+        )
+    ; 
+        print_red("\nAinda não há avisos no Mural da Turma.\n")
+    ).
+
+print_avisos([], _).
+print_avisos([Aviso|Rest], IsFirst) :-
+    (   IsFirst
+    ->  print_blue_bold("+ "), write(Aviso), write("\n\n"),  % Se IsFirst for true, imprime com "+"
+        print_avisos(Rest, false)
+    ;   format("  ~w\n\n", [Aviso]),
+        print_avisos(Rest, false)
+    ).
 
 adicionar_aviso_mural(Disciplina, CodTurma) :-
     print_purple("\nDigite o aviso para toda turma ou "), print_white_bold('q'), print_purple(" para sair: \n"),
