@@ -47,6 +47,7 @@ criar_turma(Disciplina):-
 
         make_directory(CodTurmaPath, "alunos"),
         make_directory(CodTurmaPath, "avaliacoes"),
+        make_directory(CodTurmaPath, "materiais"),
         make_directory(CodTurmaPath, "mural"),
         make_directory(CodTurmaPath, "chats"),
         make_directory(CodTurmaPath, "quiz"),
@@ -65,12 +66,15 @@ minhas_turmas(Disciplina):-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas"], Path),
     directory_files(Path, Lista),
     remove_pontos(Lista, ListaDeTurmas),
-    print_turmas(ListaDeTurmas, Path),
+    reverse(ListaDeTurmas, Turmas),
+    print_turmas(Turmas, Path),
     print_purple_bold("\n===============================================\n"),
-    print_purple("Informe um codigo de turma:\n"),
+    print_purple("Informe um codigo de turma ou "), print_white_bold("q"), print_purple(" para sair:\n"),
     read(CodTurma),
-    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
-    (exists_file(CodTurmaPath) -> turma_menu(Disciplina, CodTurma); print_red("\nCódigo de turma inválido.\n"), minhas_turmas(Disciplina)).
+    (CodTurma == 'q' ->
+        write("")
+    ;   concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/", CodTurma, ".json"], CodTurmaPath),
+        (exists_file(CodTurmaPath) -> turma_menu(Disciplina, CodTurma); print_red("\nCódigo de turma inválido.\n"), minhas_turmas(Disciplina))).
 
 print_turmas([], _).
 print_turmas([Turma|Turmas], Path):-
