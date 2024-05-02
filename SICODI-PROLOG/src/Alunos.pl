@@ -1,6 +1,7 @@
 :- module(aluno, [aluno_menu/1]).
 :- use_module("../utils/Utils").
 :- use_module("./Turmas").
+:- use_module("./Quizzes", [escolher_quiz/2]).
 
 aluno_menu(Matricula):-
     print_blue_bold("\n===== MENU DO ALUNO "), print_blue_bold(Matricula), print_blue_bold(" ====\n"),
@@ -42,6 +43,7 @@ aluno_menu_turma(Matricula, Disciplina, CodTurma):-
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "1"):- situacao_aluno(Disciplina, CodTurma, Matricula).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "4"):- avaliar_prof_menu(Disciplina, CodTurma, Matricula), aluno_menu_turma(Matricula, Disciplina, CodTurma).
+escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "6"):- escolher_quiz(Disciplina, CodTurma), aluno_menu_turma(Matricula, Disciplina, CodTurma).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, _):- print_red("\nOpção inválida.\n").
 
 printar_todas_turmas(Matricula):- 

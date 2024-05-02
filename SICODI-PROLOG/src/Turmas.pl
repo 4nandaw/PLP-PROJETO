@@ -1,10 +1,10 @@
 :- module(turma, [turma_menu/2, situacao_aluno/3]).
+:- use_module("./Quizzes", [quiz_menu/2]).
 :- use_module(library(json)).
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Disciplinas", [disciplina_menu/1]).
 :- use_module("../utils/Utils", [remove_pontos/2]).
-:- use_module("./Quizzes", [quiz_menu/2]).
 
 turma_menu(Disciplina, CodTurma):-
     string_upper(CodTurma, X),
@@ -32,7 +32,7 @@ escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina,
 escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("8", Disciplina, CodTurma):- materiais_didaticos_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
-escolher_opcao_turma_menu("9", Disciplina, CodTurma):- quizzes:quiz_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("9", Disciplina, CodTurma):- quiz_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
 ver_alunos(Disciplina, CodTurma):-
