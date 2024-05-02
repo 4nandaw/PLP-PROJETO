@@ -14,7 +14,9 @@ print_purple_bold/1,
 print_red/1,
 print_green/1,
 print_white_bold/1,
+lista_vazia/1,
 input/1]).
+
 
 :- use_module(library(http/json)).
 :- usemodule(library(process)).
@@ -102,3 +104,4 @@ print_green(Texto):-
 print_white_bold(Texto):-
     ansi_format([bold, fg(white)], '~w', [Texto]).
 
+lista_vazia([]).

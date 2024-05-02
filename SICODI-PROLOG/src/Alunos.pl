@@ -41,7 +41,11 @@ aluno_menu_turma(Matricula, Disciplina, CodTurma):-
         (escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, Op), aluno_menu_turma(Matricula, Disciplina, CodTurma))).
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "1"):- situacao_aluno(Disciplina, CodTurma, Matricula).
+
+escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "3"):- chat_aluno(Matricula, Disciplina, CodTurma).
+
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "2"):- ver_mural(Disciplina, CodTurma).
+
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "4"):- avaliar_prof_menu(Disciplina, CodTurma, Matricula), aluno_menu_turma(Matricula, Disciplina, CodTurma).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, _):- print_red("\nOpção inválida.\n").
 
@@ -80,3 +84,27 @@ registra_avaliacao_prof(Disciplina, CodTurma, Matricula, Nota):-
         print_green("\nAvaliação registrada!\n")
     ;   write_json(AvaliacaoPath, _{comentario : "", nota : Nota}),
         print_green("\nAvaliação registrada!\n")).
+
+chat_aluno(Matricula, Disciplina, CodTurma):- 
+    print_blue("\nMensagens anteriores: "), acessar_chat(Disciplina, CodTurma, Matricula), print_aviso_chat, enviar_mensagem_chat_aluno(Matricula, Disciplina, CodTurma).
+
+enviar_mensagem_chat_aluno(Matricula, Disciplina, CodTurma):-
+    print_white_bold("\nMsg: "),
+    read(Mensagem),
+    convert_to_string(Mensagem, M),
+    ((M == "q") -> nl ; 
+        (concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/chats/", CodTurma, "-", Matricula, ".json"], Path),
+        concat_atom(["../db/alunos/", Matricula, ".json"], AlunoPath),
+        read_json(AlunoPath, DadosAluno),
+        NomeAluno = DadosAluno.nome,
+        ((exists_file(Path)) -> 
+            (read_json(Path, Dados),
+            Chat = Dados.chat,
+            append(Chat, [[NomeAluno, Mensagem]], ChatAtualizado),
+            put_dict(chat, Dados, ChatAtualizado, DadosGravados),
+            write_json(Path, DadosGravados)
+            ) ;
+            (write_json(Path, _{chat : [[NomeAluno, Mensagem]]}))
+        ),
+            enviar_mensagem_chat_aluno(Matricula, Disciplina, CodTurma))
+    ).
