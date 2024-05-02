@@ -1,9 +1,13 @@
-:- module(turma, [turma_menu/2, situacao_aluno/3, acessar_chat/3, print_aviso_chat/0]).
+
+
+:- module(turma, [turma_menu/2, situacao_aluno/3, ver_mural/2, acessar_chat/3, print_aviso_chat/0]).
 :- use_module(library(json)).
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Disciplinas", [disciplina_menu/1]).
+
 % :- use_module("../utils/Utils", [remove_pontos/2]).
+
 
 turma_menu(Disciplina, CodTurma):-
     string_upper(CodTurma, X),
@@ -30,7 +34,10 @@ escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, 
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+
 escolher_opcao_turma_menu("7", Disciplina, CodTurma):- chat(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("6", Disciplina, CodTurma):- mural_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("8", Disciplina, CodTurma):- materiais_didaticos_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
 
 ver_alunos(Disciplina, CodTurma):-
@@ -214,6 +221,7 @@ media_avaliacoes([H|T], Path, M):-
     media_avaliacoes(T, Path, Media),
     M is Media + Nota.
 
+
     
         
 
@@ -287,4 +295,90 @@ salvar_mensagem(Disciplina, CodTurma, Matricula, Mensagem):-
         ) ;
         write_json(Path, _{chat : [[NomeProf, Mensagem]]})
     ).
+
+
+mural_menu(Disciplina, CodTurma) :-
+    print_purple_bold("\nMURAL DA TURMA ==============="),
+    print_purple("\nEscolha uma opção: "),
+    write("\n[0] Voltar\n"),
+    write("[1] Ver Mural\n"),
+    write("[2] Deixar aviso no Mural\n"),
+    print_purple_bold("================================\n"),
+    read(Opcao),
+    convert_to_string(Opcao, Op),
+    escolher_opcao_mural(Op, Disciplina, CodTurma).
+
+escolher_opcao_mural("0", Disciplina, CodTurma) :- turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_mural("1", Disciplina, CodTurma) :- ver_mural(Disciplina, CodTurma), mural_menu(Disciplina, CodTurma), !.
+escolher_opcao_mural("2", Disciplina, CodTurma) :- adicionar_aviso_mural(Disciplina, CodTurma), mural_menu(Disciplina, CodTurma), !.
+escolher_opcao_mural(_, Disciplina, CodTurma) :- print_red("\nOpção inválida!\n"), mural_menu(Disciplina, CodTurma).
+
+ver_mural(Disciplina, CodTurma) :-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/mural/", CodTurma, ".json"], Path),
+    (exists_file(Path) ->
+        read_json(Path, Mural),
+        (   get_dict(avisos, Mural, Avisos),
+            Avisos \= []
+        ->  print_white_bold("\nAvisos no Mural da Turma:\n\n"),
+            reverse(Avisos, ReversedAvisos),
+            print_avisos(ReversedAvisos, true)
+        ;   print_red("\nAinda não há avisos no Mural da Turma.\n")
+        )
+    ; 
+        print_red("\nAinda não há avisos no Mural da Turma.\n")
+    ).
+
+print_avisos([], _).
+print_avisos([Aviso|Rest], IsFirst) :-
+    (   IsFirst
+    ->  print_blue_bold("+ "), write(Aviso), write("\n\n"),  % Se IsFirst for true, imprime com "+"
+        print_avisos(Rest, false)
+    ;   write("  "), write(Aviso), write("\n\n"),
+        print_avisos(Rest, false)
+    ).
+
+adicionar_aviso_mural(Disciplina, CodTurma) :-
+    print_purple("\nDigite o aviso para toda turma ou "), print_white_bold('q'), print_purple(" para sair: \n"),
+    input(Aviso),
+
+    (Aviso == "q" -> nl ;
+
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/mural/", CodTurma, ".json"], Path),
+        (exists_file(Path) -> 
+            read_json(Path, Mural),
+            get_dict(avisos, Mural, Atuais),
+            append(Atuais, [Aviso], NovosAvisos),
+            MuralAtual = Mural.put(avisos, NovosAvisos)
+        ;
+            MuralAtual = _{avisos: [Aviso]}
+        ),
+        write_json(Path, MuralAtual),
+        print_green("\nAviso adicionado ao Mural!\n")
+    ).
+
+materiais_didaticos_menu(Disciplina, CodTurma):-
+    print_purple_bold("\nMATERIAIS DIDÁTICOS ============================\n"),
+    print_purple("Escolha uma opção: \n"),
+    write("[0] Voltar\n"),
+    write("[1] Ver Materiais Didáticos\n"),
+    write("[2] Adicionar novo Material Didático para turma\n"),
+    print_purple_bold("===============================================\n"),
+    read(Opcao),
+    escolher_opcao_materiais_didaticos_menu(Opcao, Disciplina, CodTurma).
+
+escolher_opcao_materiais_didaticos_menu("0", Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu("1", Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu("2", Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
+
+ver_materiais_didaticos(Disciplina, CodTurma):- 
+    print_white_bold("\n===== MATERIAIS DIDÁTICOS =====\n"),
+
+    print_white_bold("\n================================\n").
+
+adicionar_material_didatico(Disciplina, CodTurma):-
+    print_purple("\nInsira o TÍTULO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
+    read(Titulo),
+    print_purple("\nInsira o CONTEÚDO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
+    read(Conteudo).
 
