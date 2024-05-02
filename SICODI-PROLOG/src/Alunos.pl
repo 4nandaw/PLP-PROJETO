@@ -41,6 +41,7 @@ aluno_menu_turma(Matricula, Disciplina, CodTurma):-
         (escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, Op), aluno_menu_turma(Matricula, Disciplina, CodTurma))).
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "1"):- situacao_aluno(Disciplina, CodTurma, Matricula).
+escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "2"):- ver_mural(Disciplina, CodTurma).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "4"):- avaliar_prof_menu(Disciplina, CodTurma, Matricula), aluno_menu_turma(Matricula, Disciplina, CodTurma).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, _):- print_red("\nOpção inválida.\n").
 

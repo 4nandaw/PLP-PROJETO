@@ -251,7 +251,7 @@ print_avisos([Aviso|Rest], IsFirst) :-
     (   IsFirst
     ->  print_blue_bold("+ "), write(Aviso), write("\n\n"),  % Se IsFirst for true, imprime com "+"
         print_avisos(Rest, false)
-    ;   format("  ~w\n\n", [Aviso]),
+    ;   write("  "), write(Aviso), write("\n\n"),
         print_avisos(Rest, false)
     ).
 
