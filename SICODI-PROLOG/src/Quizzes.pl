@@ -30,7 +30,8 @@ editar_quiz(Disciplina, CodTurma) :-
 criar_quiz(Disciplina, CodTurma) :- 
     print_purple("\nQual o título do Quiz?\n"),
     read(Titulo),
-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes"], DirectoryQuizzesPath),
+    make_directory_path(DirectoryQuizzesPath),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
     ler_perguntas_respostas([], [], Perguntas, Respostas),
