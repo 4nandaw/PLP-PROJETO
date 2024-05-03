@@ -32,24 +32,22 @@ criar_quiz(Disciplina, CodTurma) :-
     read(Titulo),
 
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
-    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes", Titulo, ".json"], QuizPath),
-
-    print_green("\nQuiz criado! Agora adicione as perguntas e as respostas!\n"),
-
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
     ler_perguntas_respostas([], [], Perguntas, Respostas),
-    write_json(QuizPath, _{perguntas: Perguntas, respostas: Respostas}).
+    write_json(QuizPath, _{perguntas: Perguntas, respostas: Respostas}),
+    print_green("\nQuiz criado! Agora adicione as perguntas e as respostas!\n").
 
 ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :- 
     ler_perguntas(P1, Perguntas, Fim),
     \+ Fim -> ler_respostas(R1, Respostas).
 
-ler_perguntas(P1, [P1, Pergunta], Fim) :-
+ler_perguntas(P1, [Pergunta|P1], Fim) :-
     print_purple_bold("\n============ NOVA PERGUNTA ============\n"),
     print_purple("Digite uma pergunta ou "), print_white_bold("q"), print_purple(" para sair: \n"),
     read(Read), convert_to_string(Read, P),
     (P \== "q") -> (Pergunta = P, print_green("\nPergunta adicionada!\n")), Fim = false; Fim = true.
 
-ler_respostas(R1, [R1, Resposta]) :-
+ler_respostas(R1, [Resposta|R1]) :-
     print_purple("\nDigite a resposta (digite "), print_white_bold("V"), print_purple(" para verdadeiro e "), print_white_bold("F"), print_purple(" para falso): \n"),
     read(Read), convert_to_string(Read, R),
     (R == "V"; R == "v"; R == "F"; R == "f") -> Resposta = R ;
