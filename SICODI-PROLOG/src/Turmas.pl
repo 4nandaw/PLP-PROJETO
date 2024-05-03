@@ -76,8 +76,8 @@ alocar_notas(Disciplina, CodTurma):-
      ; nl).
 
 alocar_notas_aluno(Disciplina, CodTurma, Matricula):-
-    print_purple_bold("===== ADICIONANDO NOTAS DO ALUNO ,"), print_purple_bold(Matricula), print_purple_bold(" ====="),
-    print_purple_bold("\nDigite qual opção deseja: \n"),
+    print_purple_bold("\n===== ADICIONANDO NOTAS DO ALUNO "), print_purple_bold(Matricula), print_purple_bold(" ====="),
+    print_purple_bold("\nDigite uma opção: \n"),
     write("[0] Voltar"), nl,
     write("[1] Alocar 1º nota"), nl,
     write("[2] Alocar 2º nota"), nl,
