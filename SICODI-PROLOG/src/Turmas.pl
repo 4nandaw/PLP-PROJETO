@@ -212,11 +212,11 @@ print_avaliacoes([H|T], Path):-
     print_white_bold("Comentário: "), write(Comentario), nl,
     print_avaliacoes(T, Path).
 
-formata_nota("1"):- print_yellow_bold("\n⭑☆☆☆☆\n").
-formata_nota("2"):- print_yellow_bold("\n⭑⭑☆☆☆\n").
-formata_nota("3"):- print_yellow_bold("\n⭑⭑⭑☆☆\n").
-formata_nota("4"):- print_yellow_bold("\n⭑⭑⭑⭑☆\n").
-formata_nota("5"):- print_yellow_bold("\n⭑⭑⭑⭑⭑\n").
+formata_nota(1):- print_yellow_bold("\n⭑☆☆☆☆\n").
+formata_nota(2):- print_yellow_bold("\n⭑⭑☆☆☆\n").
+formata_nota(3):- print_yellow_bold("\n⭑⭑⭑☆☆\n").
+formata_nota(4):- print_yellow_bold("\n⭑⭑⭑⭑☆\n").
+formata_nota(5):- print_yellow_bold("\n⭑⭑⭑⭑⭑\n").
 
 media_avaliacoes([], _, 0).
 media_avaliacoes([H|T], Path, M):-
