@@ -1,9 +1,4 @@
-# SICODI
-
-O SICODI, **Sistema de Controle de Disciplina**, atua como uma ferramenta útil e eficiente, facilitando a gestão do professor sobre sua disciplina, **contando com sistema de notas, quizzes, frequência, mural da turma, disponibilização de materiais didáticos e muito mais!** Não só isso: o SICODI pode registrar dados da sua turma e receber um feedback dos alunos, facilitando o seu trabalho e o entendimento da turma em relação aos assuntos apresentados.
-
- Além disso, **os alunos podem receber mensagens do professor no mural, realizar quizzes** para medirem seus conhecimentos sobre os assuntos da disciplina e ainda **conversarem por meio de um chat!** Incrível, não?
-
+# SICODI - Prolog
 
 ## Funcionalidades
 
@@ -15,7 +10,7 @@ O SICODI, **Sistema de Controle de Disciplina**, atua como uma ferramenta útil 
 ## Rodando localmente
 
 ### Cuidado!
-É preciso que você tenha o Stack instalado e atualizado em sua máquina. Saiba mais acessando o [Haskell Tool Stack](https://docs.haskellstack.org/en/stable/).
+É preciso que você tenha o Prolog instalado e atualizado em sua máquina. Saiba mais acessando o [SWI Prolog](https://www.swi-prolog.org/).
 
 Tudo pronto? Vamos em frente!
 
@@ -28,32 +23,17 @@ Clone o projeto em sua IDE
 Entre no diretório do projeto
 
 ```bash
-  cd SICODI
+  cd SICODI-PROLOG
 ```
 
-Instale as dependências
+Entre em mais um diretório
 
 ```bash
-  stack build
+  cd src
 ```
 
 Execute o programa com
 
 ```bash
-  stack exec SICODI-exe
+  prolog MenuPrincipal.pl
 ```
-Caso tudo tenha dado certo, agora você pode executar sempre com
-```bash
-  stack run
-```
-
-Ainda é possível que o programa apresente erros porque você não está com o stack devidamente atualizado. Atualize-o com o comando abaixo e tente novamente.
-```bash
-  stack upgrade
-```
-## Autores
-
-- [@4nandaw](https://github.com/4nandaw)
-- [magnofilipe](https://github.com/magnofilipe)
-- [Jose-Jardel-Alves](https://github.com/Jose-Jardel-Alves)
-- [Zeroum2345](Zeroum2345)
