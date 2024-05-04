@@ -9,7 +9,7 @@ O SICODI, **Sistema de Controle de Disciplina**, atua como uma ferramenta útil 
 
 - Conheça todas as funcionalidades disponíveis acessando a [documentação oficial do projeto](https://docs.google.com/document/d/1-fbfaGj1wzGZkykMTlaCoOr7ITP9GOQND91S7UgrVJs/edit). 
 
-- Vídeo de apresentação do SICODI em Haskell: em breve.
+- Vídeo de apresentação do SICODI em Prolog: em breve.
 
 
 ## Rodando localmente
@@ -51,3 +51,9 @@ Ainda é possível que o programa apresente erros porque você não está com o 
 ```bash
   stack upgrade
 ```
+## Autores
+
+- [@4nandaw](https://github.com/4nandaw)
+- [magnofilipe](https://github.com/magnofilipe)
+- [Jose-Jardel-Alves](https://github.com/Jose-Jardel-Alves)
+- [Zeroum2345](Zeroum2345)
