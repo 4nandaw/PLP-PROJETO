@@ -77,11 +77,13 @@ avaliar_prof_menu(Disciplina, CodTurma, Matricula):-
     write("[4] Bom\n"),
     write("[5] Excelente\n"),
     print_blue_bold("==========================================\n"),
-    read_line_to_string(user_input, Nota),
+    read_line_to_string(user_input, N),
+    trim_whitespace(N, Nota),
     (Nota \= "" ->
         ((Nota \= "1", Nota \= "2", Nota \= "3", Nota \= "4", Nota \= "5") ->
             print_red("\nOpção inválida!\n"), avaliar_prof_menu(Disciplina, CodTurma, Matricula)
-        ;   registra_avaliacao_prof(Disciplina, CodTurma, Matricula, Nota))
+        ;   number_string(NotaNumber, Nota),
+            registra_avaliacao_prof(Disciplina, CodTurma, Matricula, NotaNumber))
     ;   write("")).
 
 registra_avaliacao_prof(Disciplina, CodTurma, Matricula, Nota):-
