@@ -11,9 +11,9 @@
 % MENU
 cadastro_menu:-
     print_yellow_bold("\nCADASTRO =====================\n"),
-    print_yellow("[0] Sair\n"),
-    print_yellow("[1] Cadastro de professor\n"),
-    print_yellow("[2] Cadastro de aluno\n"),
+    write("[0] Sair\n"),
+    write("[1] Cadastro de professor\n"),
+    write("[2] Cadastro de aluno\n"),
     print_yellow_bold("==============================\n"),
     read(Opcao),
     escolher_opcao_cadastro(Opcao).
