@@ -47,6 +47,7 @@ escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "3"):- chat_aluno(Mat
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "2"):- ver_mural(Disciplina, CodTurma).
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "4"):- avaliar_prof_menu(Disciplina, CodTurma, Matricula), aluno_menu_turma(Matricula, Disciplina, CodTurma).
+escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "5"):- ver_materiais_didaticos(Disciplina, CodTurma).
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, _):- print_red("\nOpção inválida.\n").
 
 printar_todas_turmas(Matricula):- 
