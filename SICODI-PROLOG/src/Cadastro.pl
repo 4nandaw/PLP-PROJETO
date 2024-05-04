@@ -6,6 +6,8 @@
 :- use_module(library(filesex)).
 :- use_module(library(json)).
 :- use_module("../utils/Utils").
+:- use_module(library(readutil)).
+
 
 
 % MENU
@@ -15,25 +17,25 @@ cadastro_menu:-
     write("[1] Cadastro de professor\n"),
     write("[2] Cadastro de aluno\n"),
     print_yellow_bold("==============================\n"),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     escolher_opcao_cadastro(Opcao).
 
-escolher_opcao_cadastro(0):- main, !.
-escolher_opcao_cadastro(1):- cadastrar_disciplina, !.
-escolher_opcao_cadastro(2):- cadastrar_aluno, !.
+escolher_opcao_cadastro("0"):- main, !.
+escolher_opcao_cadastro("1"):- cadastrar_disciplina, !.
+escolher_opcao_cadastro("2"):- cadastrar_aluno, !.
 
 % DISCIPLINAS
 
 % RECEBE OS DADOS
 cadastrar_disciplina:-
     print_yellow("\nDigite a matricula do professor: \n"),
-    read(Matricula),
+    read_line_to_string(user_input, Matricula),
     print_yellow("\nDigite o nome do professor: \n"),
-    read(Nome),
+    read_line_to_string(user_input, Nome),
     print_yellow("\nDigite o nome da disciplina: \n"),
-    read(Disciplina),
+    read_line_to_string(user_input, Disciplina),
     print_yellow("\nDigite a senha do professor: \n"),
-    read(Senha),
+    read_line_to_string(user_input, Senha),
     validar_dados_disciplina(Matricula, Nome, Disciplina, Senha).
 
 % FUNCAO PARA VALIDAR OS DADOS RECEBIDOS
@@ -62,11 +64,11 @@ gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
 % RECEBE OS DADOS
 cadastrar_aluno:-
     print_yellow("\nDigite a matricula do aluno:\n"),
-    read(Matricula),
+    read_line_to_string(user_input, Matricula),
     print_yellow("\nDigite o nome do aluno: \n"),
-    read(Nome),
+    read_line_to_string(user_input, Nome),
     print_yellow("\nDigite a senha do aluno: \n"),
-    read(Senha),
+    read_line_to_string(user_input, Senha),
     validar_dados(Matricula, Nome, Senha).
 
 % FUNÇÃO QUE CHAMA A FUNÇÃO DO UTILS PARA VALIDAR OS DADOS

@@ -15,7 +15,8 @@ print_red/1,
 print_green/1,
 print_white_bold/1,
 lista_vazia/1,
-input/1]).
+input/1,
+trim_whitespace/2]).
 
 
 :- use_module(library(http/json)).
@@ -76,6 +77,11 @@ remove_pontos(List, CleanList) :-
 
 is_dot_or_dotdot('.').
 is_dot_or_dotdot('..').
+
+trim_whitespace(String, Trimmed) :-
+    atom_string(Atom, String),
+    atom_string(TrimmedAtom, Atom),
+    atom_string(TrimmedAtom, Trimmed).
 
 print_yellow(Texto):-
     ansi_format([fg(yellow)], '~w', [Texto]).
