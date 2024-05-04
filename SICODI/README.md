@@ -1,15 +1,10 @@
-# SICODI
-
-O SICODI, **Sistema de Controle de Disciplina**, atua como uma ferramenta útil e eficiente, facilitando a gestão do professor sobre sua disciplina, **contando com sistema de notas, quizzes, frequência, mural da turma, disponibilização de materiais didáticos e muito mais!** Não só isso: o SICODI pode registrar dados da sua turma e receber um feedback dos alunos, facilitando o seu trabalho e o entendimento da turma em relação aos assuntos apresentados.
-
- Além disso, **os alunos podem receber mensagens do professor no mural, realizar quizzes** para medirem seus conhecimentos sobre os assuntos da disciplina e ainda **conversarem por meio de um chat!** Incrível, não?
-
+# SICODI - Haskell
 
 ## Funcionalidades
 
 - Conheça todas as funcionalidades disponíveis acessando a [documentação oficial do projeto](https://docs.google.com/document/d/1-fbfaGj1wzGZkykMTlaCoOr7ITP9GOQND91S7UgrVJs/edit). 
 
-- Vídeo de apresentação do SICODI em Haskell: em breve.
+- Vídeo de apresentação do SICODI em Haskell: https://youtu.be/xdK59hDmNZ8.
 
 
 ## Rodando localmente
