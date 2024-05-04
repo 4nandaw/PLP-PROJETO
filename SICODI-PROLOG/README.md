@@ -35,5 +35,11 @@ Entre em mais um diretório
 Execute o programa com
 
 ```bash
+  swipl MenuPrincipal.pl
+```
+
+Ou então com
+
+```bash
   prolog MenuPrincipal.pl
 ```
