@@ -34,7 +34,7 @@ criar_quiz(Disciplina, CodTurma) :-
     print_purple("\nQual o título do Quiz?\n"),
     read_line_to_string(user_input, Titulo),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/"], DirectoryQuizzesPath),
-    make_directory_path(DirectoryQuizzesPath)
+    make_directory_path(DirectoryQuizzesPath),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
     make_directory_path(QuizzesPath),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
@@ -45,7 +45,7 @@ criar_quiz(Disciplina, CodTurma) :-
 
 ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :- 
     ler_perguntas(P1, Perguntas, Fim),
-    \+ Fim -> ler_respostas(R1, Respostas).
+    \+ Fim -> ler_respostas(R1, Respostas), ler_perguntas_respostas(P1, R1, Perguntas, Respostas).
 
 ler_perguntas(P1, [Pergunta|P1], Fim) :-
     print_purple_bold("\n============ NOVA PERGUNTA ============\n"),
@@ -88,8 +88,7 @@ realizar_perguntas([Pergunta|Perguntas], Respostas) :-
     print_blue(Pergunta), nl
     print_white("Digite a resposta, apenas "), print_blue("V"), print_white(" para verdadeiro e "), print_blue("F"), print_white(" para falso:")
     read_line_to_string(user_input, Read), convert_to_string(Read, R),
-    ((R == "V"; R == "v"; R == "F"; R == "f") -> (
-        Respostas = [Respostas|R],
+    ((R == "V"; R == "v"; R == "F"; R == "f") -> (Respostas = [Respostas|R],
         realizar_perguntas(Perguntas, Respostas)
     ) ; write_red("Opção Inválida!")),
     realizar_perguntas([Pergunta|Perguntas], Respostas).
