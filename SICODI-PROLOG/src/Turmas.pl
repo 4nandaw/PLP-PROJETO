@@ -1,6 +1,6 @@
 
 
-:- module(turma, [turma_menu/2, situacao_aluno/3, ver_mural/2, acessar_chat/3, print_aviso_chat/0]).
+:- module(turma, [turma_menu/2, situacao_aluno/3, ver_mural/2, acessar_chat/3, print_aviso_chat/0, ver_materiais_didaticos/2]).
 :- use_module(library(json)).
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
