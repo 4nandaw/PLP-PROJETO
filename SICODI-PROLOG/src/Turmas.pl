@@ -221,10 +221,6 @@ media_avaliacoes([H|T], Path, M):-
     media_avaliacoes(T, Path, Media),
     M is Media + Nota.
 
-
-    
-        
-
 chat(Disciplina, CodTurma):-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos"], Path),
     directory_files(Path, L),
@@ -371,13 +367,45 @@ escolher_opcao_materiais_didaticos_menu(2, Disciplina, CodTurma):- adicionar_mat
 escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
 
 ver_materiais_didaticos(Disciplina, CodTurma):- 
-    print_white_bold("\n===== MATERIAIS DIDÁTICOS =====\n"),
+    print_white_bold("\n=============== MATERIAIS DIDÁTICOS ===============\n"),
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/materiais/materiaisDidaticos.json"], Path),
+    (exists_file(Path) ->
+        read_json(Path, Materiais),
+        (get_dict(materiaisDidaticos, Materiais, MateriaisDidaticos),
+         MateriaisDidaticos \= [] ->
+            reverse(MateriaisDidaticos, ReversedMateriaisDidaticos),
+            print_materiais(ReversedMateriaisDidaticos, true)
+        ;   print_red("\nAinda não há materiais didáticos disponíveis.\n")
+        )
+    ;   print_red("\nAinda não há materiais didáticos disponíveis.\n")
+    ),
+    print_white_bold("\n====================================================\n").
 
-    print_white_bold("\n================================\n").
+print_materiais([], _).
+print_materiais([[Titulo,Conteudo]|T], IsFirst):-
+    (IsFirst ->
+        print_blue_bold("\n+ "), print_white_bold("Título do Material: "), write(Titulo),
+        print_white_bold("\nConteúdo do Material: "), write(Conteudo), nl,
+        print_materiais(T, false)
+    ;   print_white_bold("\nTítulo do Material: "), write(Titulo),
+        print_white_bold("\nConteúdo do Material: "), write(Conteudo), nl,
+        print_materiais(T, false)
+    ).
 
 adicionar_material_didatico(Disciplina, CodTurma):-
     print_purple("\nInsira o TÍTULO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
-    read(Titulo),
+    input(Titulo),
     print_purple("\nInsira o CONTEÚDO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
-    read(Conteudo).
-
+    read_line_to_string(user_input, Conteudo),
+    (Titulo == "q"; Conteudo == "q" -> write("")
+    ;   concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/materiais/materiaisDidaticos.json"], Path),
+        (exists_file(Path) ->
+            read_json(Path, Materiais),
+            get_dict(materiaisDidaticos, Materiais, Atuais),
+            append(Atuais, [[Titulo, Conteudo]], NovosMateriais),
+            MateriaisAtuais = Materiais.put(materiaisDidaticos, NovosMateriais)
+        ;   MateriaisAtuais = _{materiaisDidaticos: [[Titulo, Conteudo]]}
+        ),
+        write_json(Path, MateriaisAtuais),
+        print_green("\nMaterial didático registrado com sucesso!\n")
+    ).
