@@ -2,6 +2,8 @@
 :- use_module(library(filesex)).
 :- use_module(library(http/json)).
 :- use_module("./utils/Utils").
+:- use_module(library(readutil)).
+:- set_prolog_flag(encoding, utf8).
 
 quiz_menu(Disciplina, CodTurma) :- 
     print_purple_bold("\n===== MENU QUIZ ======\n"),
@@ -10,15 +12,16 @@ quiz_menu(Disciplina, CodTurma) :-
     write("[1] Criar Quiz \n"),
     write("[2] Adicionar pergunta a um Quiz \n"),
     print_purple_bold("======================\n"),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     escolher_opcao_quiz(Opcao, Disciplina, CodTurma).
 
-escolher_opcao_quiz(1, Disciplina, CodTurma) :-  criar_quiz(Disciplina, CodTurma), !.
-escolher_opcao_quiz(2, Disciplina, CodTurma) :-  editar_quiz(Disciplina, CodTurma), !.
-
+escolher_opcao_quiz("0", Disciplina, CodTurma) :-  nl, !.
+escolher_opcao_quiz("1", Disciplina, CodTurma) :-  criar_quiz(Disciplina, CodTurma), !.
+escolher_opcao_quiz("2", Disciplina, CodTurma) :-  editar_quiz(Disciplina, CodTurma), !.
+escolher_opcao_quiz(_, Disciplina, CodTurma) :-  print_red("Opção inválida").
 editar_quiz(Disciplina, CodTurma) :- 
     print_purple("\nQual o título do Quiz?\n"),
-    read(Titulo),
+    read_line_to_string(user_input, Titulo),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes", Titulo, ".json"], QuizPath),
 
     exists_file(QuizPath) -> (
@@ -29,7 +32,7 @@ editar_quiz(Disciplina, CodTurma) :-
 
 criar_quiz(Disciplina, CodTurma) :- 
     print_purple("\nQual o título do Quiz?\n"),
-    read(Titulo),
+    read_line_to_string(user_input, Titulo),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/"], DirectoryQuizzesPath),
     make_directory_path(DirectoryQuizzesPath)
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
@@ -46,13 +49,13 @@ ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :-
 
 ler_perguntas(P1, [Pergunta|P1], Fim) :-
     print_purple_bold("\n============ NOVA PERGUNTA ============\n"),
-    print_purple("Digite uma pergunta ou "), print_white_bold("q"), print_purple(" para sair: \n"),
-    read(Read), convert_to_string(Read, P),
-    (P \== "q") -> (Pergunta = P, print_green("\nPergunta adicionada!\n")), Fim = false; Fim = true.
+    print_purple("Digite uma pergunta ou "), print_white_bold("ENTER"), print_purple(" para sair: \n"),
+    read_line_to_string(user_input, Read), convert_to_string(Read, P),
+    (P \== "") -> (Pergunta = P, print_green("\nPergunta adicionada!\n")), Fim = false; Fim = true.
 
 ler_respostas(R1, [Resposta|R1]) :-
     print_purple("\nDigite a resposta (digite "), print_white_bold("V"), print_purple(" para verdadeiro e "), print_white_bold("F"), print_purple(" para falso): \n"),
-    read(Read), convert_to_string(Read, R),
+    read_line_to_string(user_input, Read), convert_to_string(Read, R),
     (R == "V"; R == "v"; R == "F"; R == "f") -> Resposta = R ;
     print_red("\nDigite apenas V para verdadeiro ou F para falso.\n"), ler_respostas(R1, [R1, Resposta]).
 
@@ -62,7 +65,7 @@ escolher_quiz(Disciplina, CodTurma) :-
     print_blue_bold("\n======= ESCOLHA QUAL QUIZ VOCÊ QUER RESPONDER =======\n"),
     print_red("Atenção: "), print_white("Ao entrar no quiz, ele só irá fechar após responder todas as perguntas!"),
     print_blue("\nDigite o título do quiz: "),
-    read(Titulo),
+    read_line_to_string(user_input, Titulo),
     validar_titulo(Titulo, Disciplina, CodTurma) -> (
         responder_perguntas(Titulo, Disciplina, CodTurma),
         print_blue("Quiz respondido!")
@@ -84,7 +87,7 @@ exibir_respostas([Pergunta|Perguntas], [QResposta|QRespostas], [AResposta|ARespo
 realizar_perguntas([Pergunta|Perguntas], Respostas) :- 
     print_blue(Pergunta), nl
     print_white("Digite a resposta, apenas "), print_blue("V"), print_white(" para verdadeiro e "), print_blue("F"), print_white(" para falso:")
-    read(Read), convert_to_string(Read, R),
+    read_line_to_string(user_input, Read), convert_to_string(Read, R),
     ((R == "V"; R == "v"; R == "F"; R == "f") -> (
         Respostas = [Respostas|R],
         realizar_perguntas(Perguntas, Respostas)

@@ -5,6 +5,9 @@
 :- use_module(library(filesex)).
 :- use_module("./Disciplinas", [disciplina_menu/1]).
 :- use_module("./Quizzes", [quiz_menu/2]).
+:- use_module(library(readutil)).
+:- set_prolog_flag(encoding, utf8).
+
 
 % :- use_module("../utils/Utils", [remove_pontos/2]).
 
@@ -24,7 +27,7 @@ turma_menu(Disciplina, CodTurma):-
     write("[8] Materiais Didáticos\n"),
     write("[9] Quizzes da turma\n"),
     print_purple_bold("=======================================\n"),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     convert_to_string(Opcao, Op),
     escolher_opcao_turma_menu(Op, Disciplina, CodTurma).
 
@@ -34,9 +37,8 @@ escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, 
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("4", Disciplina, CodTurma):- ver_relatorio(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("5", Disciplina, CodTurma):- ver_avaliacoes(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
-
-escolher_opcao_turma_menu("7", Disciplina, CodTurma):- chat(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("6", Disciplina, CodTurma):- mural_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_turma_menu("7", Disciplina, CodTurma):- chat(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("8", Disciplina, CodTurma):- materiais_didaticos_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("9", Disciplina, CodTurma):- quiz_menu(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida.\n"), turma_menu(Disciplina, CodTurma).
@@ -66,9 +68,9 @@ print_alunos([H|T], AlunosTurmaPath, AlunosPath):-
     print_alunos(T, AlunosTurmaPath, AlunosPath).
 
 alocar_notas(Disciplina, CodTurma):- 
-    print_purple("\nDigite a matrícula do aluno que deseja alocar notas/ver situação ou "), print_white_bold('q'), print_purple(" para sair: \n"),
-    read(Matricula), convert_to_string(Matricula, M),
-    ((M \== "q") -> 
+    print_purple("\nDigite a matrícula do aluno que deseja alocar notas/ver situação ou "), print_white_bold("ENTER"), print_purple(" para sair: \n"),
+    read_line_to_string(user_input, Matricula), convert_to_string(Matricula, M),
+    ((M \== "") -> 
         (concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
         ((exists_file(Path)) -> 
             (alocar_notas_aluno(Disciplina, CodTurma, Matricula), 
@@ -84,7 +86,7 @@ alocar_notas_aluno(Disciplina, CodTurma, Matricula):-
     write("[2] Alocar 2º nota"), nl,
     write("[3] Alocar 3º nota"), nl,
     write("[4] Ver situação do aluno"), nl,
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     convert_to_string(Opcao, Op),
     ((Op == "0") ->
          nl ;
@@ -120,17 +122,19 @@ situacao(_, Media):- print_red("\nREPROVADO :(\n").
 
 alocar_nota(Disciplina, CodTurma, Matricula, Opcao):-
     print_purple("\nQual a nota do aluno?\n"), 
-    read(Nota),
+    read_line_to_string(user_input, N),
+    trim_whitespace(N, Nota),
     ((nota_valida(Nota)) -> 
         (concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
         concat_atom(["nota", Opcao], NotaC),
         read_json(Path, Dados),
-        put_dict(NotaC, Dados, Nota, Dados_gravados),
+        number_string(NotaNumber, Nota),
+        put_dict(NotaC, Dados, NotaNumber, Dados_gravados),
         write_json(Path, Dados_gravados),
         atualizar_media(Disciplina, CodTurma, Matricula))
     ; print_red("\nNota inválida.\n")).
 
-nota_valida(Nota):- number(Nota), Nota=<10.0, Nota>=0.
+nota_valida(N):- number_string(Nota, N), number(Nota), Nota=<10.0, Nota>=0.
 
 atualizar_media(Disciplina, CodTurma, Matricula):-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
@@ -145,10 +149,10 @@ calcular_media(Dados, Media):-
     atom_number(MediaFormatada, Media).
 
 alocar_faltas(Disciplina, CodTurma):- 
-    print_purple("\nDigite a matrícula do aluno que deseja alocar faltas ou "), print_white_bold('q'), print_purple(" para sair: \n"),
-    read(Matricula),
+    print_purple("\nDigite a matrícula do aluno que deseja alocar faltas ou "), print_white_bold("ENTER"), print_purple(" para sair: \n"),
+    read_line_to_string(user_input, Matricula),
     convert_to_string(Matricula, M),
-    ((M == "q") -> nl ;
+    ((M == "") -> nl ;
         concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/alunos/", Matricula, ".json"], Path),
         ((not_exists_file(Path))-> (print_red("\nAluno não está na turma.\n")) ;
             read_json(Path, Dados),
@@ -208,11 +212,11 @@ print_avaliacoes([H|T], Path):-
     print_white_bold("Comentário: "), write(Comentario), nl,
     print_avaliacoes(T, Path).
 
-formata_nota(1):- print_yellow_bold("\n⭑☆☆☆☆\n").
-formata_nota(2):- print_yellow_bold("\n⭑⭑☆☆☆\n").
-formata_nota(3):- print_yellow_bold("\n⭑⭑⭑☆☆\n").
-formata_nota(4):- print_yellow_bold("\n⭑⭑⭑⭑☆\n").
-formata_nota(5):- print_yellow_bold("\n⭑⭑⭑⭑⭑\n").
+formata_nota("1"):- print_yellow_bold("\n⭑☆☆☆☆\n").
+formata_nota("2"):- print_yellow_bold("\n⭑⭑☆☆☆\n").
+formata_nota("3"):- print_yellow_bold("\n⭑⭑⭑☆☆\n").
+formata_nota("4"):- print_yellow_bold("\n⭑⭑⭑⭑☆\n").
+formata_nota("5"):- print_yellow_bold("\n⭑⭑⭑⭑⭑\n").
 
 media_avaliacoes([], _, 0).
 media_avaliacoes([H|T], Path, M):-
@@ -229,10 +233,10 @@ chat(Disciplina, CodTurma):-
     ((lista_vazia(ListaAlunos)) -> 
             print_red("\nAinda não há alunos nessa turma para iniciar um chat!\n") ;
             (ver_alunos_turma(ListaAlunos),
-            print_purple("\nDigite a matrícula do aluno ou "), print_white_bold("q"), print_purple(" para sair do chat: "),
-            read(Matricula), 
+            print_purple("\nDigite a matrícula do aluno ou "), print_white_bold("ENTER"), print_purple(" para sair do chat: "),
+            read_line_to_string(user_input, Matricula), 
             convert_to_string(Matricula, M)),
-            ((M == "q") -> print_green("\nChat's encerrados\n") ;
+            ((M == "") -> print_green("\nChat's encerrados\n") ;
                             concat_atom([Matricula, ".json"], MatriculaJ),
                             (member(MatriculaJ, ListaAlunos)) ->
                                     (print_purple_bold("\nMensagens anteriores: "),
@@ -273,7 +277,7 @@ print_mensagem([Mensagem|T]):- print_white_bold(Mensagem).
 enviar_mensagem_chat(Disciplina, CodTurma, Matricula):-
     write("\nMsg: "),
     read_line_to_string(user_input, Mensagem),
-    ((Mensagem == "q") -> nl ;
+    ((Mensagem == "") -> nl ;
         (salvar_mensagem(Disciplina, CodTurma, Matricula, Mensagem),
         enviar_mensagem_chat(Disciplina, CodTurma, Matricula))).
 
@@ -300,7 +304,7 @@ mural_menu(Disciplina, CodTurma) :-
     write("[1] Ver Mural\n"),
     write("[2] Deixar aviso no Mural\n"),
     print_purple_bold("================================\n"),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     convert_to_string(Opcao, Op),
     escolher_opcao_mural(Op, Disciplina, CodTurma).
 
@@ -334,10 +338,10 @@ print_avisos([Aviso|Rest], IsFirst) :-
     ).
 
 adicionar_aviso_mural(Disciplina, CodTurma) :-
-    print_purple("\nDigite o aviso para toda turma ou "), print_white_bold('q'), print_purple(" para sair: \n"),
-    input(Aviso),
+    print_purple("\nDigite o aviso para toda turma ou "), print_white_bold("ENTER"), print_purple(" para sair: \n"),
+    read_line_to_string(user_input, Aviso),
 
-    (Aviso == "q" -> nl ;
+    (Aviso == "" -> nl ;
 
         concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/mural/", CodTurma, ".json"], Path),
         (exists_file(Path) -> 
@@ -359,12 +363,12 @@ materiais_didaticos_menu(Disciplina, CodTurma):-
     write("[1] Ver Materiais Didáticos\n"),
     write("[2] Adicionar novo Material Didático para turma\n"),
     print_purple_bold("===============================================\n"),
-    read(Opcao),
+    read_line_to_string(user_input, Opcao),
     escolher_opcao_materiais_didaticos_menu(Opcao, Disciplina, CodTurma).
 
-escolher_opcao_materiais_didaticos_menu(0, Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
-escolher_opcao_materiais_didaticos_menu(1, Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
-escolher_opcao_materiais_didaticos_menu(2, Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu("0", Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu("1", Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
+escolher_opcao_materiais_didaticos_menu("2", Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
 escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
 
 ver_materiais_didaticos(Disciplina, CodTurma):- 
@@ -394,11 +398,11 @@ print_materiais([[Titulo,Conteudo]|T], IsFirst):-
     ).
 
 adicionar_material_didatico(Disciplina, CodTurma):-
-    print_purple("\nInsira o TÍTULO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
-    input(Titulo),
-    print_purple("\nInsira o CONTEÚDO do Material Didático para toda turma ou "), print_white_bold("q"), print_purple(" para sair: \n"),
+    print_purple("\nInsira o TÍTULO do Material Didático para toda turma ou "), print_white_bold("ENTER"), print_purple(" para sair: \n"),
+    read_line_to_string(user_input, Titulo),
+    print_purple("\nInsira o CONTEÚDO do Material Didático para toda turma ou "), print_white_bold("ENTER"), print_purple(" para sair: \n"),
     read_line_to_string(user_input, Conteudo),
-    (Titulo == "q"; Conteudo == "q" -> write("")
+    (Titulo == ""; Conteudo == "" -> write("")
     ;   concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/materiais/materiaisDidaticos.json"], Path),
         (exists_file(Path) ->
             read_json(Path, Materiais),
