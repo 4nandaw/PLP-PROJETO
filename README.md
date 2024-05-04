@@ -1,3 +1,7 @@
+# AVISO PRÉVIO
+
+O sistema a seguir foi feito em duas linguagens de programação diferentes: Haskell e Prolog, por isso, as **instruções para rodar em sua máquina não estarão aqui**, e sim dentro das pastas "SICODI" e "SICODI-PROLOG", no **README.md de cada uma**. 
+
 # SICODI
 
 O SICODI, **Sistema de Controle de Disciplina**, atua como uma ferramenta útil e eficiente, facilitando a gestão do professor sobre sua disciplina, **contando com sistema de notas, quizzes, frequência, mural da turma, disponibilização de materiais didáticos e muito mais!** Não só isso: o SICODI pode registrar dados da sua turma e receber um feedback dos alunos, facilitando o seu trabalho e o entendimento da turma em relação aos assuntos apresentados.
@@ -9,51 +13,11 @@ O SICODI, **Sistema de Controle de Disciplina**, atua como uma ferramenta útil 
 
 - Conheça todas as funcionalidades disponíveis acessando a [documentação oficial do projeto](https://docs.google.com/document/d/1-fbfaGj1wzGZkykMTlaCoOr7ITP9GOQND91S7UgrVJs/edit). 
 
-- Vídeo de apresentação do SICODI: em breve.
+- Você pode ainda acessar **os vídeos do sistema em funcionamento** acessando as pastas **SICODI** e **SICODI-PROLOG**!
 
-
-## Rodando localmente
-
-### Cuidado!
-É preciso que você tenha o Stack instalado e atualizado em sua máquina. Saiba mais acessando o [Haskell Tool Stack](https://docs.haskellstack.org/en/stable/).
-
-Tudo pronto? Vamos em frente!
-
-Clone o projeto em sua IDE
-
-```bash
-  git clone https://github.com/4nandaw/PLP-PROJETO.git
-```
-
-Entre no diretório do projeto
-
-```bash
-  cd SICODI
-```
-
-Instale as dependências
-
-```bash
-  stack build
-```
-
-Execute o programa com
-
-```bash
-  stack exec SICODI-exe
-```
-Caso tudo tenha dado certo, agora você pode executar sempre com
-```bash
-  stack run
-```
-
-Ainda é possível que o programa apresente erros porque você não está com o stack devidamente atualizado. Atualize-o com o comando abaixo e tente novamente.
-```bash
-  stack upgrade
-```
 ## Autores
 
-- [@4nandaw](https://github.com/4nandaw)
-- [magnofilipe](https://github.com/magnofilipe)
-- [Jose-Jardel-Alves](https://github.com/Jose-Jardel-Alves)
-- [Zeroum2345](Zeroum2345)
+- [Ananda Vilar](https://github.com/4nandaw)
+- [Filipe Magno](https://github.com/magnofilipe)
+- [José Jardel](https://github.com/Jose-Jardel-Alves)
+- [Marcus Paulo](Zeroum2345)
