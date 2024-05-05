@@ -6,12 +6,12 @@
 :- set_prolog_flag(encoding, utf8).
 
 quiz_menu(Disciplina, CodTurma) :- 
-    print_purple_bold("\n===== MENU QUIZ ======\n"),
+    print_purple_bold("\n========== MENU QUIZ ===========\n"),
     write("Digite uma opção: \n"),
     write("[0] Voltar \n"),
     write("[1] Criar Quiz \n"),
     write("[2] Adicionar pergunta a um Quiz \n"),
-    print_purple_bold("======================\n"),
+    print_purple_bold("================================\n"),
     read_line_to_string(user_input, Opcao),
     escolher_opcao_quiz(Opcao, Disciplina, CodTurma).
 
@@ -39,13 +39,13 @@ criar_quiz(Disciplina, CodTurma) :-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
     (\+ exists_file(QuizzesPath) -> (write_json(QuizzesPath, _{quizzes: []})); nl),
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
+    print_green("Quiz criado! Agora adicione as perguntas e as respostas!\n"),
     
     ler_perguntas_respostas([], [], Perguntas, Respostas),
     write_json(QuizPath, _{perguntas: Perguntas, respostas: Respostas}),
     read_json(QuizzesPath, QuizzesD),
     append(QuizzesD.quizzes, [Titulo], QuizzesNovo),
-    write_json(QuizzesPath, _{quizzes: QuizzesNovo}),
-    print_green("\nQuiz criado! Agora adicione as perguntas e as respostas!\n").
+    write_json(QuizzesPath, _{quizzes: QuizzesNovo}).
 
 ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :- 
     print_purple_bold("\n============ NOVA PERGUNTA ============\n"),
@@ -67,7 +67,7 @@ ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :-
     ) ; Perguntas = P1, Respostas = R1.
 
 escolher_quiz(Disciplina, CodTurma) :- 
-    print_blue_bold("\n======== LISTA DE QUIZZES ========\n"),
+    print_blue_bold("\n======== LISTA DE QUIZZES ========\n\n"),
     listar_quizzes(Disciplina, CodTurma),
     print_blue_bold("\n======= ESCOLHA QUAL QUIZ VOCÊ QUER RESPONDER =======\n"),
     print_red("Atenção: "), write("Ao entrar no quiz, ele só irá fechar após responder todas as perguntas!\n"),
@@ -75,14 +75,14 @@ escolher_quiz(Disciplina, CodTurma) :-
     read_line_to_string(user_input, Titulo),
     validar_titulo(Titulo, Disciplina, CodTurma) -> (
         responder_perguntas(Titulo, Disciplina, CodTurma),
-        print_blue("Quiz respondido!")
+        print_blue("Quiz respondido!\n")
     ) ; print_red("Título inválido").
 
 responder_perguntas(Titulo, Disciplina, CodTurma) :-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
     read_json(QuizPath, Quiz),
     realizar_perguntas(Quiz.perguntas, [], RespostasAluno),
-    print_blue("\n ====== Respostas ======\n"),
+    print_blue("\n====== RESPOSTAS ======\n"),
     exibir_respostas(Quiz.perguntas, Quiz.respostas, RespostasAluno).
 
 exibir_respostas([], [], []) :- !.
