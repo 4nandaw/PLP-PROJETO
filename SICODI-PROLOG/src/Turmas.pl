@@ -8,10 +8,6 @@
 :- use_module(library(readutil)).
 :- set_prolog_flag(encoding, utf8).
 
-
-% :- use_module("../utils/Utils", [remove_pontos/2]).
-
-
 turma_menu(Disciplina, CodTurma):-
     string_upper(CodTurma, X),
     print_purple_bold("\nMENU "), print_purple_bold(X), print_purple_bold(" =====================\n"),

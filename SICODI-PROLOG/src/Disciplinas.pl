@@ -68,6 +68,7 @@ minhas_turmas(Disciplina):-
     string_upper(Disciplina, X),
     print_purple_bold("\nTurmas de "), print_purple_bold(X), nl, nl,
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas"], Path),
+    make_directory_path(Path), 
     directory_files(Path, Lista),
     remove_pontos(Lista, ListaDeTurmas),
     reverse(ListaDeTurmas, Turmas),

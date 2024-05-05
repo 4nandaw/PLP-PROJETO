@@ -36,12 +36,15 @@ cadastrar_disciplina:-
     read_line_to_string(user_input, Disciplina),
     print_yellow("\nDigite a senha do professor: \n"),
     read_line_to_string(user_input, Senha),
-    validar_dados_disciplina(Matricula, Nome, Disciplina, Senha).
+    ((Matricula \= "", Nome \= "", Disciplina \= "", Senha \= "") -> 
+    validar_dados_disciplina(Matricula, Nome, Disciplina, Senha);
+    print_red("\nEntrada inválida. Tente novamente.\n")).
 
 % FUNCAO PARA VALIDAR OS DADOS RECEBIDOS
 % ESSA PRIMEIRA AINDA IRÁ TER UMA FUNÇÃO NO UTILS QUE SERÁ CHAMADA AQUI ANTES DE gravar_dados_disciplina
  validar_dados_disciplina(Matricula, Nome, Disciplina, Senha):- gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha), !.
  validar_dados_disciplina(Matricula, Nome, Disciplina, Senha):- print_red("\nEntrada inválida. Tente novamente.\n").
+
 
 % SALVA NO JSON
 gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
@@ -69,6 +72,7 @@ cadastrar_aluno:-
     read_line_to_string(user_input, Nome),
     print_yellow("\nDigite a senha do aluno: \n"),
     read_line_to_string(user_input, Senha),
+    (Matricula == ""; Nome == ""; Senha == "") -> print_red("\nEntrada inválida. Tente novamente.\n") ;
     validar_dados(Matricula, Nome, Senha).
 
 % FUNÇÃO QUE CHAMA A FUNÇÃO DO UTILS PARA VALIDAR OS DADOS

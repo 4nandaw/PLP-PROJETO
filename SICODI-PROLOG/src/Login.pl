@@ -51,6 +51,7 @@ login_menu:-
     read_line_to_string(user_input, Opcao),
     escolher_opcao_login(Opcao), !.
 
+escolher_opcao_login("0"):- !.
 escolher_opcao_login("1"):- login_disciplina, !.
 escolher_opcao_login("2"):- login_aluno, !.
 escolher_opcao_login(_):- print_red("\nEntrada inválida.\n").
