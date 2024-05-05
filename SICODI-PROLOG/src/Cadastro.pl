@@ -72,8 +72,8 @@ cadastrar_aluno:-
     read_line_to_string(user_input, Nome),
     print_yellow("\nDigite a senha do aluno: \n"),
     read_line_to_string(user_input, Senha),
-    (Matricula == ""; Nome == ""; Senha == "") -> print_red("\nEntrada inválida. Tente novamente.\n") ;
-    validar_dados(Matricula, Nome, Senha).
+    ((Matricula \= ""; Nome \= ""; Senha \= "") ->  validar_dados(Matricula, Nome, Senha);
+    print_red("\nEntrada inválida. Tente novamente.\n")).
 
 % FUNÇÃO QUE CHAMA A FUNÇÃO DO UTILS PARA VALIDAR OS DADOS
  validar_dados(Matricula, Nome, Senha):- gravar_dados_aluno(Matricula, Nome, Senha), !.
