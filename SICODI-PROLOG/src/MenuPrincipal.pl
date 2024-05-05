@@ -4,8 +4,6 @@
 :- use_module("./Cadastro", [cadastro_menu/0]).
 :- use_module("./Login", [login_menu/0]).
 :- use_module("../utils/Utils").
-:- set_prolog_flag(encoding, utf8).
-
 
 main:-
     print_yellow_bold("\nMENU INICIAL ========\n"),

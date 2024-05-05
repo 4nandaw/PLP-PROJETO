@@ -67,16 +67,19 @@ ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :-
     ) ; Perguntas = P1, Respostas = R1.
 
 escolher_quiz(Disciplina, CodTurma) :- 
-    print_blue_bold("\n======== LISTA DE QUIZZES ========\n"),
-    listar_quizzes(Disciplina, CodTurma),
-    print_blue_bold("\n======= ESCOLHA QUAL QUIZ VOCÊ QUER RESPONDER =======\n"),
-    print_red("Atenção: "), print_white_bold("Ao entrar no quiz, ele só irá fechar após responder todas as perguntas!\n"),
-    print_blue("\nDigite o título do quiz: \n"),
-    read_line_to_string(user_input, Titulo),
-    validar_titulo(Titulo, Disciplina, CodTurma) -> (
-        responder_perguntas(Titulo, Disciplina, CodTurma),
-        print_green("Quiz respondido!\n")
-    ) ; print_red("\nTítulo inválido.\n").
+    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
+    (not_exists_file(QuizzesPath) -> print_red("\nNão há quizzes para serem respondidos!\n") ;
+        print_blue_bold("\n======== LISTA DE QUIZZES ========\n"),
+        listar_quizzes(Disciplina, CodTurma),
+        print_blue_bold("\n======= ESCOLHA QUAL QUIZ VOCÊ QUER RESPONDER =======\n"),
+        print_red("Atenção: "), print_white_bold("Ao entrar no quiz, ele só irá fechar após responder todas as perguntas!\n"),
+        print_blue("\nDigite o título do quiz: \n"),
+        read_line_to_string(user_input, Titulo),
+        validar_titulo(Titulo, Disciplina, CodTurma) -> (
+            responder_perguntas(Titulo, Disciplina, CodTurma),
+            print_green("Quiz respondido!\n")
+        ) ; print_red("\nTítulo inválido.\n")
+    ).
 
 responder_perguntas(Titulo, Disciplina, CodTurma) :-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
