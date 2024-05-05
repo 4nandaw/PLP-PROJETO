@@ -18,7 +18,7 @@ main:-
     escolher_opcao(Opcao),
     main.
 
-escolher_opcao("0"):- print_green("\nSaindo... :)\n\n"), halt.
+escolher_opcao("0"):- print_green("\nPrograma finalizado! :)\n\n"), halt.
 escolher_opcao("1"):- cadastro_menu, !.
 escolher_opcao("2"):- login_menu, !.
 escolher_opcao(_):- print_red("\nOpção inválida.\n").
