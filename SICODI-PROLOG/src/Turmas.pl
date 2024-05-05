@@ -242,7 +242,7 @@ chat(Disciplina, CodTurma):-
                                     print_red("\nAluno não está na turma\n"), chat(Disciplina, CodTurma))).
 
 print_aviso_chat:-
-    print_red("\nAVISO:"), print_white_bold(" para parar de mandar mensagens aperte apenas ENTER").
+    print_red("\nAVISO:"), write(" para sair do chat digite ENTER").
 
 ver_alunos_turma([]):- nl.
 ver_alunos_turma([Matricula|T]):-
@@ -380,7 +380,7 @@ ver_materiais_didaticos(Disciplina, CodTurma):-
         )
     ;   print_red("\nAinda não há materiais didáticos disponíveis.\n")
     ),
-    print_white_bold("\n====================================================\n").
+    print_white_bold("\n===================================================\n").
 
 print_materiais([], _).
 print_materiais([[Titulo,Conteudo]|T], IsFirst):-

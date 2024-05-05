@@ -16,8 +16,8 @@ quiz_menu(Disciplina, CodTurma) :-
     escolher_opcao_quiz(Opcao, Disciplina, CodTurma).
 
 escolher_opcao_quiz("0", Disciplina, CodTurma) :-  nl, !.
-escolher_opcao_quiz("1", Disciplina, CodTurma) :-  criar_quiz(Disciplina, CodTurma), !.
-escolher_opcao_quiz("2", Disciplina, CodTurma) :-  editar_quiz(Disciplina, CodTurma), !.
+escolher_opcao_quiz("1", Disciplina, CodTurma) :-  criar_quiz(Disciplina, CodTurma), quiz_menu(Disciplina, CodTurma), !.
+escolher_opcao_quiz("2", Disciplina, CodTurma) :-  editar_quiz(Disciplina, CodTurma), quiz_menu(Disciplina, CodTurma), !.
 escolher_opcao_quiz(_, Disciplina, CodTurma) :-  print_red("Opção inválida").
 
 editar_quiz(Disciplina, CodTurma) :- 
@@ -101,7 +101,7 @@ realizar_perguntas([Pergunta|Perguntas], R1, Respostas) :-
         append(R1, [R], R2),
         realizar_perguntas(Perguntas, R2, Respostas)
     ) ; (
-    write_red("Opção Inválida!")),
+    write_red("\nOpção Inválida!\n")),
     realizar_perguntas([Pergunta|Perguntas], R1, Respostas)).
 
 validar_titulo(Titulo, Disciplina, CodTurma) :-
