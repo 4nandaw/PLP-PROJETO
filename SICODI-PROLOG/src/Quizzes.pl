@@ -6,19 +6,19 @@
 :- set_prolog_flag(encoding, utf8).
 
 quiz_menu(Disciplina, CodTurma) :- 
-    print_purple_bold("\n===== MENU QUIZ ======\n"),
+    print_purple_bold("\n===== MENU QUIZ ==================\n"),
     write("Digite uma opção: \n"),
     write("[0] Voltar \n"),
     write("[1] Criar Quiz \n"),
     write("[2] Adicionar pergunta a um Quiz \n"),
-    print_purple_bold("======================\n"),
+    print_purple_bold("==================================\n"),
     read_line_to_string(user_input, Opcao),
     escolher_opcao_quiz(Opcao, Disciplina, CodTurma).
 
 escolher_opcao_quiz("0", Disciplina, CodTurma) :-  nl, !.
 escolher_opcao_quiz("1", Disciplina, CodTurma) :-  criar_quiz(Disciplina, CodTurma), !.
 escolher_opcao_quiz("2", Disciplina, CodTurma) :-  editar_quiz(Disciplina, CodTurma), !.
-escolher_opcao_quiz(_, Disciplina, CodTurma) :-  print_red("Opção inválida").
+escolher_opcao_quiz(_, Disciplina, CodTurma) :-  print_red("\nOpção inválida\n").
 
 editar_quiz(Disciplina, CodTurma) :- 
     print_purple("\nQual o título do Quiz?\n"),
@@ -57,7 +57,7 @@ ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :-
 
         print_purple("\nDigite a resposta (digite "), print_white_bold("V"), print_purple(" para verdadeiro e "), print_white_bold("F"), print_purple(" para falso): \n"),
         read_line_to_string(user_input, Read1), convert_to_string(Read1, R),
-        (R == "V"; R == "v"; R == "F"; R == "f") -> (
+        (R == "V"; R == "F") -> (
             append(R1, [R], R2), 
             ler_perguntas_respostas(P2, R2, Perguntas, Respostas)
         );
@@ -92,17 +92,25 @@ exibir_respostas([Pergunta|Perguntas], [QResposta|QRespostas], [AResposta|ARespo
     print_blue("\nSua resposta: "), ((QResposta =:= AResposta) -> print_green(AResposta); print_red(AResposta)), nl, nl,
     exibir_respostas(Perguntas, QRespostas, ARespostas).
 
-realizar_perguntas([], R1, Respostas) :- Respostas = R1.
-realizar_perguntas([Pergunta|Perguntas], R1, Respostas) :- 
+realizar_perguntas([], R1, Respostas) :-
+    Respostas = R1.
+
+realizar_perguntas([Pergunta|Perguntas], R1, Respostas) :-
     nl, print_blue_bold(Pergunta), nl,
     write("Digite a resposta, apenas "), print_blue_bold("V"), write(" para verdadeiro e "), print_blue_bold("F"), write(" para falso: \n"),
     read_line_to_string(user_input, Read), convert_to_string(Read, R),
-    ((R == "V"; R == "v"; R == "F"; R == "f") -> (
-        append(R1, [R], R2),
-        realizar_perguntas(Perguntas, R2, Respostas)
-    ) ; (
-    write_red("\nOpção inválida.\n")),
-    realizar_perguntas([Pergunta|Perguntas], R1, Respostas)).
+    ( (R == "V"; R == "F") ->
+        (
+            append(R1, [R], R2),
+            realizar_perguntas(Perguntas, R2, Respostas)
+        )
+    ;
+        (
+            print_red("\nOpção inválida, tente novamente.\n"),
+            realizar_perguntas([Pergunta|Perguntas], R1, Respostas)
+        )
+    ).
+
 
 validar_titulo(Titulo, Disciplina, CodTurma) :-
     concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
