@@ -1,13 +1,10 @@
 :- module(disciplina, [disciplina_menu/1]).
-:- use_module(library(json)).
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Turmas", [turma_menu/2]).
 :- use_module("../utils/Utils", [remove_pontos/2]).
 :- use_module(library(readutil)).
 :- set_prolog_flag(encoding, utf8).
-
-
 
 disciplina_menu(Disciplina):-
     string_upper(Disciplina, X),

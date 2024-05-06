@@ -5,8 +5,6 @@
 :- use_module(library(readutil)).
 :- set_prolog_flag(encoding, utf8).
 
-
-
 aluno_menu(Matricula):-
     print_blue_bold("\n===== MENU DO ALUNO "), print_blue_bold(Matricula), print_blue_bold(" ====\n"),
     printar_todas_turmas(Matricula), nl,
@@ -49,15 +47,15 @@ escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "1"):- situacao_aluno
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "3"):- chat_aluno(Matricula, Disciplina, CodTurma).
 
-escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "2"):- ver_mural(Disciplina, CodTurma).
+escolher_opcao_menu_turma(_, Disciplina, CodTurma, "2"):- ver_mural(Disciplina, CodTurma).
 
 escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "4"):- avaliar_prof_menu(Disciplina, CodTurma, Matricula).
 
-escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "5"):- ver_materiais_didaticos(Disciplina, CodTurma).
+escolher_opcao_menu_turma(_, Disciplina, CodTurma, "5"):- ver_materiais_didaticos(Disciplina, CodTurma).
 
-escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, "6"):- escolher_quiz(Disciplina, CodTurma).
+escolher_opcao_menu_turma(_, Disciplina, CodTurma, "6"):- escolher_quiz(Disciplina, CodTurma).
 
-escolher_opcao_menu_turma(Matricula, Disciplina, CodTurma, _):- print_red("\nOpção inválida.\n").
+escolher_opcao_menu_turma(_, _, _, _):- print_red("\nOpção inválida.\n").
 
 printar_todas_turmas(Matricula):- 
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),

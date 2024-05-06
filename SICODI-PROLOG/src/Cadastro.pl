@@ -4,7 +4,6 @@
 
 %:- use_module(library(http/json)).
 :- use_module(library(filesex)).
-:- use_module(library(json)).
 :- use_module("../utils/Utils").
 :- use_module(library(readutil)).
 
@@ -43,7 +42,7 @@ cadastrar_disciplina:-
 % FUNCAO PARA VALIDAR OS DADOS RECEBIDOS
 % ESSA PRIMEIRA AINDA IRÁ TER UMA FUNÇÃO NO UTILS QUE SERÁ CHAMADA AQUI ANTES DE gravar_dados_disciplina
  validar_dados_disciplina(Matricula, Nome, Disciplina, Senha):- gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha), !.
- validar_dados_disciplina(Matricula, Nome, Disciplina, Senha):- print_red("\nEntrada inválida. Tente novamente.\n").
+ validar_dados_disciplina(_, _, _, _):- print_red("\nEntrada inválida. Tente novamente.\n").
 
 
 % SALVA NO JSON
@@ -58,7 +57,7 @@ gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
     print_green("\nCadastro concluído!\n"), !.
 
 % NOME DA DISCIPLINA JÁ EXISTE
-gravar_dados_disciplina(Matricula, Nome, Disciplina, Senha):-
+gravar_dados_disciplina(_, _, Disciplina, _):-
     concat_atom(["../db/disciplinas/", Disciplina, ".json"], Path),
     exists_file(Path), nl, print_red("\nJá existe uma disciplina com esse nome.\n"), nl.
 
@@ -77,7 +76,7 @@ cadastrar_aluno:-
 
 % FUNÇÃO QUE CHAMA A FUNÇÃO DO UTILS PARA VALIDAR OS DADOS
  validar_dados(Matricula, Nome, Senha):- gravar_dados_aluno(Matricula, Nome, Senha), !.
- validar_dados(Matricula, Nome, Senha):- print_red("\nEntrada inválida. Tente novamente.\n").
+ validar_dados(_, _, _):- print_red("\nEntrada inválida. Tente novamente.\n").
 
 
 % SALVA NO ARQUIVO JSON
@@ -89,6 +88,6 @@ gravar_dados_aluno(Matricula, Nome, Senha):-
     print_green("\nCadastro concluído!\n"), !.
 
 % MATRÍCULA JÁ EXISTE
-gravar_dados_aluno(Matricula, Nome, Senha):-
+gravar_dados_aluno(Matricula, _, _):-
     concat_atom(["../db/alunos/", Matricula, ".json"], Path),
     exists_file(Path), nl, print_red("\nJá existe um aluno com esta matrícula.\n"), nl.

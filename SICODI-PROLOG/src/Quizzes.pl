@@ -1,7 +1,7 @@
 :- module(quizzes, [quiz_menu/2, escolher_quiz/2]).
 :- use_module(library(filesex)).
 :- use_module(library(http/json)).
-:- use_module("./utils/Utils").
+:- use_module("../utils/Utils").
 :- use_module(library(readutil)).
 :- set_prolog_flag(encoding, utf8).
 
@@ -15,10 +15,10 @@ quiz_menu(Disciplina, CodTurma) :-
     read_line_to_string(user_input, Opcao),
     escolher_opcao_quiz(Opcao, Disciplina, CodTurma).
 
-escolher_opcao_quiz("0", Disciplina, CodTurma) :-  nl, !.
+escolher_opcao_quiz("0", _, _) :-  nl, !.
 escolher_opcao_quiz("1", Disciplina, CodTurma) :-  criar_quiz(Disciplina, CodTurma), !.
 escolher_opcao_quiz("2", Disciplina, CodTurma) :-  editar_quiz(Disciplina, CodTurma), !.
-escolher_opcao_quiz(_, Disciplina, CodTurma) :-  print_red("\nOpção inválida\n").
+escolher_opcao_quiz(_, _, _) :-  print_red("\nOpção inválida\n").
 
 editar_quiz(Disciplina, CodTurma) :- 
     print_purple("\nQual o título do Quiz?\n"),

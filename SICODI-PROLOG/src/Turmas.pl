@@ -1,6 +1,5 @@
 :- module(turma, [turma_menu/2, situacao_aluno/3, ver_mural/2, acessar_chat/3, print_aviso_chat/0, ver_materiais_didaticos/2]).
 
-:- use_module(library(json)).
 :- use_module("../utils/Utils").
 :- use_module(library(filesex)).
 :- use_module("./Disciplinas", [disciplina_menu/1]).
@@ -27,7 +26,7 @@ turma_menu(Disciplina, CodTurma):-
     convert_to_string(Opcao, Op),
     escolher_opcao_turma_menu(Op, Disciplina, CodTurma).
 
-escolher_opcao_turma_menu("0", Disciplina, CodTurma):- disciplina_menu(Disciplina), !.
+escolher_opcao_turma_menu("0", Disciplina, _):- disciplina_menu(Disciplina), !.
 escolher_opcao_turma_menu("1", Disciplina, CodTurma):- ver_alunos(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("2", Disciplina, CodTurma):- alocar_notas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_turma_menu("3", Disciplina, CodTurma):- alocar_faltas(Disciplina, CodTurma), turma_menu(Disciplina, CodTurma), !.
@@ -105,7 +104,7 @@ situacao_aluno(Disciplina, CodTurma, Matricula):-
     print_white_bold("\n==== SITUAÇÃO DO ALUNO "), print_white_bold(Matricula), print_white_bold(" ===\n\n"),
     print_white_bold("Nota 1: "), write(Nota1), nl,
     print_white_bold("Nota 2: "), write(Nota2), nl,
-    print_white_bold("Nota 3: "), write(Nota2), nl,
+    print_white_bold("Nota 3: "), write(Nota3), nl,
     print_white_bold("Faltas: "), write(Faltas), nl,
     print_white_bold("Média: "), print_white_bold(Media), nl,
     situacao(Faltas, Media).
@@ -113,7 +112,7 @@ situacao_aluno(Disciplina, CodTurma, Matricula):-
 situacao(Faltas, _):- Faltas >= 8, print_red("\nREPROVADO POR FALTA :(\n"), !.
 situacao(_, Media):- Media>=7.0, print_green("\nAPROVADO :)\n"), !.
 situacao(_, Media):- Media>=4.0, print_yellow("\nFINAL :|\n").
-situacao(_, Media):- print_red("\nREPROVADO :(\n").
+situacao(_, _):- print_red("\nREPROVADO :(\n").
 
 
 alocar_nota(Disciplina, CodTurma, Matricula, Opcao):-
@@ -268,7 +267,7 @@ ver_mensagens_anteriores([]):- nl.
 ver_mensagens_anteriores([[Remetente|Mensagem]|T2]):-
     nl, print_white_bold(Remetente), print_white_bold(": "), print_mensagem(Mensagem), ver_mensagens_anteriores(T2).
 
-print_mensagem([Mensagem|T]):- print_white_bold(Mensagem).
+print_mensagem([Mensagem|_]):- print_white_bold(Mensagem).
 
 enviar_mensagem_chat(Disciplina, CodTurma, Matricula):-
     write("\nMsg: "),
@@ -365,7 +364,7 @@ materiais_didaticos_menu(Disciplina, CodTurma):-
 escolher_opcao_materiais_didaticos_menu("0", Disciplina, CodTurma):- turma_menu(Disciplina, CodTurma), !.
 escolher_opcao_materiais_didaticos_menu("1", Disciplina, CodTurma):- ver_materiais_didaticos(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
 escolher_opcao_materiais_didaticos_menu("2", Disciplina, CodTurma):- adicionar_material_didatico(Disciplina, CodTurma), materiais_didaticos_menu(Disciplina, CodTurma), !.
-escolher_opcao_materiais_didaticos_menu(_, Disciplina, CodTurma):- print_red("\nOpção inválida!\n").
+escolher_opcao_materiais_didaticos_menu(_, _, _):- print_red("\nOpção inválida!\n").
 
 ver_materiais_didaticos(Disciplina, CodTurma):- 
     print_white_bold("\n=============== MATERIAIS DIDÁTICOS ===============\n"),
