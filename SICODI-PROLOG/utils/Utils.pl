@@ -16,7 +16,6 @@ print_green/1,
 print_white_bold/1]).
 
 :- use_module(library(http/json)).
-:- usemodule(library(process)).
 :- use_module(library(ansi_term)).
 
 limparTela:-
