@@ -12,7 +12,7 @@
 % MENU
 cadastro_menu:-
     print_yellow_bold("\nCADASTRO =====================\n"),
-    write("[0] Sair\n"),
+    write("[0] Voltar\n"),
     write("[1] Cadastro de professor\n"),
     write("[2] Cadastro de aluno\n"),
     print_yellow_bold("==============================\n"),

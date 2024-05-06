@@ -13,7 +13,8 @@ print_purple/1,
 print_purple_bold/1,
 print_red/1,
 print_green/1,
-print_white_bold/1]).
+print_white_bold/1,
+trim_whitespace/2]).
 
 :- use_module(library(http/json)).
 :- use_module(library(ansi_term)).
@@ -90,3 +91,7 @@ print_green(Texto):-
 print_white_bold(Texto):-
     ansi_format([bold, fg(white)], '~w', [Texto]).
 
+trim_whitespace(String, Trimmed) :-
+    atom_string(Atom, String),
+    atom_string(TrimmedAtom, Atom),
+    atom_string(TrimmedAtom, Trimmed).
