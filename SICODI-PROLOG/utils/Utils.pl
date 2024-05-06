@@ -14,7 +14,8 @@ print_purple_bold/1,
 print_red/1,
 print_green/1,
 print_white_bold/1,
-trim_whitespace/2]).
+trim_whitespace/2,
+lista_vazia/1]).
 
 :- use_module(library(http/json)).
 :- use_module(library(ansi_term)).
@@ -95,3 +96,5 @@ trim_whitespace(String, Trimmed) :-
     atom_string(Atom, String),
     atom_string(TrimmedAtom, Atom),
     atom_string(TrimmedAtom, Trimmed).
+
+lista_vazia([]).
