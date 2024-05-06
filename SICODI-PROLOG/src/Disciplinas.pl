@@ -46,6 +46,7 @@ criar_turma(Disciplina):-
 
     concat_atom([CodTurmaPath, "/", CodTurma, ".json"], TurmaJsonPath),
     
+    (NomeTurma \= "", CodTurma \= "") ->
     (not_exists_file(TurmaJsonPath) -> 
         write_json(TurmaJsonPath, _{alunos : [], nome : NomeTurma, codigo : CodTurma}),
 
@@ -57,7 +58,7 @@ criar_turma(Disciplina):-
         make_directory(CodTurmaPath, "quiz"),
 
         print_green("\nCadastro concluído!\n")
-    ;   print_red("\nTurma já existente!\n")).
+    ;   print_red("\nTurma já existente!\n")); print_red("\nDados inváidos!\n").
 
 
 make_directory(CodTurmaPath, Diretorio):-

@@ -34,18 +34,23 @@ editar_quiz(Disciplina, CodTurma) :-
 criar_quiz(Disciplina, CodTurma) :- 
     print_purple("\nQual o título do Quiz?\n"),
     read_line_to_string(user_input, Titulo),
-    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/"], DirectoryQuizzesPath),
-    make_directory_path(DirectoryQuizzesPath),
-    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
-    (\+ exists_file(QuizzesPath) -> (write_json(QuizzesPath, _{quizzes: []})); nl),
-    concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
-    
-    ler_perguntas_respostas([], [], Perguntas, Respostas),
-    write_json(QuizPath, _{perguntas: Perguntas, respostas: Respostas}),
-    read_json(QuizzesPath, QuizzesD),
-    append(QuizzesD.quizzes, [Titulo], QuizzesNovo),
-    write_json(QuizzesPath, _{quizzes: QuizzesNovo}),
-    print_green("\nQuiz criado!\n").
+    (Titulo \= "") ->
+    ((\+ validar_titulo(Titulo, Disciplina, CodTurma)) -> (
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/"], DirectoryQuizzesPath),
+        make_directory_path(DirectoryQuizzesPath),
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes.json"], QuizzesPath),
+        (\+ exists_file(QuizzesPath) -> (write_json(QuizzesPath, _{quizzes: []})); nl),
+        concat_atom(["../db/disciplinas/", Disciplina, "/turmas/", CodTurma, "/quiz/quizzes/", Titulo, ".json"], QuizPath),
+        
+        ler_perguntas_respostas([], [], Perguntas, Respostas),
+        write_json(QuizPath, _{perguntas: Perguntas, respostas: Respostas}),
+        read_json(QuizzesPath, QuizzesD),
+        append(QuizzesD.quizzes, [Titulo], QuizzesNovo),
+        write_json(QuizzesPath, _{quizzes: QuizzesNovo}),
+        print_green("\nQuiz criado!\n")
+    ); print_red("\nJá existe um quiz com esse título!\n")
+    ) ; print_red("\nTítulo inválido!\n").
+
 
 ler_perguntas_respostas(P1, R1, Perguntas, Respostas) :- 
     print_purple_bold("\n============ NOVA PERGUNTA ============\n"),
